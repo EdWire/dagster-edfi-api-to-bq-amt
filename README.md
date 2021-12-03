@@ -11,14 +11,36 @@ More specifically, this repository is a [Dagster](https://dagster.io/) workspace
 
 This repository currently supports Google Cloud Storage, BigQuery, and the subset of the Analytics Middler Tier necessary to power the Chronic Absenteeism Starter Kit use case.
 
-Dagster was chosen as the orchestration platform to run this job due to it being free and open-source, focused on workflows that are specifically data oriented, and finally due to its ability to abstract out intermediary IO and other resources. This means it would be possible to extend this job to support additional blob storage and cloud data warehouse services (ie. AWS S3 buckets and Snowflake).
+Dagster was chosen as the orchestration platform to run this job due to it being free and open-source, focus on workflows that are specifically data oriented, and due to its ability to abstract out intermediary IO and other resources. This means it would be possible to extend this job to support additional blob storage and cloud data warehouse services (ie. AWS S3 buckets and Snowflake).
 
-## Local Testing
-This repository is designed to be opened on a machine with [Docker](https://www.docker.com/) installed. When opened in [Visual Studio Code](https://code.visualstudio.com/) with the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed, Visual Studio Code can open the code in its own container using all Python requirements specified in this repository's `requirements.txt` file.
+This repository is designed to be opened on a machine with [Docker](https://www.docker.com/) installed. When opened in [Visual Studio Code](https://code.visualstudio.com/) with the [Remote Containers](https://marketplace.visualstudio.com/items?itemName=ms-vscode-remote.remote-containers) extension installed, Visual Studio Code can open the repository in its own container using all Python requirements specified in this repository's `requirements.txt` file.
+
+At the root of this repo is a `.env-sample` file. Copy the file to create a `.env` file. Complete the following missing values:
+* EDFI_BASE_URL
+* EDFI_API_KEY
+* EDFI_API_SECRET
+
+You will complete the missing values in the steps below.
+
+## Google Cloud Configuration
+Create a Google Cloud Platform (GCP) project and set the `GCP_PROJECT` variable to the Google Cloud project ID.
+
+### Service Account
+Authentication with the GCP project happens through a service account. In GCP, head to _IAM & Admin --> Service Accounts_ to create your service account.
+
+* Click **Create Service Account**
+* Choose a name (ie. dagster) and click **Create**
+* Grant the service account the following roles
+    * BigQuery Admin
+    * Storage Object Admin
+* Click **Done** 
+* Select the actions menu and click **Create key**. Create a JSON key, rename to _service.json_ and store in the root of the repository.
+
+### Google Cloud Storage
+Create a Google Cloud Storage bucket that will be used to house the JSON data retrieved from the target Ed-Fi API. In GCP, head to _Cloud Storage_ and click **Create Bucket**. Once created, set the `GCS_BUCKET_DEV` variable to the newly created bucket's name (ie. dagster-dev-123).
 
 
-### Google Cloud Configuration
-
+## Launching Dev Job
 
 
 ```bash
