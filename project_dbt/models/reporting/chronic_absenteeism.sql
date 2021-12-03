@@ -6,7 +6,7 @@
 
 
 SELECT
-    {{ normalize_school_name('attendance_fact.school_name') }} AS school_name,
+    attendance_fact.school_name AS school_name,
     attendance_fact.student_key,
     attendance_fact.student_last_surname || ', ' || attendance_fact.student_first_name AS student_display_name,
     student_school_dim.grade_level,

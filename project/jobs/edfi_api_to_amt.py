@@ -81,7 +81,11 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "project_dir": os.getenv("DBT_PROJECT_DIR"),
             "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
             "target": "dev",
-            "models": ["+chronic_absenteeism"]
+            "models": ["+date_dim", "+date_dim", "+demographic_dim",
+                       "+grading_period_dim", "+local_education_agency_dim", "+rls_student_data_authorization",
+                       "+rls_user_authorization", "+rls_user_dim", "+rls_user_student_data_authorization",
+                       "+school_dim", "+student_local_education_agency_demographics_bridge", "+student_local_education_agency_dim",
+                       "+student_school_dim", "+student_section_dim"]
         })
     },
     config={
