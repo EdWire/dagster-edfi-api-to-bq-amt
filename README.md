@@ -32,7 +32,7 @@ Authentication with the GCP project happens through a service account. In GCP, h
 * Choose a name (ie. dagster) and click **Create**
 * Grant the service account the following roles
     * BigQuery Admin
-    * Storage Object Admin
+    * Storage Admin
 * Click **Done** 
 * Select the actions menu and click **Create key**. Create a JSON key, rename to _service.json_ and store in the root of the repository.
 
@@ -41,10 +41,19 @@ Create a Google Cloud Storage bucket that will be used to house the JSON data re
 
 
 ## Launching Dev Job
-
+In Visual Studio Code, with the repo opened in a container, run the command below:
 
 ```bash
 
 dagit -w workspace.yaml;
 
 ```
+
+The command above launches dagit, Dagster's web UI. The menu top-left will allow you to access the Ed-Fi related job.
+
+* Click **Launchpad**
+* Click **Launch Run**
+
+
+## Deploying to Production
+This repository has been successfully deployed to production. Future documentation will be written if community interest is expressed.
