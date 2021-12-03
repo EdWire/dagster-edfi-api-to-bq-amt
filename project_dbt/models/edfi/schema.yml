@@ -1,0 +1,26 @@
+
+version: 2
+
+
+models:
+  - name: edfi_local_education_agencies
+    description: ""
+    columns:
+      - name: local_education_agency_id
+        tests:
+          - unique
+          - not_null
+  - name: edfi_schools
+    description: ""
+    columns:
+      - name: school_id
+        tests:
+          - unique
+          - not_null
+  - name: edfi_students
+    description: ""
+    columns:
+      - name: student_unique_id
+        tests:
+          - unique
+          - not_null

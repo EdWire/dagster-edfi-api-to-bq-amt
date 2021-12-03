@@ -1,0 +1,56 @@
+
+version: 2
+
+
+models:
+  - name: student_local_education_agency_dim
+    description: Contains attributes of a student including name and demographic information as defined in relationship to the local education agency in which the student is currently enrolled.
+    columns:
+      - name: student_local_education_agency_key
+        description: Primary key
+      - name: student_key
+        description: A unique alphanumeric code assigned to a student.
+
+  - name: student_local_education_agency_demographics_bridge
+    description: This view provides student demographic information by linking the StudentLocalEducationAgencyDim View to the DemographicDim View.
+
+  - name: student_school_dim
+    description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
+    columns:
+      - name: student_school_key
+        description: Primary key
+      - name: student_key
+        description: A unique alphanumeric code assigned to a student.
+      - name: school_year
+        description: School year
+      - name: school_key
+        description: The identifier assigned to a school.
+      - name: student_first_name
+        description: A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change.
+      - name: student_middle_name
+        description: A secondary name given to an individual at birth, baptism, or during another naming ceremony.
+      - name: student_last_surname
+        description: The name borne in common by members of a family.
+      - name: enrollment_date_key
+        description: The month, day, and year on which an individual enters and begins to receive instructional services in a school.
+      - name: grade_level
+        description: The grade level or primary instructional level at which a student enters and receives services in a school or an educational institution during a given academic session.
+      - name: limited_english_proficiency
+        description: An indication that the student has been identified as limited English proficient by the Language Proficiency Assessment Committee (LPAC), or English proficient.
+      - name: is_hispanic
+        description: An indication that the individual traces his or her origin or descent to Mexico, Puerto Rico, Cuba, Central, and South America, and other Spanish cultures, regardless of race, as last reported to the education organization. The term, "Spanish origin," can be used in addition to "Hispanic or Latino."
+      - name: sex
+        description: The student's gender as last reported to the education organization.
+      - name: birth_date
+        description: The month, day, and year on which an individual was born.
+      - name: internet_access_in_residence
+        description: An indication of whether the student is able to access the internet in their primary place of residence.
+
+  - name: chronic_absenteeism_attendance_fact
+    description: "Used for looking at student's attendance per day using the common methods for defining attendance."
+    columns:
+      - name: student_key
+        tests:
+          - relationships:
+              to: ref('student_local_education_agency_dim')
+              field: student_key

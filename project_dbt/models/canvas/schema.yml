@@ -1,0 +1,10 @@
+
+version: 2
+
+
+models:
+    - name: terms
+      description: ""
+      # tests:
+      # - unique:
+      #     column_name: "(source_system_identifier || '-' || user_role)"

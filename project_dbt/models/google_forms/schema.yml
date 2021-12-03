@@ -1,0 +1,37 @@
+
+version: 2
+
+
+models:
+  - name: forms
+    description: "One row per Google Form fetched from API"
+    columns:
+      - name: form_id
+        tests:
+          - unique
+          - not_null
+          # - dbt_utils.at_least_one
+  - name: questions
+    description: ""
+    columns:
+      - name: form_id
+        tests:
+          - relationships:
+              to: ref('forms')
+              field: form_id
+      - name: question_id
+        tests:
+          - unique
+          - not_null
+  - name: responses
+    description: ""
+    columns:
+      - name: form_id
+        tests:
+          - relationships:
+              to: ref('forms')
+              field: form_id
+      - name: response_id
+        tests:
+          - unique
+          - not_null
