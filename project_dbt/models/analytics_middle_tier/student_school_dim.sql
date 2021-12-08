@@ -39,8 +39,8 @@ FROM {{ ref('edfi_student_school_associations') }} ssa
 LEFT JOIN {{ ref('edfi_schools') }} schools ON schools.school_id = ssa.school_reference.school_id
 LEFT JOIN {{ ref('edfi_students') }} students ON students.student_unique_id = ssa.student_reference.student_unique_id
 LEFT JOIN {{ ref('edfi_student_education_organization_associations') }} school_ed_org 
-    ON school_ed_org.student_unique_id = ssa.student_reference.student_unique_id
-    AND school_ed_org.education_organization_id = ssa.school_reference.school_id
+    ON school_ed_org.student_reference.student_unique_id = ssa.student_reference.student_unique_id
+    AND school_ed_org.education_organization_reference.education_organization_id = ssa.school_reference.school_id
 LEFT JOIN {{ ref('edfi_student_education_organization_associations') }} district_ed_org 
-    ON district_ed_org.student_unique_id = ssa.student_reference.student_unique_id
-    AND district_ed_org.education_organization_id = schools.local_education_agency_id
+    ON district_ed_org.student_reference.student_unique_id = ssa.student_reference.student_unique_id
+    AND district_ed_org.education_organization_reference.education_organization_id = schools.local_education_agency_id

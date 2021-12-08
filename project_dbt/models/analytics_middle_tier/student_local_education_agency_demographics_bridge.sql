@@ -4,16 +4,16 @@ WITH demographics AS (
         CONCAT('CohortYear:',
             cohort_years.school_year, '-',
             cohort_years.cohort_type_descriptor, '-', 
-            seoa.student_unique_id, '-',
-            seoa.education_organization_id
+            seoa.student_reference.student_unique_id, '-',
+            seoa.education_organization_reference.education_organization_id
         ) AS student_school_demographic_bridge_key,
-        CONCAT(seoa.student_unique_id, '-', seoa.education_organization_id) AS student_local_education_agency_key,
+        CONCAT(seoa.student_reference.student_unique_id, '-', seoa.education_organization_reference.education_organization_id) AS student_local_education_agency_key,
         CONCAT('CohortYear:',
             cohort_years.school_year, '-',
             cohort_years.cohort_type_descriptor
         ) AS demographic_key, 
-        seoa.education_organization_id,
-        seoa.student_unique_id
+        seoa.education_organization_reference.education_organization_id,
+        seoa.student_reference.student_unique_id
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.cohort_years) AS cohort_years
 
@@ -22,15 +22,15 @@ WITH demographics AS (
     SELECT
         CONCAT('LanguageUse:', '-',
             uses.language_use_descriptor, '-', 
-            seoa.student_unique_id, '-',
-            seoa.education_organization_id
+            seoa.student_reference.student_unique_id, '-',
+            seoa.education_organization_reference.education_organization_id
         ) AS student_school_demographic_bridge_key,
-        CONCAT(seoa.student_unique_id, '-', seoa.education_organization_id) AS student_local_education_agency_key,
+        CONCAT(seoa.student_reference.student_unique_id, '-', seoa.education_organization_reference.education_organization_id) AS student_local_education_agency_key,
         CONCAT('LanguageUse:',
             uses.language_use_descriptor
         ) AS demographic_key,
-        seoa.education_organization_id,
-        seoa.student_unique_id
+        seoa.education_organization_reference.education_organization_id,
+        seoa.student_reference.student_unique_id
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.languages) AS languages
     CROSS JOIN UNNEST(languages.uses) AS uses
@@ -40,15 +40,15 @@ WITH demographics AS (
     SELECT
         CONCAT('Language:', '-',
             languages.language_descriptor, '-', 
-            seoa.student_unique_id, '-',
-            seoa.education_organization_id
+            seoa.student_reference.student_unique_id, '-',
+            seoa.education_organization_reference.education_organization_id
         ) AS student_school_demographic_bridge_key,
-        CONCAT(seoa.student_unique_id, '-', seoa.education_organization_id) AS student_local_education_agency_key,
+        CONCAT(seoa.student_reference.student_unique_id, '-', seoa.education_organization_reference.education_organization_id) AS student_local_education_agency_key,
         CONCAT('Language:',
             languages.language_descriptor
         ) AS demographic_key,
-        seoa.education_organization_id,
-        seoa.student_unique_id
+        seoa.education_organization_reference.education_organization_id,
+        seoa.student_reference.student_unique_id
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.languages) AS languages
 
@@ -57,15 +57,15 @@ WITH demographics AS (
     SELECT
         CONCAT('Race:', '-',
             races.race_descriptor, '-', 
-            seoa.student_unique_id, '-',
-            seoa.education_organization_id
+            seoa.student_reference.student_unique_id, '-',
+            seoa.education_organization_reference.education_organization_id
         ) AS student_school_demographic_bridge_key,
-        CONCAT(seoa.student_unique_id, '-', seoa.education_organization_id) AS student_local_education_agency_key,
+        CONCAT(seoa.student_reference.student_unique_id, '-', seoa.education_organization_reference.education_organization_id) AS student_local_education_agency_key,
         CONCAT('Race:',
             races.race_descriptor
         ) AS demographic_key,
-        seoa.education_organization_id,
-        seoa.student_unique_id
+        seoa.education_organization_reference.education_organization_id,
+        seoa.student_reference.student_unique_id
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.races) AS races
 

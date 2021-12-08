@@ -1,7 +1,11 @@
 
 SELECT
-    JSON_VALUE(data, '$.educationOrganizationReference.educationOrganizationId') AS education_organization_id,
-    JSON_VALUE(data, '$.studentReference.studentUniqueId') AS student_unique_id,
+    STRUCT(
+        JSON_VALUE(data, '$.educationOrganizationReference.educationOrganizationId') AS education_organization_id
+    ) AS education_organization_reference,
+    STRUCT(
+        JSON_VALUE(data, '$.studentReference.studentUniqueId') AS student_unique_id
+    ) AS student_reference,
     ARRAY(
         SELECT AS STRUCT 
             JSON_VALUE(email, "$.electronicMailAddress") AS address,

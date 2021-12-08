@@ -6,6 +6,15 @@ SELECT
     SPLIT(JSON_VALUE(data, "$.academicSubjectDescriptor"), '#')[OFFSET(1)] AS academic_subject_descriptor,
     SPLIT(JSON_VALUE(data, "$.careerPathwayDescriptor"), '#')[OFFSET(1)] AS career_pathway_descriptor,
     SPLIT(JSON_VALUE(data, "$.courseDefinedByDescriptor"), '#')[OFFSET(1)] AS course_defined_by_descriptor,
+    SPLIT(JSON_VALUE(data, "$.courseGPAApplicabilityDescriptor"), '#')[OFFSET(1)] AS course_gpa_applicability_descriptor,
+    PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, "$.dateCourseAdopted")) AS date_course_adopted,
+    CAST(JSON_VALUE(data, "$.highSchoolCourseRequirement") AS BOOL) AS high_school_course_requirement,
+    CAST(JSON_VALUE(data, "$.maxCompletionsForCredit") AS float64) AS max_completions_for_credit,
+    CAST(JSON_VALUE(data, "$.maximumAvailableCreditConversion") AS float64) AS maximum_available_credit_conversion,
+    CAST(JSON_VALUE(data, "$.maximumAvailableCredits") AS float64) AS maximum_available_credits,
+    CAST(JSON_VALUE(data, "$.minimumAvailableCreditConversion") AS float64) AS minimum_available_credit_conversion,
+    CAST(JSON_VALUE(data, "$.minimumAvailableCredits") AS float64) AS minimum_available_credits,
+    CAST(JSON_VALUE(data, "$.numberOfParts") AS int64) AS number_of_parts,
     STRUCT(
         JSON_VALUE(data, '$.educationOrganizationReference.educationOrganizationId') AS education_organization_id
     ) AS education_organization_reference,
@@ -16,11 +25,10 @@ SELECT
     ) AS competency_levels,
     ARRAY(
         SELECT AS STRUCT 
-            SPLIT(JSON_VALUE(codes, "$.courseIdentificationSystemDescriptor"), '#')[OFFSET(1)] AS course_identification_system_descriptor,
-            SPLIT(JSON_VALUE(codes, "$.assigningOrganizationIdentificationCode"), '#')[OFFSET(1)] AS assigning_organization_identification_code,
-            JSON_VALUE(codes, "$.courseCatalogURL") AS course_catalog_url,
-            JSON_VALUE(codes, "$.identificationCode") AS identification_code
+            SPLIT(JSON_VALUE(codes, "$.identificationCodes.courseIdentificationSystemDescriptor"), '#')[OFFSET(1)] AS course_identification_system_descriptor,
+            SPLIT(JSON_VALUE(codes, "$.identificationCodes.assigningOrganizationIdentificationCode"), '#')[OFFSET(1)] AS assigning_organization_identification_code,
+            JSON_VALUE(codes, "$.identificationCodes.courseCatalogURL") AS course_catalog_url,
+            JSON_VALUE(codes, "$.identificationCodes.identificationCode") AS identification_code
         FROM UNNEST(JSON_QUERY_ARRAY(data, "$.identificationCodes")) codes 
-    ) AS identification_codes,
+    ) AS identification_codes
 FROM {{ source('raw_sources', 'edfi_courses') }}
-

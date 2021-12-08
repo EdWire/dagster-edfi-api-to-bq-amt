@@ -48,6 +48,7 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/staffs", "table_name": "edfi_staffs" },
     {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations", "table_name": "edfi_staff_education_organization_assignment_associations" },
     {"endpoint": "/ed-fi/staffSectionAssociations", "table_name": "edfi_staff_section_associations" },
+    {"endpoint": "/ed-fi/studentParentAssociations", "table_name": "edfi_student_parent_associations" },
     {"endpoint": "/ed-fi/studentSchoolAttendanceEvents", "table_name": "edfi_student_school_attendance_events" },
     {"endpoint": "/ed-fi/studentSectionAssociations", "table_name": "edfi_student_section_associations" },
     {"endpoint": "/ed-fi/studentSectionAttendanceEvents", "table_name": "edfi_student_section_attendance_events" },
