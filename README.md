@@ -1,5 +1,7 @@
-# Ed-Fi API -> Analytics Middle Tier
+# Ed-Fi API ➡️ Analytics Middle Tier
 This repository contains code that pulls data from a target Ed-Fi API and creates tables in BigQuery that conform to the Analytics Middle Tier specification.
+
+[YouTube demo video](https://youtu.be/A1a7C9pDVL4)
 
 More specifically, this repository is a [Dagster](https://dagster.io/) workspace that contains a job designed to:
 
