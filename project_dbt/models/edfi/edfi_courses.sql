@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='edfi',
-    )
-}}
-
 
 SELECT
     JSON_VALUE(data, '$.courseCode') AS course_code,

@@ -29,3 +29,12 @@ models:
   +persist_docs:
     relation: true
     columns: true
+  alcozer:
+    analytics_middle_tier:
+      +materialized: table
+      +schema: analytics_middle_tier
+    edfi:
+      +materialized: table
+      +schema: edfi
+      +labels:
+          edfi_version: "5_3"

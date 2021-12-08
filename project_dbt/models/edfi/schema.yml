@@ -3,6 +3,15 @@ version: 2
 
 
 models:
+  - name: edfi_calendar_dates
+    description: "The type of scheduled or unscheduled event for the day."
+  
+  - name: edfi_course_offerings
+    description: "This entity represents an entry in the course catalog of available courses offered by the school during a session."
+
+  - name: edfi_courses
+    description: "This educational entity represents the organization of subject matter and related learning experiences provided for the instruction of students on a regular or systematic basis."
+
   - name: edfi_local_education_agencies
     description: ""
     columns:
@@ -10,6 +19,7 @@ models:
         tests:
           - unique
           - not_null
+
   - name: edfi_schools
     description: ""
     columns:
@@ -17,8 +27,9 @@ models:
         tests:
           - unique
           - not_null
+
   - name: edfi_students
-    description: ""
+    description: "This entity represents an individual for whom instruction, services, and/or care are provided in an early childhood, elementary, or secondary educational program under the jurisdiction of a school, education agency or other institution or program. A student is a person who has been enrolled in a school or other educational institution."
     columns:
       - name: student_unique_id
         tests:

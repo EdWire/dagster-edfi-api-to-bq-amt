@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='analytics_middle_tier',
-    )
-}}
-
 
 WITH staff_to_scope_map AS (
     SELECT

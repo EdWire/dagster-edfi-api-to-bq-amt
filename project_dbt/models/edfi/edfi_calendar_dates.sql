@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='edfi',
-    )
-}}
-
 
 SELECT
     PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, '$.date')) AS date,

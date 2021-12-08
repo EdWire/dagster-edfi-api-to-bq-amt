@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='analytics_middle_tier',
-    )
-}}
-
 
 SELECT
     CONCAT('CohortYear:',

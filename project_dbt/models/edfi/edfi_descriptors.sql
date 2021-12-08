@@ -1,8 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='edfi',
-    )
-}}
 
 
 {% set tables = ["edfi_cohort_type_descriptors", "edfi_disability_descriptors", "edfi_language_descriptors", 

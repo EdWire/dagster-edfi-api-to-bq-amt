@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='edfi',
-    )
-}}
-
 
 SELECT
     SPLIT(JSON_VALUE(data, "$.gradingPeriodDescriptor"), '#')[OFFSET(1)] AS grading_period_descriptor,

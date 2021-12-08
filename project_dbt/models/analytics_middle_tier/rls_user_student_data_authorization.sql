@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='analytics_middle_tier',
-    )
-}}
-
 
 SELECT DISTINCT
     seoa.staff_reference.staff_unique_id AS user_key,

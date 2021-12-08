@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='analytics_middle_tier',
-    )
-}}
-
 
 SELECT
     ssa.student_reference.student_unique_id AS student_key,

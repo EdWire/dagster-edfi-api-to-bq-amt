@@ -1,9 +1,3 @@
-{{ config(
-        materialized='table',
-        schema='edfi',
-    )
-}}
-
 
 SELECT
     JSON_VALUE(data, '$.educationOrganizationReference.educationOrganizationId') AS education_organization_id,

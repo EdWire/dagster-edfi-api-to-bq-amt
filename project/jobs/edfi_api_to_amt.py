@@ -43,6 +43,7 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/calendarDates", "table_name": "edfi_calendar_dates" },
     {"endpoint": "/ed-fi/courses", "table_name": "edfi_courses" },
     {"endpoint": "/ed-fi/courseOfferings", "table_name": "edfi_course_offerings" },
+    {"endpoint": "/ed-fi/parents", "table_name": "edfi_parents" },
     {"endpoint": "/ed-fi/sections", "table_name": "edfi_sections" },
     {"endpoint": "/ed-fi/staffs", "table_name": "edfi_staffs" },
     {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations", "table_name": "edfi_staff_education_organization_assignment_associations" },
