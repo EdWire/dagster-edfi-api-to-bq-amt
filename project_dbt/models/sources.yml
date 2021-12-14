@@ -12,6 +12,8 @@ sources:
         - name: edfi_courses
         - name: edfi_course_offerings
         - name: edfi_grading_periods
+        - name: edfi_grading_period_descriptors
+        - name: edfi_grades
         - name: edfi_local_education_agencies
         - name: edfi_parents
         - name: edfi_schools

@@ -46,7 +46,7 @@ models:
       - name: internet_access_in_residence
         description: An indication of whether the student is able to access the internet in their primary place of residence.
 
-  - name: chronic_absenteeism_attendance_fact
+  - name: attendance_fact
     description: "Used for looking at student's attendance per day using the common methods for defining attendance."
     columns:
       - name: student_key

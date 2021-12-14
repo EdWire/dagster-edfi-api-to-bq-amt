@@ -43,6 +43,15 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/calendarDates", "table_name": "edfi_calendar_dates" },
     {"endpoint": "/ed-fi/courses", "table_name": "edfi_courses" },
     {"endpoint": "/ed-fi/courseOfferings", "table_name": "edfi_course_offerings" },
+    {"endpoint": "/ed-fi/disciplineActions", "table_name": "edfi_discipline_actions" },
+    {"endpoint": "/ed-fi/disciplineIncidents", "table_name": "edfi_discipline_incidents" },
+    {"endpoint": "/ed-fi/grades", "table_name": "edfi_grades" },
+    {"endpoint": "/ed-fi/gradingPeriods", "table_name": "edfi_grading_periods" },
+    {"endpoint": "/ed-fi/gradingPeriodDescriptors", "table_name": "edfi_grading_period_descriptors" },
+    {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations", "table_name": "edfi_staff_discipline_incident_associations" },
+    {"endpoint": "/ed-fi/studentDisciplineIncidentAssociations", "table_name": "edfi_student_discipline_incident_associations" }, # deprecated
+    # {"endpoint": "/ed-fi/studentDisciplineIncidentBehaviorAssociations", "table_name": "edfi_student_discipline_incident_behavior_associations" }, # implemented in v5.2
+    # {"endpoint": "/ed-fi/studentDisciplineIncidentNonOffenderAssociations", "table_name": "edfi_student_discipline_incident_non_offender_associations" }, # implemented in v5.2
     {"endpoint": "/ed-fi/parents", "table_name": "edfi_parents" },
     {"endpoint": "/ed-fi/sections", "table_name": "edfi_sections" },
     {"endpoint": "/ed-fi/staffs", "table_name": "edfi_staffs" },
@@ -52,7 +61,6 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/studentSchoolAttendanceEvents", "table_name": "edfi_student_school_attendance_events" },
     {"endpoint": "/ed-fi/studentSectionAssociations", "table_name": "edfi_student_section_associations" },
     {"endpoint": "/ed-fi/studentSectionAttendanceEvents", "table_name": "edfi_student_section_attendance_events" },
-    {"endpoint": "/ed-fi/gradingPeriods", "table_name": "edfi_grading_periods" },
     {"endpoint": "/ed-fi/sessions", "table_name": "edfi_sessions" },
     {"endpoint": "/ed-fi/cohortTypeDescriptors", "table_name": "edfi_cohort_type_descriptors"},
     {"endpoint": "/ed-fi/disabilityDescriptors", "table_name": "edfi_disability_descriptors"},
