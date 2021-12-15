@@ -16,9 +16,10 @@ class EdFiApiClient:
         self.api_key = api_key
         self.api_secret = api_secret
         self.school_year = school_year
-        self.limit = 100
+        # self.limit = 100
         self.log = get_dagster_logger()
         self.access_token = self.get_access_token()
+
 
     def get_access_token(self):
         credentials_concatenated = ':'.join((self.api_key, self.api_secret))
@@ -51,36 +52,61 @@ class EdFiApiClient:
         except requests.exceptions.HTTPError as err:
             self.log.warn(f'Failed to retrieve data: {err}')
             raise err
-        
+
         return response.json()
 
 
-    def get_data(self, api_endpoint) -> List[Dict]:
+    def get_available_change_versions(self) -> List[Dict]:
         headers = {'Authorization': f'Bearer {self.access_token}'}
 
         # determine if URL should include school year
         if self.school_year > 1901:
-            endpoint = f'{self.base_url}/data/v3/{self.school_year}{api_endpoint}?limit={self.limit}&totalCount=true'
+            endpoint = f'{self.base_url}/changeQueries/v1/{self.school_year}/availableChangeVersions'
         else:
-            endpoint = f'{self.base_url}/data/v3{api_endpoint}?limit={self.limit}&totalCount=true'
+            endpoint = f'{self.base_url}/changeQueries/v1/availableChangeVersions'
+        
+        return self._call_api(endpoint, headers)
+
+
+    def get_data(self, api_endpoint: str,
+        latest_processed_change_version: int, newest_change_version: int) -> List[Dict]:
+
+        headers = {'Authorization': f'Bearer {self.access_token}'}
+
+        if "/deletes" in api_endpoint:
+            self.limit = 5000
+        else:
+            self.limit = 100
+
+        # determine if URL should include school year
+        if self.school_year > 1901:
+            endpoint = (
+                f"{self.base_url}/data/v3/{self.school_year}{api_endpoint}"
+                f"?limit={self.limit}&minChangeVersion={latest_processed_change_version + 1}"
+                f"&maxChangeVersion={newest_change_version}"
+            )
+        else:
+            endpoint = (
+                f"{self.base_url}/data/v3{api_endpoint}"
+                f"?limit={self.limit}&minChangeVersion={latest_processed_change_version + 1}"
+                f"&maxChangeVersion={newest_change_version}"
+            )
 
         result = list()
-        try:
-            # GET with no offset to determine total record count
-            self.log.debug(f'Calling endpoint {endpoint}')
-            response = requests.get(endpoint, headers=headers)
-            response.raise_for_status()
-            result = result + response.json()
-        except requests.exceptions.HTTPError as err:
-            self.log.warn(f'Failed to retrieve data: {err}')
-            raise err
-
-        number_times_to_run = math.ceil(int(response.headers['Total-Count']) / 100)
-        for run_number in range(1, number_times_to_run):
-            endpoint_to_call = f'{endpoint}&offset={run_number * self.limit}'
+        offset = 0
+        while True:
+            endpoint_to_call = f'{endpoint}&offset={offset}'
             self.log.debug(endpoint_to_call)
+            
             response = self._call_api(endpoint_to_call, headers)
             result = result + response
+            
+            if not response:
+                # retrieved all data from api
+                break
+            else:
+                # move onto next page
+                offset = offset + self.limit
 
         return result
 
