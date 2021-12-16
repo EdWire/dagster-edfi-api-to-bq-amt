@@ -52,10 +52,10 @@ class BigQueryClient:
                 content_type='application/json',
                 num_retries=3
             )
+            gcs_upload_path = f"gs://{self.staging_gcs_bucket}/{gcs_file}"
+            context.log.debug(f"Uploaded JSON file to {gcs_upload_path}")
+            gcs_paths.append(gcs_upload_path)
 
-            gcs_paths.append(f'gs://{self.staging_gcs_bucket}/{gcs_file}')
-
-        context.log.debug(gcs_paths)
         return gcs_paths
 
 

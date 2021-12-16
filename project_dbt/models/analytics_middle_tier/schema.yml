@@ -8,8 +8,12 @@ models:
     columns:
       - name: student_local_education_agency_key
         description: Primary key
+        tests:
+          - not_null
       - name: student_key
         description: A unique alphanumeric code assigned to a student.
+        tests:
+          - not_null
 
   - name: student_local_education_agency_demographics_bridge
     description: This view provides student demographic information by linking the StudentLocalEducationAgencyDim View to the DemographicDim View.

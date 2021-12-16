@@ -1,4 +1,4 @@
-name: 'alcozer'
+name: 'project'
 version: '1.0.0'
 config-version: 2
 
@@ -20,7 +20,7 @@ clean-targets:         # directories to be removed by `dbt clean`
     - "dbt_modules"
 
 # vars:
-#       alcozer:
+#       project:
 
 # Configuring models
 # Full documentation: https://docs.getdbt.com/docs/configuring-models
@@ -29,7 +29,7 @@ models:
   +persist_docs:
     relation: true
     columns: true
-  alcozer:
+  project:
     analytics_middle_tier:
       +materialized: table
       +schema: analytics_middle_tier

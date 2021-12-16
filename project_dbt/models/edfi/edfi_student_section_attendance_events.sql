@@ -52,7 +52,7 @@ ranked AS (
 
 )
 
-SELECT * EXCEPT (id, extracted_timestamp, rank)
+SELECT * EXCEPT (extracted_timestamp, rank)
 FROM ranked
 WHERE
     rank = 1

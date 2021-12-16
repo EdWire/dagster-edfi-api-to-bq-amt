@@ -42,8 +42,6 @@ def edfi_api_to_amt(use_change_queries):
     append_newest_change_version(
         start_after=result, newest_change_version=newest_change_version)
 
-    # result = api_endpoint_generator.alias('api_endpoint_generator')(api_endpoints, use_change_queries=do_not_use_change_queries).map(get_data).map(load_data).collect()
-    
     dbt_run_result = dbt_run_op(start_after=result)
     dbt_test_op(start_after=dbt_run_result)
 
@@ -139,11 +137,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "project_dir": os.getenv("DBT_PROJECT_DIR"),
             "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
             "target": "dev",
-            "models": ["+date_dim", "+date_dim", "+demographic_dim",
-                       "+grading_period_dim", "+local_education_agency_dim", "+rls_student_data_authorization",
-                       "+rls_user_authorization", "+rls_user_dim", "+rls_user_student_data_authorization",
-                       "+school_dim", "+student_local_education_agency_demographics_bridge", "+student_local_education_agency_dim",
-                       "+student_school_dim", "+student_section_dim"]
+            "models": []
         })
     },
     config={

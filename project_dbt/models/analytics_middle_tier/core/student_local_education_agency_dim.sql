@@ -22,10 +22,7 @@ SELECT
         (SELECT indicator FROM UNNEST(seoa.student_indicators) WHERE name = 'Internet Access In Residence'),
         'n/a'
     ) AS internet_access_in_residence
-FROM currently_enrolled
-LEFT JOIN {{ ref('edfi_student_education_organization_associations') }} seoa
-    ON seoa.education_organization_reference.education_organization_id = currently_enrolled.local_education_agency_id
-    AND seoa.student_reference.student_unique_id = currently_enrolled.student_unique_id
+FROM {{ ref('edfi_student_education_organization_associations') }} seoa
 LEFT JOIN {{ ref('edfi_students') }} students
     ON students.student_unique_id = seoa.student_reference.student_unique_id
-
+WHERE seoa.student_reference.student_unique_id IN ( SELECT student_unique_id FROM currently_enrolled )

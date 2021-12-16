@@ -1,6 +1,7 @@
 *.db
 .env
 service.json
+service*.json
 .telemetry
 history/
 logs/
