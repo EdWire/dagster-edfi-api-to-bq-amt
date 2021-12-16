@@ -1,7 +1,6 @@
 from typing import List, Dict
 
 import base64
-import math
 import requests
 
 from dagster import get_dagster_logger, resource
@@ -9,30 +8,28 @@ from tenacity import retry, wait_exponential
 
 
 class EdFiApiClient:
-    '''Class for interacting with an Ed-Fi API'''
+    """Class for interacting with an Ed-Fi API"""
 
     def __init__(self, base_url, api_key, api_secret, school_year):
         self.base_url = base_url
         self.api_key = api_key
         self.api_secret = api_secret
         self.school_year = school_year
-        # self.limit = 100
         self.log = get_dagster_logger()
         self.access_token = self.get_access_token()
 
 
     def get_access_token(self):
-        credentials_concatenated = ':'.join((self.api_key, self.api_secret))
+        """
+        Retrieve access token from Ed-Fi API.
+        """
+        credentials_concatenated = ":".join((self.api_key, self.api_secret))
         credentials_encoded = base64.b64encode(credentials_concatenated.encode('utf-8'))
-        access_url = f'{self.base_url}/oauth/token'
-
+        access_url = f"{self.base_url}/oauth/token"
         access_headers = {
-            'Authorization': b'Basic ' + credentials_encoded
+            "Authorization": b"Basic " + credentials_encoded
         }
-
-        access_params = {
-            'grant_type': 'client_credentials'
-        }
+        access_params = { "grant_type": "client_credentials" }
 
         response = requests.post(access_url, headers=access_headers, data=access_params)
 
@@ -46,6 +43,10 @@ class EdFiApiClient:
 
     @retry(wait=wait_exponential(multiplier=1, min=4, max=10))
     def _call_api(self, url, headers):
+        """
+        Call GET on passed in URL and
+        return response.
+        """
         try:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
@@ -74,21 +75,21 @@ class EdFiApiClient:
         headers = {'Authorization': f'Bearer {self.access_token}'}
 
         if "/deletes" in api_endpoint:
-            self.limit = 5000
+            limit = 5000
         else:
-            self.limit = 100
+            limit = 100
 
         # determine if URL should include school year
         if self.school_year > 1901:
             endpoint = (
                 f"{self.base_url}/data/v3/{self.school_year}{api_endpoint}"
-                f"?limit={self.limit}&minChangeVersion={latest_processed_change_version + 1}"
+                f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
                 f"&maxChangeVersion={newest_change_version}"
             )
         else:
             endpoint = (
                 f"{self.base_url}/data/v3{api_endpoint}"
-                f"?limit={self.limit}&minChangeVersion={latest_processed_change_version + 1}"
+                f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
                 f"&maxChangeVersion={newest_change_version}"
             )
 
@@ -97,16 +98,15 @@ class EdFiApiClient:
         while True:
             endpoint_to_call = f'{endpoint}&offset={offset}'
             self.log.debug(endpoint_to_call)
-            
             response = self._call_api(endpoint_to_call, headers)
             result = result + response
-            
+
             if not response:
                 # retrieved all data from api
                 break
             else:
                 # move onto next page
-                offset = offset + self.limit
+                offset = offset + limit
 
         return result
 

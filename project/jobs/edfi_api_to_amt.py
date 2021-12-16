@@ -30,7 +30,6 @@ def edfi_api_to_amt(use_change_queries):
 
     previous_change_version = get_previous_change_version()
     newest_change_version = get_newest_api_change_versions(use_change_queries)
-    append_newest_change_version(newest_change_version)
 
     result = api_endpoint_generator.alias('api_endpoint_generator')(use_change_queries=use_change_queries).map(
         lambda mapped_value: get_data(
@@ -39,6 +38,9 @@ def edfi_api_to_amt(use_change_queries):
             newest_change_version=newest_change_version
         )
     ).map(load_data).collect()
+
+    append_newest_change_version(
+        start_after=result, newest_change_version=newest_change_version)
 
     # result = api_endpoint_generator.alias('api_endpoint_generator')(api_endpoints, use_change_queries=do_not_use_change_queries).map(get_data).map(load_data).collect()
     
