@@ -1,13 +1,4 @@
 
-WITH currently_enrolled AS (
-    SELECT DISTINCT 
-        schools.local_education_agency_id,
-        ssa.student_reference.student_unique_id
-    FROM {{ ref('edfi_student_school_associations') }} ssa
-    LEFT JOIN {{ ref('edfi_schools') }} schools ON ssa.school_reference.school_id = schools.school_id
-    WHERE ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE
-)
-
 SELECT
     seoa.student_reference.student_unique_id || '-' || seoa.education_organization_reference.education_organization_id AS student_local_education_agency_key,
     seoa.student_reference.student_unique_id AS student_key,
@@ -25,4 +16,3 @@ SELECT
 FROM {{ ref('edfi_student_education_organization_associations') }} seoa
 LEFT JOIN {{ ref('edfi_students') }} students
     ON students.student_unique_id = seoa.student_reference.student_unique_id
-WHERE seoa.student_reference.student_unique_id IN ( SELECT student_unique_id FROM currently_enrolled )
