@@ -36,7 +36,7 @@ class EdFiApiClient:
         if response.ok:
             response_json = response.json()
             access_token = response_json['access_token']
-            self.log.debug(f'Retrieved access token {access_token}')
+            self.log.debug(f"Retrieved access token {access_token}")
             return access_token
         else:
             raise Exception("Failed to retrieve access token")
@@ -51,52 +51,52 @@ class EdFiApiClient:
             response = requests.get(url, headers=headers)
             response.raise_for_status()
         except requests.exceptions.HTTPError as err:
-            self.log.warn(f'Failed to retrieve data: {err}')
+            self.log.warn(f"Failed to retrieve data: {err}")
             raise err
 
         return response.json()
 
 
     def get_available_change_versions(self) -> List[Dict]:
-        headers = {'Authorization': f'Bearer {self.access_token}'}
-
+        """
+        Call available change versions API
+        and return response.
+        """
+        headers = { "Authorization": f"Bearer {self.access_token}" }
         # determine if URL should include school year
         if self.school_year > 1901:
-            endpoint = f'{self.base_url}/changeQueries/v1/{self.school_year}/availableChangeVersions'
+            endpoint = f"{self.base_url}/changeQueries/v1/{self.school_year}/availableChangeVersions"
         else:
-            endpoint = f'{self.base_url}/changeQueries/v1/availableChangeVersions'
-        
+            endpoint = f"{self.base_url}/changeQueries/v1/availableChangeVersions"
+
         return self._call_api(endpoint, headers)
 
 
     def get_data(self, api_endpoint: str,
         latest_processed_change_version: int, newest_change_version: int) -> List[Dict]:
-
-        headers = {'Authorization': f'Bearer {self.access_token}'}
-
-        if "/deletes" in api_endpoint:
-            limit = 5000
-        else:
-            limit = 100
+        """
+        Page through API endpoint using change version
+        numbers and return response.
+        """
+        headers = { "Authorization": f"Bearer {self.access_token}" }
+        limit = 5000 if "/deletes" in api_endpoint else 100
 
         # determine if URL should include school year
         if self.school_year > 1901:
             endpoint = (
                 f"{self.base_url}/data/v3/{self.school_year}{api_endpoint}"
                 f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
-                f"&maxChangeVersion={newest_change_version}"
-            )
+                f"&maxChangeVersion={newest_change_version}")
         else:
             endpoint = (
                 f"{self.base_url}/data/v3{api_endpoint}"
                 f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
-                f"&maxChangeVersion={newest_change_version}"
-            )
+                f"&maxChangeVersion={newest_change_version}")
 
         result = list()
         offset = 0
         while True:
-            endpoint_to_call = f'{endpoint}&offset={offset}'
+            endpoint_to_call = f"{endpoint}&offset={offset}"
             self.log.debug(endpoint_to_call)
             response = self._call_api(endpoint_to_call, headers)
             result = result + response

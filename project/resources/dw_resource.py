@@ -2,34 +2,42 @@ import json
 import uuid
 from typing import List, Dict
 
-from dataclasses import dataclass
-
+from dagster import get_dagster_logger
 from dagster import resource
 from google.cloud import bigquery
 from google.cloud import storage
 
 
 class BigQueryClient:
-    '''Class for loading data into BigQuery'''
+    """Class for loading data into BigQuery"""
 
     def __init__(self, dataset, staging_gcs_bucket):
         self.dataset = dataset
         self.staging_gcs_bucket = staging_gcs_bucket
         self.client = bigquery.Client()
-        self.project = self.client.project
         self._create_dataset()
-        self.dataset_ref = bigquery.DatasetReference(self.project, self.dataset)
+        self.dataset_ref = bigquery.DatasetReference(self.client.project, self.dataset)
+        self.log = get_dagster_logger()
 
 
     def _create_dataset(self):
-        # create dataset if it doesn't already exist
+        """
+        Create BigQuery dataset if
+        it does not exist.
+        """
         self.client.create_dataset(
-            bigquery.Dataset(f"{self.project}.{self.dataset}"),
+            bigquery.Dataset(f"{self.client.project}.{self.dataset}"),
             exists_ok=True
         )
 
 
-    def upload_to_gcs(self, context, gcs_path: str, records: List[Dict]) -> str:
+    def upload_to_gcs(self, gcs_path: str, records: List[Dict]) -> str:
+        """
+        Upload list of dictionaries to gcs,
+        splitting data into 10,000 record
+        chunks. Each file is uploaded as a JSON
+        file.
+        """
         storage_client = storage.Client()
         bucket = storage_client.get_bucket(self.staging_gcs_bucket)
         gcs_paths = list()
@@ -39,34 +47,36 @@ class BigQueryClient:
         # for blob in blobs:
         #     blob.delete()
 
-        # upload records into 10,000 record JSON chunks
-        context.log.info(f'Splitting {len(records)} into 10,000 record chunks.')
+        self.log.info(f"Splitting {len(records)} into 10,000 record chunks.")
         for i in range(0, len(records), 10000):
-            gcs_file = f'{gcs_path}/{str(uuid.uuid4())}.json'
-            output = ''
+            gcs_file = f"{gcs_path}/{str(uuid.uuid4())}.json"
+            output = ""
             for record in records[i:i+10000]:
-                output = output + json.dumps(record) + '\r\n'
+                output = output + json.dumps(record) + "\r\n"
 
             bucket.blob(gcs_file).upload_from_string(
                 output,
-                content_type='application/json',
+                content_type="application/json",
                 num_retries=3
             )
             gcs_upload_path = f"gs://{self.staging_gcs_bucket}/{gcs_file}"
-            context.log.debug(f"Uploaded JSON file to {gcs_upload_path}")
+            self.log.debug(f"Uploaded JSON file to {gcs_upload_path}")
             gcs_paths.append(gcs_upload_path)
 
         return gcs_paths
 
 
-    def load_data(self, context, table_name, gcs_path, records) -> str:
-        gcs_paths = self.upload_to_gcs(context, gcs_path, records)
-    
+    def load_data(self, table_name, gcs_path, records) -> str:
+        """
+        Call method to upload records to gcs path,
+        Create BigQuery external table using gcs
+        path as source uri.
+        """
+        self.upload_to_gcs(gcs_path, records)
         schema = [
             bigquery.SchemaField("id", "STRING", "NULLABLE"),
             bigquery.SchemaField("data", "STRING", "NULLABLE")
         ]
-
         table_ref = bigquery.Table(self.dataset_ref.table(table_name), schema=schema)
 
         external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
@@ -76,21 +86,13 @@ class BigQueryClient:
         table = self.client.create_table(table_ref, exists_ok=True)
         self.client.close()
 
-        return "Created table {}.{}.{}".format(table.project, table.dataset_id, table.table_id)
+        return f"Created table {table.project}.{table.dataset_id}.{table.table_id}"
 
 
-    def append_data(self, context, table_name: str, schema: List, df) -> str:
-        """Appends data to bigquery table using schema specified
-        
-        Parameters
-        ----------
-        table_name : str
-            The name of the bigquery table
-        schema : List
-            BigQuery schema for bigquery table
-        data_to_append
-            The actual records to append to bigquery table
-
+    def append_data(self, table_name: str, schema: List, df) -> str:
+        """
+        Append data to BigQuery table using
+        schema specified
         """
         table_ref = bigquery.Table(self.dataset_ref.table(table_name), schema=schema)
         job_config = bigquery.LoadJobConfig(
@@ -101,15 +103,17 @@ class BigQueryClient:
         job = self.client.load_table_from_dataframe(
             df, table_ref, job_config=job_config
         )
-
         job.result()  # waits for the job to complete.
-
         self.client.close()
-        return "Created table {}.{}.{}".format(self.project, self.dataset, table_name)
+
+        return f"Created table {self.client.project}.{self.dataset}.{table_name}"
 
 
-    def run_query(self, context, query: str):
-        return self.client.query(query.format(project_id=self.project, dataset=self.dataset))
+    def run_query(self, query: str):
+        """
+        Run SQL query and return the resulting QueryJob.
+        """
+        return self.client.query(query.format(project_id=self.client.project, dataset=self.dataset))
 
 
 @resource(
@@ -120,6 +124,9 @@ class BigQueryClient:
     description="BigQuery client used to load data.",
 )
 def bq_client(context):
+    """
+    Initialize and return BigQueryClient()
+    """
     return BigQueryClient(
         context.resource_config["dataset"],
         context.resource_config["staging_gcs_bucket"]

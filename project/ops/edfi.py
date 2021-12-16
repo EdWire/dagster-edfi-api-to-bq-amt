@@ -92,8 +92,7 @@ def append_newest_change_version(context, start_after, newest_change_version: in
     table_name = 'edfi_processed_change_versions'
 
     table = context.resources.warehouse.append_data(
-        context, table_name, schema, df
-    )
+        table_name, schema, df)
 
     yield ExpectationResult(
         success=table != None,description="ensure table was created without failures")
@@ -128,7 +127,7 @@ def get_previous_change_version(context) -> int:
         LIMIT 1
     """
     try:
-        for row in context.resources.warehouse.run_query(context, query):
+        for row in context.resources.warehouse.run_query(query):
             previous_change_version = row["newest_change_version"]
             context.log.debug(f"Latest processed change version: {previous_change_version}")
             return previous_change_version
@@ -183,7 +182,7 @@ def load_data(context, api_endpoint_records: Dict):
     """
     table_name = api_endpoint_records['table_name']
     table = context.resources.warehouse.load_data(
-        context, table_name, f"edfi_api/{table_name}", api_endpoint_records["records"])
+        table_name, f"edfi_api/{table_name}", api_endpoint_records["records"])
 
     yield ExpectationResult(success=table is not None,
         description="ensure table was created without failures")
