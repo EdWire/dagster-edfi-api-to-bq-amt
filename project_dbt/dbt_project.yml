@@ -32,9 +32,11 @@ models:
   project:
     analytics_middle_tier:
       +materialized: table
+      +tags: amt
       +schema: analytics_middle_tier
     edfi:
       +materialized: table
       +schema: edfi
+      +tags: edfi
       +labels:
           edfi_version: "5_3"

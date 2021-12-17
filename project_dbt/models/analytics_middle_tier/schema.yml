@@ -3,20 +3,19 @@ version: 2
 
 
 models:
-  - name: student_local_education_agency_dim
-    description: Contains attributes of a student including name and demographic information as defined in relationship to the local education agency in which the student is currently enrolled.
+  - name: attendance_fact
+    description: "Used for looking at student's attendance per day using the common methods for defining attendance."
     columns:
-      - name: student_local_education_agency_key
-        description: Primary key
-        tests:
-          - not_null
       - name: student_key
-        description: A unique alphanumeric code assigned to a student.
         tests:
-          - not_null
-
-  - name: student_local_education_agency_demographics_bridge
-    description: This view provides student demographic information by linking the StudentLocalEducationAgencyDim View to the DemographicDim View.
+          - relationships:
+              to: ref('student_local_education_agency_dim')
+              field: student_key
+      - name: "(student_key || '-' || school_key)"
+        tests:
+          - relationships:
+              to: ref('student_school_dim')
+              field: student_school_key
 
   - name: student_school_dim
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
@@ -50,14 +49,38 @@ models:
       - name: internet_access_in_residence
         description: An indication of whether the student is able to access the internet in their primary place of residence.
 
-  - name: attendance_fact
-    description: "Used for looking at student's attendance per day using the common methods for defining attendance."
+  - name: student_local_education_agency_dim
+    description: Contains attributes of a student including name and demographic information as defined in relationship to the local education agency in which the student is currently enrolled.
     columns:
+      - name: student_local_education_agency_key
+        description: Primary key
+        tests:
+          - not_null
       - name: student_key
+        description: A unique alphanumeric code assigned to a student.
+        tests:
+          - not_null
+
+  - name: student_local_education_agency_demographics_bridge
+    description: This view provides student demographic information by linking the StudentLocalEducationAgencyDim View to the DemographicDim View.
+
+  - name: student_section_dim
+    description: "Attributes related to a student's enrollment in a section."
+    columns:
+      - name: "(student_key || '-' || school_key)"
         tests:
           - relationships:
-              to: ref('student_local_education_agency_dim')
-              field: student_key
+              to: ref('student_school_dim')
+              field: student_school_key
+
+  - name: student_section_grade_fact
+    description: "Records describe a student's cumulative grade in a section for each grading period."
+    columns:
+      - name: student_section_key
+        tests:
+          - relationships:
+              to: ref('student_section_dim')
+              field: student_section_key
       - name: "(student_key || '-' || school_key)"
         tests:
           - relationships:

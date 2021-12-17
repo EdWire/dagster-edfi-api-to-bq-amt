@@ -7,7 +7,7 @@ from dagster import (
     multiprocess_executor
 )
 
-from dagster_dbt import dbt_cli_resource, dbt_run_op, dbt_test_op
+from dagster_dbt import dbt_cli_resource, dbt_test_op
 from dagster_gcp.gcs.io_manager import gcs_pickle_io_manager
 from dagster_gcp.gcs.resources import gcs_resource
 
@@ -42,7 +42,7 @@ def edfi_api_to_amt(use_change_queries):
     append_newest_change_version(
         start_after=result, newest_change_version=newest_change_version)
 
-    dbt_run_result = dbt_run_op(start_after=result)
+    dbt_run_result = run_edfi_models(start_after=result)
     dbt_test_op(start_after=dbt_run_result)
 
 
@@ -136,8 +136,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
         "dbt": dbt_cli_resource.configured({
             "project_dir": os.getenv("DBT_PROJECT_DIR"),
             "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
-            "target": "dev",
-            "models": []
+            "target": "dev"
         })
     },
     config={

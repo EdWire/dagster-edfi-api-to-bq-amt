@@ -13,6 +13,8 @@ from dagster import (
     Output,
     RetryPolicy
 )
+from dagster_dbt.cli.types import DbtCliOutput
+from dagster_dbt.utils import generate_materializations
 
 import pandas as pd
 from google.cloud import bigquery
@@ -193,3 +195,26 @@ def load_data(context, api_endpoint_records: Dict):
     )
 
     yield Output(table)
+
+
+@op(
+    required_resource_keys={"dbt"},
+)
+def run_edfi_models(context, start_after) -> DbtCliOutput:
+    """
+    Run all dbt models tagged with edfi
+    and yield asset materializations
+    """
+    dbt_cli_edfi_output = context.resources.dbt.run(models=["tag:edfi"])
+    for materialization in generate_materializations(
+        dbt_cli_edfi_output, asset_key_prefix=["edfi"]):
+
+        yield materialization
+    
+    dbt_cli_amt_output = context.resources.dbt.run(models=["tag:amt"])
+    for materialization in generate_materializations(
+        dbt_cli_amt_output, asset_key_prefix=["amt"]):
+
+        yield materialization.asset_key
+
+    yield Output(dbt_cli_edfi_output)
