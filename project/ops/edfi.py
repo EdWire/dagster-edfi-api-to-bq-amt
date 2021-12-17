@@ -198,12 +198,13 @@ def load_data(context, api_endpoint_records: Dict):
 
 
 @op(
+    description="Run all dbt models tagged with edfi and amt",
     required_resource_keys={"dbt"},
 )
 def run_edfi_models(context, start_after) -> DbtCliOutput:
     """
     Run all dbt models tagged with edfi
-    and yield asset materializations
+    and amt. Yield asset materializations
     """
     dbt_cli_edfi_output = context.resources.dbt.run(models=["tag:edfi"])
     for materialization in generate_materializations(
