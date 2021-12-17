@@ -58,3 +58,8 @@ models:
           - relationships:
               to: ref('student_local_education_agency_dim')
               field: student_key
+      - name: "(student_key || '-' || school_key)"
+        tests:
+          - relationships:
+              to: ref('student_school_dim')
+              field: student_school_key

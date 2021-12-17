@@ -17,7 +17,7 @@ sources:
         - name: edfi_course_offerings_deletes
         - name: edfi_discipline_actions
         - name: edfi_discipline_actions_deletes
-        - name: edfi_discipline_incident
+        - name: edfi_discipline_incidents
         - name: edfi_discipline_incident_deletes
         - name: edfi_grading_periods
         - name: edfi_grading_periods_deletes
