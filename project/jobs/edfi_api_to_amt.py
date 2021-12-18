@@ -3,15 +3,24 @@ import os
 from dagster import (
     fs_io_manager,
     graph,
-    multiprocess_executor
+    multiprocess_executor,
+    RunRequest,
+    schedule,
+    ScheduleEvaluationContext
 )
-
 from dagster_dbt import dbt_cli_resource, dbt_test_op
 from dagster_gcp.gcs.io_manager import gcs_pickle_io_manager
 from dagster_gcp.gcs.resources import gcs_resource
 
-from ops.edfi import *
-
+from ops.edfi import (
+    api_endpoint_generator,
+    get_newest_api_change_versions,
+    get_previous_change_version,
+    append_newest_change_version,
+    get_data,
+    load_data,
+    run_edfi_models
+)
 from resources.edfi_api_resource import edfi_api_resource_client
 from resources.dw_resource import bq_client
 
@@ -158,7 +167,6 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
     },
 )
 
-
 edfi_api_prod_job = edfi_api_to_amt.to_job(
     executor_def=multiprocess_executor.configured({
         "max_concurrent": 8
@@ -184,19 +192,49 @@ edfi_api_prod_job = edfi_api_to_amt.to_job(
             "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
             "target": "prod"
         })
-    },
-    config={
-        "inputs": {
-            "use_change_queries": {
-                "value": True
-            }
-        },
-        "ops": {
-            "api_endpoint_generator": {
-                "inputs": {
-                    "api_endpoints": edfi_api_endpoints
+    }
+)
+
+@schedule(job=edfi_api_prod_job, cron_schedule="0 6 * * 7,1-5")
+def change_query_schedule(context: ScheduleEvaluationContext):
+    scheduled_date = context.scheduled_execution_time.strftime("%Y-%m-%d")
+    return RunRequest(
+        run_key=None,
+        run_config={
+            "inputs": {
+                "use_change_queries": {
+                    "value": True
+                }
+            },
+            "ops": {
+                "api_endpoint_generator": {
+                    "inputs": {
+                        "api_endpoints": edfi_api_endpoints
+                    }
                 }
             }
-        }
-    },
-)
+        },
+        tags={"date": scheduled_date},
+    )
+
+@schedule(job=edfi_api_prod_job, cron_schedule="0 6 * * 6")
+def full_run_schedule(context: ScheduleEvaluationContext):
+    scheduled_date = context.scheduled_execution_time.strftime("%Y-%m-%d")
+    return RunRequest(
+        run_key=None,
+        run_config={
+            "inputs": {
+                "use_change_queries": {
+                    "value": False
+                }
+            },
+            "ops": {
+                "api_endpoint_generator": {
+                    "inputs": {
+                        "api_endpoints": edfi_api_endpoints
+                    }
+                }
+            }
+        },
+        tags={"date": scheduled_date},
+    )
