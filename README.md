@@ -47,9 +47,6 @@ In Visual Studio Code, with the repo opened in a container, run the command belo
 
 ```bash
 
-# optional
-dagster-daemon run;
-
 dagit -w workspace.yaml;
 
 ```
