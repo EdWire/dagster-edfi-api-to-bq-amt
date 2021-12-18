@@ -27,16 +27,21 @@ from resources.dw_resource import bq_client
 )
 def edfi_api_to_amt(use_change_queries):
 
-    previous_change_version = get_previous_change_version()
+    previous_change_version = get_previous_change_version(use_change_queries)
     newest_change_version = get_newest_api_change_versions(use_change_queries)
 
-    result = api_endpoint_generator.alias('api_endpoint_generator')(use_change_queries=use_change_queries).map(
+    result = api_endpoint_generator(use_change_queries=use_change_queries).map(
         lambda mapped_value: get_data(
             api_endpoint=mapped_value,
             previous_change_version=previous_change_version,
             newest_change_version=newest_change_version
         )
-    ).map(load_data).collect()
+    ).map(
+        lambda mapped_value: load_data(
+            api_endpoint_records=mapped_value,
+            use_change_queries=use_change_queries
+        )
+    ).collect()
 
     append_newest_change_version(
         start_after=result, newest_change_version=newest_change_version)

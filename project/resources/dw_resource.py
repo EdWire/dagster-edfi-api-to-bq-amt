@@ -31,7 +31,8 @@ class BigQueryClient:
         )
 
 
-    def upload_to_gcs(self, gcs_path: str, records: List[Dict]) -> str:
+    def upload_to_gcs(
+        self, gcs_path: str, records: List[Dict], retain_gcs_files: bool) -> str:
         """
         Upload list of dictionaries to gcs,
         splitting data into 10,000 record
@@ -43,9 +44,10 @@ class BigQueryClient:
         gcs_paths = list()
 
         # delete existing files
-        # blobs = bucket.list_blobs(prefix=f'{gcs_path}/')
-        # for blob in blobs:
-        #     blob.delete()
+        if not retain_gcs_files:
+            blobs = bucket.list_blobs(prefix=f'{gcs_path}/')
+            for blob in blobs:
+                blob.delete()
 
         self.log.info(f"Splitting {len(records)} into 10,000 record chunks.")
         for i in range(0, len(records), 10000):
@@ -66,13 +68,13 @@ class BigQueryClient:
         return gcs_paths
 
 
-    def load_data(self, table_name, gcs_path, records) -> str:
+    def load_data(self, table_name, gcs_path, records, retain_gcs_files) -> str:
         """
         Call method to upload records to gcs path,
         Create BigQuery external table using gcs
         path as source uri.
         """
-        self.upload_to_gcs(gcs_path, records)
+        self.upload_to_gcs(gcs_path, records, retain_gcs_files)
         schema = [
             bigquery.SchemaField("id", "STRING", "NULLABLE"),
             bigquery.SchemaField("data", "STRING", "NULLABLE")

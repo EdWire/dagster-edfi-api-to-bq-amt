@@ -85,13 +85,19 @@ class EdFiApiClient:
         if self.school_year > 1901:
             endpoint = (
                 f"{self.base_url}/data/v3/{self.school_year}{api_endpoint}"
-                f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
-                f"&maxChangeVersion={newest_change_version}")
+                f"?limit={limit}")
         else:
             endpoint = (
                 f"{self.base_url}/data/v3{api_endpoint}"
-                f"?limit={limit}&minChangeVersion={latest_processed_change_version + 1}"
-                f"&maxChangeVersion={newest_change_version}")
+                f"?limit={limit}")
+        
+        if latest_processed_change_version is not None and \
+            newest_change_version is not None:
+            endpoint = (
+                f"{endpoint}"
+                f"&minChangeVersion={latest_processed_change_version + 1}"
+                f"&maxChangeVersion={newest_change_version}"
+            )
 
         result = list()
         offset = 0

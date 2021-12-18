@@ -1,7 +1,7 @@
 import json
 
 from datetime import datetime
-from typing import List, Dict
+from typing import List, Dict, Optional, Union
 
 from dagster import (
     AssetMaterialization,
@@ -45,11 +45,11 @@ def api_endpoint_generator(context, api_endpoints: List[Dict], use_change_querie
 @op(
     description="Retrieves newest change version from Ed-Fi API",
     required_resource_keys={"edfi_api_client"},
-    out={ "newest_change_version": Out(int) },
+    out=Out(Union[int, None]),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "change_queries"},
 )
-def get_newest_api_change_versions(context, use_change_queries: bool) -> int:
+def get_newest_api_change_versions(context, use_change_queries: bool):
     """
     If job is configured to use change queries, get
     the newest change version number from the target Ed-Fi API.
@@ -57,19 +57,20 @@ def get_newest_api_change_versions(context, use_change_queries: bool) -> int:
     if use_change_queries:
         response = context.resources.edfi_api_client.get_available_change_versions()
         context.log.debug(response)
-        yield Output(response["NewestChangeVersion"], "newest_change_version")
+        return response["NewestChangeVersion"]
     else:
-        context.log.debug("Will not use change queries")
+        context.log.info("Will not use change queries")
+        return None
 
 
 @op(
     description="Appends newest change version to warehouse table",
     required_resource_keys={"warehouse"},
-    out=Out(str),
+    out=Out(str, is_required=False),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "change_queries"}
 )
-def append_newest_change_version(context, start_after, newest_change_version: int):
+def append_newest_change_version(context, start_after, newest_change_version:Optional[int]):
     """
     Create a dataframe with two columns:
     timestamp column using job's run timestamp and
@@ -80,40 +81,42 @@ def append_newest_change_version(context, start_after, newest_change_version: in
         newest_change_version (bool): The latest change
         version number returned from target Ed-Fi API.
     """
-    df = pd.DataFrame(
-        [[
-            datetime.now().isoformat(),
-            newest_change_version
-        ]],
-        columns = ['timestamp', 'newest_change_version']
-    )
-    schema = [
-        bigquery.SchemaField("timestamp", "TIMESTAMP", "REQUIRED"),
-        bigquery.SchemaField("newest_change_version", "INTEGER", "REQUIRED")
-    ]
-    table_name = 'edfi_processed_change_versions'
+    if newest_change_version is not None:
+        df = pd.DataFrame(
+            [[
+                datetime.now().isoformat(),
+                newest_change_version
+            ]],
+            columns = ['timestamp', 'newest_change_version']
+        )
+        schema = [
+            bigquery.SchemaField("timestamp", "TIMESTAMP", "REQUIRED"),
+            bigquery.SchemaField("newest_change_version", "INTEGER", "REQUIRED")
+        ]
+        table_name = 'edfi_processed_change_versions'
 
-    table = context.resources.warehouse.append_data(
-        table_name, schema, df)
+        table = context.resources.warehouse.append_data(
+            table_name, schema, df)
 
-    yield ExpectationResult(
-        success=table != None,description="ensure table was created without failures")
+        yield ExpectationResult(
+            success=table != None,description="ensure table was created without failures")
 
-    yield AssetMaterialization(
-        asset_key=f'{context.resources.warehouse.dataset}.{table_name}',
-        description="Ed-Fi API data",
-    )
+        yield AssetMaterialization(
+            asset_key=f'{context.resources.warehouse.dataset}.{table_name}',
+            description="Ed-Fi API data",
+        )
 
-    yield Output(table)
+        yield Output(table)
 
 
 @op(
     description="Retrieves change version from last job run",
     required_resource_keys={"warehouse"},
+    out=Out(Union[int, None]),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "change_queries"}
 )
-def get_previous_change_version(context) -> int:
+def get_previous_change_version(context, use_change_queries: bool):
     """
     Run SQL query on table edfi_processed_change_versions
     to retrieve the change version number from the
@@ -121,24 +124,27 @@ def get_previous_change_version(context) -> int:
     This will cause the extract step to pull all data from
     the target Ed-Fi API.
     """
-    query = f"""
-        SELECT newest_change_version
-        FROM `{{project_id}}.{{dataset}}.edfi_processed_change_versions`
-        WHERE timestamp < TIMESTAMP '{datetime.now().isoformat()}'
-        ORDER BY timestamp DESC
-        LIMIT 1
-    """
-    try:
-        for row in context.resources.warehouse.run_query(query):
-            previous_change_version = row["newest_change_version"]
-            context.log.debug(f"Latest processed change version: {previous_change_version}")
-            return previous_change_version
-    except exceptions.NotFound as err:
-        context.log.debug(err)
-        context.log.debug("Failed to query table. Table not found.")
-        context.log.debug("Returning -1 as latest processed change version")
-
-    return -1
+    context.log.info(f"Use change queries is set to {use_change_queries}")
+    if use_change_queries:
+        query = f"""
+            SELECT newest_change_version
+            FROM `{{project_id}}.{{dataset}}.edfi_processed_change_versions`
+            WHERE timestamp < TIMESTAMP '{datetime.now().isoformat()}'
+            ORDER BY timestamp DESC
+            LIMIT 1
+        """
+        try:
+            for row in context.resources.warehouse.run_query(query):
+                previous_change_version = row["newest_change_version"]
+                context.log.debug(f"Latest processed change version: {previous_change_version}")
+                return previous_change_version
+        except exceptions.NotFound as err:
+            context.log.debug(err)
+            context.log.debug("Failed to query table. Table not found.")
+            context.log.debug("Returning -1 as latest processed change version")
+            return -1
+    else:
+        return None
 
 
 @op(
@@ -147,8 +153,8 @@ def get_previous_change_version(context) -> int:
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "extract"},
 )
-def get_data(context, api_endpoint: Dict, previous_change_version: int,
-    newest_change_version=None) -> Dict:
+def get_data(context, api_endpoint: Dict, previous_change_version:Optional[int]=None,
+    newest_change_version:Optional[int]=None) -> Dict:
     """
     Retrieve data from API endpoint. For each record, add the run
     timestamp to store when the data was extracted.
@@ -177,14 +183,19 @@ def get_data(context, api_endpoint: Dict, previous_change_version: int,
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "load"}
 )
-def load_data(context, api_endpoint_records: Dict):
+def load_data(context, api_endpoint_records: Dict, use_change_queries: bool):
     """
     Load the passed in records retrieved from the
     specific API endpoint into the data warehouse.
+    If change queries is used, files in gcs should
+    be retained.
     """
     table_name = api_endpoint_records['table_name']
     table = context.resources.warehouse.load_data(
-        table_name, f"edfi_api/{table_name}", api_endpoint_records["records"])
+        table_name=table_name,
+        gcs_path=f"edfi_api/{table_name}",
+        records=api_endpoint_records["records"],
+        retain_gcs_files=use_change_queries)
 
     yield ExpectationResult(success=table is not None,
         description="ensure table was created without failures")
@@ -211,11 +222,11 @@ def run_edfi_models(context, start_after) -> DbtCliOutput:
         dbt_cli_edfi_output, asset_key_prefix=["edfi"]):
 
         yield materialization
-    
+
     dbt_cli_amt_output = context.resources.dbt.run(models=["tag:amt"])
     for materialization in generate_materializations(
         dbt_cli_amt_output, asset_key_prefix=["amt"]):
 
-        yield materialization.asset_key
+        yield materialization
 
     yield Output(dbt_cli_edfi_output)
