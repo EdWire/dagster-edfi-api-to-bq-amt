@@ -1,5 +1,4 @@
 import os
-from datetime import datetime
 
 from dagster import (
     fs_io_manager,
@@ -116,7 +115,6 @@ edfi_api_endpoints = [
 
 
 edfi_api_dev_job = edfi_api_to_amt.to_job(
-    tags={ "run_timestamp": datetime.now().isoformat() },
     executor_def=multiprocess_executor.configured({
         "max_concurrent": 8
     }),
@@ -130,7 +128,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "school_year": 1901 # tells job to not include year in URL
         }),
         "warehouse": bq_client.configured({
-            "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV", ""),
+            "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV"),
             "dataset": "dev_raw_sources",
         }),
         "dbt": dbt_cli_resource.configured({
@@ -156,42 +154,44 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
 )
 
 
-# edfi_api_prod_job = edfi_api_to_amt.to_job(
-#     executor_def=multiprocess_executor.configured({
-#         "max_concurrent": 8
-#     }),
-#     resource_defs={
-#         "gcs": gcs_resource,
-#         "io_manager": gcs_pickle_io_manager.configured({
-#             "gcs_bucket": os.getenv("GCS_BUCKET_PROD", ""),
-#             "gcs_prefix": "edfi_api"
-#         }),
-#         "edfi_api_client": edfi_api_resource_client.configured({
-#             "base_url": os.getenv("EDFI_BASE_URL"),
-#             "api_key": os.getenv("EDFI_API_KEY"),
-#             "api_secret": os.getenv("EDFI_API_SECRET"),
-#             "school_year": 1901
-#         }),
-#         "warehouse": bq_client.configured({
-#             "staging_gcs_bucket": os.getenv("GCS_BUCKET_PROD", ""),
-#             "dataset": "prod_raw_sources",
-#         }),
-#         "dbt": dbt_cli_resource.configured({
-#             "project_dir": os.getenv("DBT_PROJECT_DIR"),
-#             "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
-#             "target": "dev",
-#             "models": ["edfi_local_education_agencies", "edfi_schools", 
-#                        "edfi_students", "edfi_student_education_organization_associations",
-#                        "edfi_student_school_associations"]
-#         })
-#     },
-#     config={
-#         "ops": {
-#             "api_endpoint_generator": {
-#                 "inputs": {
-#                     "api_endpoints": edfi_api_endpoints
-#                 }
-#             }
-#         }
-#     },
-# )
+edfi_api_prod_job = edfi_api_to_amt.to_job(
+    executor_def=multiprocess_executor.configured({
+        "max_concurrent": 8
+    }),
+    resource_defs={
+        "gcs": gcs_resource,
+        "io_manager": gcs_pickle_io_manager.configured({
+            "gcs_bucket": os.getenv("GCS_BUCKET_PROD"),
+            "gcs_prefix": "dagster_io"
+        }),
+        "edfi_api_client": edfi_api_resource_client.configured({
+            "base_url": os.getenv("EDFI_BASE_URL"),
+            "api_key": os.getenv("EDFI_API_KEY"),
+            "api_secret": os.getenv("EDFI_API_SECRET"),
+            "school_year": 1901 # tells job to not include year in URL
+        }),
+        "warehouse": bq_client.configured({
+            "staging_gcs_bucket": os.getenv("GCS_BUCKET_PROD"),
+            "dataset": "prod_raw_sources",
+        }),
+        "dbt": dbt_cli_resource.configured({
+            "project_dir": os.getenv("DBT_PROJECT_DIR"),
+            "profiles_dir": os.getenv("DBT_PROFILES_DIR"),
+            "target": "prod"
+        })
+    },
+    config={
+        "inputs": {
+            "use_change_queries": {
+                "value": True
+            }
+        },
+        "ops": {
+            "api_endpoint_generator": {
+                "inputs": {
+                    "api_endpoints": edfi_api_endpoints
+                }
+            }
+        }
+    },
+)

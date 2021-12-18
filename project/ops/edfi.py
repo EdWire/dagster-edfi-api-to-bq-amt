@@ -82,7 +82,7 @@ def append_newest_change_version(context, start_after, newest_change_version: in
     """
     df = pd.DataFrame(
         [[
-            datetime.fromisoformat(context.get_tag("run_timestamp")),
+            datetime.now().isoformat(),
             newest_change_version
         ]],
         columns = ['timestamp', 'newest_change_version']
@@ -124,7 +124,7 @@ def get_previous_change_version(context) -> int:
     query = f"""
         SELECT newest_change_version
         FROM `{{project_id}}.{{dataset}}.edfi_processed_change_versions`
-        WHERE timestamp < TIMESTAMP '{context.get_tag("run_timestamp")}'
+        WHERE timestamp < TIMESTAMP '{datetime.now().isoformat()}'
         ORDER BY timestamp DESC
         LIMIT 1
     """
@@ -160,7 +160,7 @@ def get_data(context, api_endpoint: Dict, previous_change_version: int,
 
     for response in retrieved_data:
 
-        response["extractedTimestamp"] = context.get_tag("run_timestamp")
+        response["extractedTimestamp"] = datetime.now().isoformat()
         output["records"].append({
             "id": None,
             "data": json.dumps(response)
