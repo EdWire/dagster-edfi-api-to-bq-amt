@@ -139,7 +139,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "school_year": 1901 # tells job to not include year in URL
+            "school_years": [2021, 2022] # empty list tells job to not include year in URL
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV"),
@@ -181,7 +181,7 @@ edfi_api_prod_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "school_year": 1901 # tells job to not include year in URL
+            "school_years": [2021, 2022] # empty list tells job to not include year in URL
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_PROD"),
