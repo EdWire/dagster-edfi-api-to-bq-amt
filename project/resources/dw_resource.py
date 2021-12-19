@@ -83,7 +83,11 @@ class BigQueryClient:
         table_ref = bigquery.Table(self.dataset_ref.table(table_name), schema=schema)
 
         external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
-        external_config.source_uris = [f"gs://{self.staging_gcs_bucket}/{gcs_path}*/{table_name}/*.json"] # ie. gs://storage-bucket/edfi_api/2022/edfi_calendars/001.json
+
+        external_config.source_uris = list()
+        for year in range(2018, 2031):
+            # ie. gs://storage-bucket/edfi_api/2022/edfi_calendars/001.json
+            external_config.source_uris.append(f"gs://{self.staging_gcs_bucket}/{gcs_path}{year}/{table_name}/*.json")
 
         table_ref.external_data_configuration = external_config
         table = self.client.create_table(table_ref, exists_ok=True)
