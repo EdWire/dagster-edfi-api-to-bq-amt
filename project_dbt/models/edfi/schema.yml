@@ -14,24 +14,18 @@ models:
 
   - name: edfi_local_education_agencies
     description: ""
-    columns:
-      - name: local_education_agency_id
-        tests:
-          - unique
-          - not_null
+    tests:
+      - unique:
+          column_name: "CONCAT(school_year, '-', local_education_agency_id)"
 
   - name: edfi_schools
     description: ""
-    columns:
-      - name: school_id
-        tests:
-          - unique
-          - not_null
+    tests:
+      - unique:
+          column_name: "school_year || '-' || school_id"
 
   - name: edfi_students
     description: "This entity represents an individual for whom instruction, services, and/or care are provided in an early childhood, elementary, or secondary educational program under the jurisdiction of a school, education agency or other institution or program. A student is a person who has been enrolled in a school or other educational institution."
-    columns:
-      - name: student_unique_id
-        tests:
-          - unique
-          - not_null
+    tests:
+      - unique:
+          column_name: "school_year || '-' || student_unique_id"

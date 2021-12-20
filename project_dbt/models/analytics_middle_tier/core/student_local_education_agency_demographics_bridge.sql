@@ -86,6 +86,6 @@ WHERE EXISTS (
         (ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE)
         AND schools.local_education_agency_id = demographics.education_organization_id
         AND ssa.student_reference.student_unique_id = demographics.student_unique_id
-        AND ssa.school_year = demographics.school_year
+        {# AND ssa.school_year = demographics.school_year #}
 )
 
