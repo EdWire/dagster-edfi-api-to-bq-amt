@@ -17,6 +17,165 @@ models:
               to: ref('student_school_dim')
               field: student_school_key
 
+
+  - name: date_dim
+    description: ""
+    columns:
+      - name: date_key
+        description: "Date without time component. This column should be used as the JOIN key."
+        tests:
+          - unique
+          - not_null
+      - name: date
+        description: "Date cast as type DATE."
+      - name: day
+        description: "Day number within a month."
+      - name: month
+        description: "Numeric month number."
+      - name: month_name
+        description: "English name"
+      - name: calendar_quarter
+        description: "Based on 1: Jan-Mar, 2: Apr-Jun, 3: Jul-Sep, 4: Oct-Dec"
+      - name: calendar_quarter_name
+        description: 	"Ordinal name"
+      - name: calendar_year
+        description: "Full four digit year"
+
+
+  - name: demographic_dim
+    description: "Describes the student demographics available for analysis via the student_school_demographics_bridgeand student_local_education_agency_demographics_bridge tables."
+    columns:
+      - name: demographic_key
+        description: "Concatenation of parent key and label columns to allow for easier joins."
+        tests:
+          - unique
+          - not_null
+      - name: demographic_parent_key
+        description: "Descriptor parent key. For example, 'RaceDescriptors' will show 'Race' here."
+      - name: demographic_label
+        description: "Descriptor code value."
+
+
+  - name: grading_period_dim
+    description: ""
+    columns:
+      - name: grading_period_key
+        description: "Concatenation of grading period descriptor code value, school id, and grading period begin date."
+        tests:
+          - unique
+          - not_null
+      - name: school_key
+        description: "School ID."
+        tests:
+          - relationships:
+              to: ref('school_dim')
+              field: school_key
+      - name: grading_period_description
+        description: "Grading period descriptor code value."
+      - name: period_sequence
+        description: "The sequential order of this period relative to other periods."
+      - name: grading_period_begin_date_key
+        description: "Month, day, and year of the first day of the grading period."
+      - name: grading_period_end_date_key
+        description: "Month, day, and year of the last day of the grading period."
+      - name: number_of_days
+        description: "Total days available for educational instruction during the grading period."
+
+
+  - name: local_education_agency_dim
+    description: ""
+    columns:
+      - name: local_education_agency_key
+        description: "The identifier assigned to a local education agency."
+        tests:
+          - unique
+          - not_null
+      - name: local_education_agency_name
+        description: "The name assigned to a local education agency."
+
+
+  - name: school_dim
+    description: ""
+    columns:
+      - name: school_key
+        description: "The identifier assigned to a school."
+        tests:
+          - unique
+          - not_null
+      - name: school_name
+        description: "The name assigned to a school."
+      - name: school_type
+        description: "The type of education institution as classified by its primary focus."
+      - name: local_education_agency_key
+        description: "The identifier assigned to a local education agency."
+      - name: local_education_agency_name
+        description: "The name assigned to a local education agency."
+
+
+  - name: student_local_education_agency_dim
+    description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."
+    columns:
+      - name: student_local_education_agency_key
+        description: "Primary key"
+        tests:
+          - unique
+          - not_null
+      - name: student_key
+        description: "A unique alphanumeric code assigned to a student."
+        tests:
+          - not_null
+      - name: local_education_agency_key
+        description: "The identifier assigned to a local education agency."
+        tests:
+          - not_null
+      - name: student_first_name
+        description: "A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change."
+        tests:
+          - not_null
+      - name: student_middle_name
+        description: "A secondary name given to an individual at birth, baptism, or during another naming ceremony."
+      - name: student_last_surname
+        description: "The name borne in common by members of a family."
+        tests:
+          - not_null
+      - name: limited_english_proficiency
+        description: "An indication that the student has been identified as limited English proficient by the Language Proficiency Assessment Committee (LPAC), or English proficient."
+      - name: is_hispanic
+        description: "An indication that the individual traces his or her origin or descent to Mexico, Puerto Rico, Cuba, Central, and South America, and other Spanish cultures, regardless of race, as last reported to the education organization."
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['true', 'false']
+              quote: false
+      - name: sex
+        description: "The student's gender as last reported to the education organization."
+      - name: internet_access_in_residence
+        description: "The primary type of internet service used in the student's primary place of residence."
+
+
+  - name: student_local_education_agency_demographics_bridge
+    description: "This view provides student demographic information by linking the student_local_education_agency_dim to the demographic_dim."
+    columns:
+      - name: student_school_demographic_bridge_key
+        description: "Concatenation of the demographic_key found in the demographic_dim with the student_local_education_agency_key found in the student_local_education_agency_dim."
+        tests:
+          - unique
+          - not_null
+      - name: student_local_education_agency_key
+        description: "Concatenation of the student unique id and the LEA id."
+      - name: demographic_key
+        description: "Concatenation of parent key and label columns to allow for easier joins."
+
+  - name: student_section_dim
+    description: "Attributes related to a student's enrollment in a section."
+    columns:
+      - name: "(student_key || '-' || school_key)"
+        tests:
+          - relationships:
+              to: ref('student_school_dim')
+              field: student_school_key
+
+
   - name: student_school_dim
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
     columns:
@@ -49,29 +208,6 @@ models:
       - name: internet_access_in_residence
         description: An indication of whether the student is able to access the internet in their primary place of residence.
 
-  - name: student_local_education_agency_dim
-    description: Contains attributes of a student including name and demographic information as defined in relationship to the local education agency in which the student is currently enrolled.
-    columns:
-      - name: student_local_education_agency_key
-        description: Primary key
-        tests:
-          - not_null
-      - name: student_key
-        description: A unique alphanumeric code assigned to a student.
-        tests:
-          - not_null
-
-  - name: student_local_education_agency_demographics_bridge
-    description: This view provides student demographic information by linking the StudentLocalEducationAgencyDim View to the DemographicDim View.
-
-  - name: student_section_dim
-    description: "Attributes related to a student's enrollment in a section."
-    columns:
-      - name: "(student_key || '-' || school_key)"
-        tests:
-          - relationships:
-              to: ref('student_school_dim')
-              field: student_school_key
 
   - name: student_section_grade_fact
     description: "Records describe a student's cumulative grade in a section for each grading period."

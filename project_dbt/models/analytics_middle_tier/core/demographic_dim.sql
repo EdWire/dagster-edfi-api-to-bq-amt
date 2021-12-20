@@ -1,5 +1,5 @@
 
-SELECT
+SELECT DISTINCT
     CONCAT('CohortYear:',
         school_year_types.school_year, '-',
         descriptors.code_value
@@ -8,31 +8,31 @@ SELECT
     CONCAT(school_year_types.school_year, '-', descriptors.code_value) AS demographic_label
 FROM {{ ref('edfi_school_year_types') }} school_year_types
 CROSS JOIN {{ ref('edfi_descriptors') }} descriptors
-WHERE descriptors.namespace = 'uri://ed-fi.org/CohortTypeDescriptor'
+WHERE descriptors.namespace LIKE '%CohortTypeDescriptor'
 
 UNION ALL
 
-SELECT
+SELECT DISTINCT
     CONCAT('Language:', descriptors.code_value) AS demographic_key,
     'Language' AS demographic_parent_key,
     descriptors.code_value AS demographic_label
 FROM {{ ref('edfi_descriptors') }} descriptors
-WHERE descriptors.namespace = 'uri://ed-fi.org/LanguageDescriptor'
+WHERE descriptors.namespace LIKE '%LanguageDescriptor'
 
 UNION ALL
 
-SELECT
+SELECT DISTINCT
     CONCAT('LanguageUse:', descriptors.code_value) AS demographic_key,
     'LanguageUse' AS demographic_parent_key,
     descriptors.code_value AS demographic_label
 FROM  {{ ref('edfi_descriptors') }} descriptors
-WHERE descriptors.namespace = 'uri://ed-fi.org/LanguageUseDescriptor'
+WHERE descriptors.namespace LIKE '%LanguageUseDescriptor'
 
 UNION ALL
 
-SELECT
+SELECT DISTINCT
     CONCAT('Race:', descriptors.code_value) AS demographic_key,
     'Race' AS demographic_parent_key,
     descriptors.code_value AS demographic_label
 FROM {{ ref('edfi_descriptors') }} descriptors
-WHERE descriptors.namespace = 'uri://ed-fi.org/RaceDescriptor'
+WHERE descriptors.namespace LIKE '%RaceDescriptor'

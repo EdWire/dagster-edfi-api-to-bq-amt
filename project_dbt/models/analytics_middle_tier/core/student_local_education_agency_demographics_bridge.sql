@@ -13,14 +13,20 @@ WITH demographics AS (
             cohort_years.cohort_type_descriptor
         ) AS demographic_key, 
         seoa.education_organization_reference.education_organization_id,
-        seoa.student_reference.student_unique_id
+        seoa.student_reference.student_unique_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                seoa.student_reference.student_unique_id,
+                cohort_years.cohort_type_descriptor
+            ORDER BY seoa.school_year DESC
+        ) AS rank
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.cohort_years) AS cohort_years
 
     UNION ALL
 
     SELECT
-        CONCAT('LanguageUse:', '-',
+        CONCAT('LanguageUse:',
             uses.language_use_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
             seoa.education_organization_reference.education_organization_id
@@ -30,7 +36,13 @@ WITH demographics AS (
             uses.language_use_descriptor
         ) AS demographic_key,
         seoa.education_organization_reference.education_organization_id,
-        seoa.student_reference.student_unique_id
+        seoa.student_reference.student_unique_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                seoa.student_reference.student_unique_id,
+                uses.language_use_descriptor
+            ORDER BY seoa.school_year DESC
+        ) AS rank
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.languages) AS languages
     CROSS JOIN UNNEST(languages.uses) AS uses
@@ -38,7 +50,7 @@ WITH demographics AS (
     UNION ALL
 
     SELECT
-        CONCAT('Language:', '-',
+        CONCAT('Language:',
             languages.language_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
             seoa.education_organization_reference.education_organization_id
@@ -48,14 +60,20 @@ WITH demographics AS (
             languages.language_descriptor
         ) AS demographic_key,
         seoa.education_organization_reference.education_organization_id,
-        seoa.student_reference.student_unique_id
+        seoa.student_reference.student_unique_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                seoa.student_reference.student_unique_id,
+                languages.language_descriptor
+            ORDER BY seoa.school_year DESC
+        ) AS rank
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.languages) AS languages
 
     UNION ALL
 
     SELECT
-        CONCAT('Race:', '-',
+        CONCAT('Race:',
             races.race_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
             seoa.education_organization_reference.education_organization_id
@@ -65,7 +83,13 @@ WITH demographics AS (
             races.race_descriptor
         ) AS demographic_key,
         seoa.education_organization_reference.education_organization_id,
-        seoa.student_reference.student_unique_id
+        seoa.student_reference.student_unique_id,
+        ROW_NUMBER() OVER (
+            PARTITION BY
+                seoa.student_reference.student_unique_id,
+                races.race_descriptor
+            ORDER BY seoa.school_year DESC
+        ) AS rank
     FROM {{ ref('edfi_student_education_organization_associations') }} seoa
     CROSS JOIN UNNEST(seoa.races) AS races
 
@@ -76,16 +100,18 @@ SELECT
     student_local_education_agency_key,
     demographic_key
 FROM demographics 
-WHERE EXISTS (
-    SELECT 1
-    FROM {{ ref('edfi_student_school_associations') }} ssa
-    LEFT JOIN {{ ref('edfi_schools') }} schools
-        ON ssa.school_reference.school_id = schools.school_id
-        AND ssa.school_year = schools.school_year
-    WHERE
-        (ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE)
-        AND schools.local_education_agency_id = demographics.education_organization_id
-        AND ssa.student_reference.student_unique_id = demographics.student_unique_id
-        {# AND ssa.school_year = demographics.school_year #}
-)
+WHERE
+    rank = 1
+    AND EXISTS (
+        SELECT 1
+        FROM {{ ref('edfi_student_school_associations') }} ssa
+        LEFT JOIN {{ ref('edfi_schools') }} schools
+            ON ssa.school_reference.school_id = schools.school_id
+            AND ssa.school_year = schools.school_year
+        WHERE
+            (ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE)
+            AND schools.local_education_agency_id = demographics.education_organization_id
+            AND ssa.student_reference.student_unique_id = demographics.student_unique_id
+            {# AND ssa.school_year = demographics.school_year #}
+    )
 

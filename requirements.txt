@@ -3,7 +3,7 @@ dagster-dbt==0.13.12
 dagster-gcp==0.13.12
 dagster-postgres==0.13.12
 dagit==0.13.12
-dbt-bigquery==0.19.0
+dbt-bigquery==1.0.0
 google-api-python-client
 google-cloud-storage
 pandas
