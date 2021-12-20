@@ -1,6 +1,7 @@
 
 WITH staff_to_scope_map AS (
     SELECT
+        seoa.school_year,
         seoa.staff_reference.staff_unique_id,
         seoa.staff_classification_descriptor AS user_scope,
         seoa.education_organization_reference.education_organization_id
@@ -37,10 +38,12 @@ SELECT DISTINCT
     IF(staff_to_scope_map.user_scope = 'Superintendent', staff_to_scope_map.education_organization_id, NULL) AS district_id,
 FROM staff_to_scope_map
 LEFT JOIN {{ ref('edfi_staff_section_associations') }} staff_section_associations
-    ON staff_section_associations.staff_reference.staff_unique_id = staff_to_scope_map.staff_unique_id
+    ON staff_to_scope_map.school_year = staff_section_associations.school_year
+    AND staff_section_associations.staff_reference.staff_unique_id = staff_to_scope_map.staff_unique_id
     AND staff_section_associations.section_reference.school_id = staff_to_scope_map.education_organization_id
 LEFT JOIN {{ ref('edfi_sections') }} edfi_sections
-    ON edfi_sections.course_offering_reference.local_course_code = staff_section_associations.section_reference.local_course_code
+    ON staff_to_scope_map.school_year = edfi_sections.school_year
+    AND edfi_sections.course_offering_reference.local_course_code = staff_section_associations.section_reference.local_course_code
     AND edfi_sections.course_offering_reference.school_id = staff_section_associations.section_reference.school_id
     AND edfi_sections.course_offering_reference.school_year = staff_section_associations.section_reference.school_year
     AND edfi_sections.section_identifier = staff_section_associations.section_reference.section_identifier

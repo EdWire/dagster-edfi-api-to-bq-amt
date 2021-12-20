@@ -1,5 +1,5 @@
 
-SELECT
+SELECT DISTINCT
     staff.staff_unique_id AS user_key,
     email.electronic_mail_address AS user_email
 FROM {{ ref('edfi_staffs') }} staff,

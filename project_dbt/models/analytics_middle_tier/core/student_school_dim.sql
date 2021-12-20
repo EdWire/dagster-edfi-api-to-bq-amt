@@ -36,11 +36,17 @@ SELECT
         'n/a'
     ) AS internet_access_in_residence
 FROM {{ ref('edfi_student_school_associations') }} ssa
-LEFT JOIN {{ ref('edfi_schools') }} schools ON schools.school_id = ssa.school_reference.school_id
-LEFT JOIN {{ ref('edfi_students') }} students ON students.student_unique_id = ssa.student_reference.student_unique_id
+LEFT JOIN {{ ref('edfi_schools') }} schools
+    ON ssa.school_year = schools.school_year
+    AND ssa.school_reference.school_id = schools.school_id
+LEFT JOIN {{ ref('edfi_students') }} students
+    ON ssa.school_year = students.school_year
+    AND ssa.student_reference.student_unique_id = students.student_unique_id
 LEFT JOIN {{ ref('edfi_student_education_organization_associations') }} school_ed_org 
-    ON school_ed_org.student_reference.student_unique_id = ssa.student_reference.student_unique_id
-    AND school_ed_org.education_organization_reference.education_organization_id = ssa.school_reference.school_id
+    ON ssa.school_year = school_ed_org.school_year
+    AND ssa.student_reference.student_unique_id = school_ed_org.student_reference.student_unique_id
+    AND ssa.school_reference.school_id = school_ed_org.education_organization_reference.education_organization_id
 LEFT JOIN {{ ref('edfi_student_education_organization_associations') }} district_ed_org 
-    ON district_ed_org.student_reference.student_unique_id = ssa.student_reference.student_unique_id
+    ON ssa.school_year = district_ed_org.school_year
+    AND ssa.student_reference.student_unique_id = district_ed_org.student_reference.student_unique_id
     AND district_ed_org.education_organization_reference.education_organization_id = schools.local_education_agency_id

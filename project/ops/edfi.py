@@ -25,81 +25,13 @@ from google.api_core import exceptions
     description="Dynamically outputs Ed-Fi API enpoints for parallelization",
     out=DynamicOut(Dict)
 )
-def api_endpoint_generator(context, use_change_queries: bool) -> Dict:
+def api_endpoint_generator(context, edfi_api_endpoints: List[Dict], use_change_queries: bool) -> Dict:
     """
     Dynamically output each Ed-Fi API endpoint
     in the job's config. If job is configured to not
     use change queries, do not output the /deletes version
     of each endpoint.
     """
-    edfi_api_endpoints = [
-        {"endpoint": "/ed-fi/localEducationAgencies", "table_name": "edfi_local_education_agencies"},
-        {"endpoint": "/ed-fi/localEducationAgencies/deletes", "table_name": "edfi_local_education_agencies_deletes"},
-        {"endpoint": "/ed-fi/schools", "table_name": "edfi_schools" },
-        {"endpoint": "/ed-fi/schools/deletes", "table_name": "edfi_schools_deletes" },
-        {"endpoint": "/ed-fi/schoolYearTypes", "table_name": "edfi_school_year_types" },
-        {"endpoint": "/ed-fi/students", "table_name": "edfi_students" },
-        {"endpoint": "/ed-fi/students/deletes", "table_name": "edfi_students_deletes" },
-        {"endpoint": "/ed-fi/studentEducationOrganizationAssociations", "table_name": "edfi_student_education_organization_associations" },
-        {"endpoint": "/ed-fi/studentEducationOrganizationAssociations/deletes", "table_name": "edfi_student_education_organization_associations_deletes" },
-        {"endpoint": "/ed-fi/studentSchoolAssociations", "table_name": "edfi_student_school_associations" },
-        {"endpoint": "/ed-fi/studentSchoolAssociations/deletes", "table_name": "edfi_student_school_associations_deletes" },
-        {"endpoint": "/ed-fi/calendars", "table_name": "edfi_calendars" },
-        {"endpoint": "/ed-fi/calendars/deletes", "table_name": "edfi_calendars_deletes" },
-        {"endpoint": "/ed-fi/calendarDates", "table_name": "edfi_calendar_dates" },
-        {"endpoint": "/ed-fi/calendarDates/deletes", "table_name": "edfi_calendar_dates_deletes" },
-        {"endpoint": "/ed-fi/courses", "table_name": "edfi_courses" },
-        {"endpoint": "/ed-fi/courses/deletes", "table_name": "edfi_courses_deletes" },
-        {"endpoint": "/ed-fi/courseOfferings", "table_name": "edfi_course_offerings" },
-        {"endpoint": "/ed-fi/courseOfferings/deletes", "table_name": "edfi_course_offerings_deletes" },
-        {"endpoint": "/ed-fi/disciplineActions", "table_name": "edfi_discipline_actions" },
-        {"endpoint": "/ed-fi/disciplineActions/deletes", "table_name": "edfi_discipline_actions_deletes" },
-        {"endpoint": "/ed-fi/disciplineIncidents", "table_name": "edfi_discipline_incidents" },
-        {"endpoint": "/ed-fi/disciplineIncidents/deletes", "table_name": "edfi_discipline_incident_deletes" },
-        {"endpoint": "/ed-fi/grades", "table_name": "edfi_grades" },
-        {"endpoint": "/ed-fi/grades/deletes", "table_name": "edfi_grades_deletes" },
-        {"endpoint": "/ed-fi/gradingPeriods", "table_name": "edfi_grading_periods" },
-        {"endpoint": "/ed-fi/gradingPeriods/deletes", "table_name": "edfi_grading_periods_deletes" },
-        {"endpoint": "/ed-fi/gradingPeriodDescriptors", "table_name": "edfi_grading_period_descriptors" },
-        {"endpoint": "/ed-fi/gradingPeriodDescriptors/deletes", "table_name": "edfi_grading_period_descriptors_deletes" },
-        {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations", "table_name": "edfi_staff_discipline_incident_associations" },
-        {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations/deletes", "table_name": "edfi_staff_discipline_incident_associations_deletes" },
-        {"endpoint": "/ed-fi/studentDisciplineIncidentAssociations", "table_name": "edfi_student_discipline_incident_associations" }, # deprecated
-        {"endpoint": "/ed-fi/studentDisciplineIncidentAssociations/deletes", "table_name": "edfi_student_discipline_incident_associations_deletes" }, # deprecated
-        # {"endpoint": "/ed-fi/studentDisciplineIncidentBehaviorAssociations", "table_name": "edfi_student_discipline_incident_behavior_associations" }, # implemented in v5.2
-        # {"endpoint": "/ed-fi/studentDisciplineIncidentNonOffenderAssociations", "table_name": "edfi_student_discipline_incident_non_offender_associations" }, # implemented in v5.2
-        {"endpoint": "/ed-fi/parents", "table_name": "edfi_parents" },
-        {"endpoint": "/ed-fi/parents/deletes", "table_name": "edfi_parents_deletes" },
-        {"endpoint": "/ed-fi/sections", "table_name": "edfi_sections" },
-        {"endpoint": "/ed-fi/sections/deletes", "table_name": "edfi_sections_deletes" },
-        {"endpoint": "/ed-fi/staffs", "table_name": "edfi_staffs" },
-        {"endpoint": "/ed-fi/staffs/deletes", "table_name": "edfi_staffs_deletes" },
-        {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations", "table_name": "edfi_staff_education_organization_assignment_associations" },
-        {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations/deletes", "table_name": "edfi_staff_education_organization_assignment_associations_deletes" },
-        {"endpoint": "/ed-fi/staffSectionAssociations", "table_name": "edfi_staff_section_associations" },
-        {"endpoint": "/ed-fi/staffSectionAssociations/deletes", "table_name": "edfi_staff_section_associations_deletes" },
-        {"endpoint": "/ed-fi/studentParentAssociations", "table_name": "edfi_student_parent_associations" },
-        {"endpoint": "/ed-fi/studentParentAssociations/deletes", "table_name": "edfi_student_parent_associations_deletes" },
-        {"endpoint": "/ed-fi/studentSchoolAttendanceEvents", "table_name": "edfi_student_school_attendance_events" },
-        {"endpoint": "/ed-fi/studentSchoolAttendanceEvents/deletes", "table_name": "edfi_student_school_attendance_events_deletes" },
-        {"endpoint": "/ed-fi/studentSectionAssociations", "table_name": "edfi_student_section_associations" },
-        {"endpoint": "/ed-fi/studentSectionAssociations/deletes", "table_name": "edfi_student_section_associations_deletes" },
-        {"endpoint": "/ed-fi/studentSectionAttendanceEvents", "table_name": "edfi_student_section_attendance_events" },
-        {"endpoint": "/ed-fi/studentSectionAttendanceEvents/deletes", "table_name": "edfi_student_section_attendance_events_deletes" },
-        {"endpoint": "/ed-fi/sessions", "table_name": "edfi_sessions" },
-        {"endpoint": "/ed-fi/sessions/deletes", "table_name": "edfi_sessions_deletes" },
-        {"endpoint": "/ed-fi/cohortTypeDescriptors", "table_name": "edfi_cohort_type_descriptors"},
-        {"endpoint": "/ed-fi/cohortTypeDescriptors/deletes", "table_name": "edfi_cohort_type_descriptors_deletes"},
-        {"endpoint": "/ed-fi/disabilityDescriptors", "table_name": "edfi_disability_descriptors"},
-        {"endpoint": "/ed-fi/disabilityDescriptors/deletes", "table_name": "edfi_disability_descriptors_deletes"},
-        {"endpoint": "/ed-fi/languageDescriptors", "table_name": "edfi_language_descriptors"},
-        {"endpoint": "/ed-fi/languageDescriptors/deletes", "table_name": "edfi_language_descriptors_deletes"},
-        {"endpoint": "/ed-fi/languageUseDescriptors", "table_name": "edfi_language_use_descriptors"},
-        {"endpoint": "/ed-fi/languageUseDescriptors/deletes", "table_name": "edfi_language_use_descriptors_deletes"},
-        {"endpoint": "/ed-fi/raceDescriptors", "table_name": "edfi_race_descriptors"},
-        {"endpoint": "/ed-fi/raceDescriptors/deletes", "table_name": "edfi_race_descriptors_deletes"}
-    ]
-
     for endpoint in edfi_api_endpoints:
         if "/deletes" in endpoint["endpoint"] and not use_change_queries:
             pass
@@ -108,6 +40,25 @@ def api_endpoint_generator(context, use_change_queries: bool) -> Dict:
                 value=endpoint,
                 mapping_key=endpoint["table_name"]
             )
+
+
+@op(
+    description="Create tables in data warehouse to store raw JSON",
+    required_resource_keys={"warehouse"},
+    retry_policy=RetryPolicy(max_retries=3, delay=30),
+)
+def create_warehouse_raw_json_tables(context, edfi_api_endpoints: Dict):
+    """
+    Create a folder for each api endpoint
+    to store raw JSON.
+    """
+    for api_endpoint in edfi_api_endpoints:
+        result = context.resources.warehouse.create_table(
+            table_name=api_endpoint['table_name']
+        )
+        context.log.info(result)
+
+    return "Created data warehouse tables"
 
 
 @op(
@@ -251,7 +202,7 @@ def get_data(context, api_endpoint: Dict, school_year: int,
 
 
 @op(
-    description="Loads JSON strings to BigQuery",
+    description="Loads JSON strings to data warehouse",
     required_resource_keys={"warehouse"},
     out=Out(str),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
@@ -269,7 +220,6 @@ def load_data(context, api_endpoint_records: Dict,
     table = context.resources.warehouse.load_data(
         table_name=table_name,
         school_year=school_year,
-        gcs_path="edfi_api/",
         records=api_endpoint_records["records"],
         retain_gcs_files=use_change_queries)
 
@@ -287,8 +237,9 @@ def load_data(context, api_endpoint_records: Dict,
 @op(
     description="Run all dbt models tagged with edfi and amt",
     required_resource_keys={"dbt"},
+    tags={"kind": "transform"}
 )
-def run_edfi_models(context, start_after) -> DbtCliOutput:
+def run_edfi_models(context, retrieved_data, raw_tables_result) -> DbtCliOutput:
     """
     Run all dbt models tagged with edfi
     and amt. Yield asset materializations

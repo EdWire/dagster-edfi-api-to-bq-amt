@@ -9,4 +9,4 @@ SELECT
     begin_date AS grading_period_begin_date_key,
     end_date AS grading_period_end_date_key,
     total_instructional_days AS number_of_days
-FROM {{ ref('edfi_grading_periods') }} school_year_types
+FROM {{ ref('edfi_grading_periods') }}

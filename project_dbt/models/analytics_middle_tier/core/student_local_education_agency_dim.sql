@@ -15,4 +15,5 @@ SELECT
     ) AS internet_access_in_residence
 FROM {{ ref('edfi_student_education_organization_associations') }} seoa
 LEFT JOIN {{ ref('edfi_students') }} students
-    ON students.student_unique_id = seoa.student_reference.student_unique_id
+    ON seoa.school_year = students.school_year
+    AND seoa.student_reference.student_unique_id = students.student_unique_id

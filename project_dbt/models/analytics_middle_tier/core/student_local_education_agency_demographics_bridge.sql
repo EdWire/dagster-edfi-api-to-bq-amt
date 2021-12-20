@@ -79,10 +79,13 @@ FROM demographics
 WHERE EXISTS (
     SELECT 1
     FROM {{ ref('edfi_student_school_associations') }} ssa
-    LEFT JOIN {{ ref('edfi_schools') }} schools ON ssa.school_reference.school_id = schools.school_id
+    LEFT JOIN {{ ref('edfi_schools') }} schools
+        ON ssa.school_reference.school_id = schools.school_id
+        AND ssa.school_year = schools.school_year
     WHERE
         (ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE)
         AND schools.local_education_agency_id = demographics.education_organization_id
         AND ssa.student_reference.student_unique_id = demographics.student_unique_id
+        AND ssa.school_year = demographics.school_year
 )
 

@@ -7,7 +7,8 @@ SELECT
     ssa.end_date
 FROM {{ ref('edfi_student_section_associations') }} ssa
 LEFT JOIN {{ ref('edfi_sections') }} sections
-    ON sections.course_offering_reference.local_course_code = ssa.section_reference.local_course_code
+    ON ssa.school_year = sections.school_year
+    AND sections.course_offering_reference.local_course_code = ssa.section_reference.local_course_code
     AND sections.course_offering_reference.school_id = ssa.section_reference.school_id
     AND sections.course_offering_reference.school_year = ssa.section_reference.school_year
     AND sections.section_identifier = ssa.section_reference.section_identifier
