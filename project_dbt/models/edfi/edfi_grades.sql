@@ -4,6 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
+        JSON_VALUE(data, '$.schoolYear') AS school_year,
         CAST(JSON_VALUE(data, '$.numericGradeEarned') AS float64) AS numeric_grade_earned,
         JSON_VALUE(data, '$.letterGradeEarned') AS letter_grade_earned,
         SPLIT(JSON_VALUE(data, '$.performanceBaseConversionDescriptor'), '#')[OFFSET(1)] AS performance_base_conversion_descriptor, 
@@ -33,6 +34,7 @@ ranked AS (
     SELECT
         ROW_NUMBER() OVER (
             PARTITION BY
+                school_year,
                 grading_period_reference.school_year,
                 grading_period_reference.grading_period_descriptor,
                 grading_period_reference.period_sequence,
@@ -44,7 +46,7 @@ ranked AS (
                 student_section_association_reference.student_unique_id,
                 student_section_association_reference.begin_date,
                 grade_type_descriptor
-            ORDER BY extracted_timestamp DESC
+            ORDER BY school_year DESC, extracted_timestamp DESC
         ) AS rank,
         *
     FROM parsed_data
@@ -56,5 +58,6 @@ FROM ranked
 WHERE
     rank = 1
     AND id NOT IN (
-        SELECT id FROM {{ ref('edfi_deletes') }}
+        SELECT id FROM {{ ref('edfi_deletes') }} edfi_deletes
+        WHERE ranked.school_year = edfi_deletes.school_year
     )

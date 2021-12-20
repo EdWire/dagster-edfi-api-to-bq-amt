@@ -31,8 +31,8 @@ class BigQueryClient:
         )
 
 
-    def upload_to_gcs(
-        self, gcs_path: str, records: List[Dict], retain_gcs_files: bool) -> str:
+    def upload_to_gcs(self, gcs_path: str,
+        records: List[Dict], retain_gcs_files: bool) -> str:
         """
         Upload list of dictionaries to gcs,
         splitting data into 10,000 record
@@ -45,13 +45,13 @@ class BigQueryClient:
 
         # delete existing files
         if not retain_gcs_files:
-            blobs = bucket.list_blobs(prefix=f'{gcs_path}/')
+            blobs = bucket.list_blobs(prefix=gcs_path)
             for blob in blobs:
                 blob.delete()
 
         self.log.info(f"Splitting {len(records)} into 10,000 record chunks.")
         for i in range(0, len(records), 10000):
-            gcs_file = f"{gcs_path}/{str(uuid.uuid4())}.json"
+            gcs_file = f"{gcs_path}{str(uuid.uuid4())}.json"
             output = ""
             for record in records[i:i+10000]:
                 output = output + json.dumps(record) + "\r\n"
@@ -67,14 +67,11 @@ class BigQueryClient:
 
         return gcs_paths
 
-
-    def load_data(self, table_name, gcs_path, records, retain_gcs_files) -> str:
+    def create_table(self, table_name: str):
         """
-        Call method to upload records to gcs path,
-        Create BigQuery external table using gcs
-        path as source uri.
+        Create BigQuery external table using
+        source URIs created from the passed in GCS folder.
         """
-        self.upload_to_gcs(gcs_path, records, retain_gcs_files)
         schema = [
             bigquery.SchemaField("id", "STRING", "NULLABLE"),
             bigquery.SchemaField("data", "STRING", "NULLABLE")
@@ -82,13 +79,24 @@ class BigQueryClient:
         table_ref = bigquery.Table(self.dataset_ref.table(table_name), schema=schema)
 
         external_config = bigquery.ExternalConfig('NEWLINE_DELIMITED_JSON')
-        external_config.source_uris = [f'gs://{self.staging_gcs_bucket}/{gcs_path}/*.json']
+        external_config.source_uris = list()
+        for year in range(2018, 2031):
+            # ie. gs://storage-bucket/edfi_api/2022/edfi_calendars/*.json
+            external_config.source_uris.append(f"gs://{self.staging_gcs_bucket}/edfi_api/{year}/{table_name}/*.json")
 
         table_ref.external_data_configuration = external_config
         table = self.client.create_table(table_ref, exists_ok=True)
         self.client.close()
-
         return f"Created table {table.project}.{table.dataset_id}.{table.table_id}"
+
+
+    def load_data(self, table_name, school_year, records, retain_gcs_files) -> str:
+        """
+        Call method to upload records to gcs path
+        """
+        upload_relative_path = f"edfi_api/{school_year}/{table_name}/"
+        self.upload_to_gcs(upload_relative_path, records, retain_gcs_files)
+        return f"Uploaded data as JSON files to: {upload_relative_path}"
 
 
     def append_data(self, table_name: str, schema: List, df) -> str:

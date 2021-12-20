@@ -40,6 +40,7 @@
 
     SELECT
         JSON_VALUE(data, '$.Id') AS id,
+        JSON_VALUE(data, '$.schoolYear') AS school_year,
         JSON_VALUE(data, '$.ChangeVersion') AS change_version,
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
     FROM {{ source('raw_sources', table) }}

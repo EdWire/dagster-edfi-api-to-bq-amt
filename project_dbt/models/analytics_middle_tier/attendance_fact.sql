@@ -24,9 +24,12 @@ SELECT
     NULL AS reported_as_is_present_in_all_sections,
     NULL AS reported_as_absent_from_any_section
 FROM {{ ref('edfi_student_school_associations') }} ssa
-LEFT JOIN {{ ref('edfi_students') }} students ON students.student_unique_id = ssa.student_reference.student_unique_id
+LEFT JOIN {{ ref('edfi_students') }} students 
+    ON ssa.school_year = students.school_year
+    AND students.student_unique_id = ssa.student_reference.student_unique_id
 LEFT JOIN {{ ref('edfi_calendar_dates') }} calendar_dates
-    ON calendar_dates.calendar_reference.school_id = ssa.school_reference.school_id
+    ON ssa.school_year = calendar_dates.school_year
+    AND calendar_dates.calendar_reference.school_id = ssa.school_reference.school_id
     AND ssa.entry_date <= calendar_dates.date
     AND (
         ssa.exit_withdraw_date IS NULL
@@ -35,7 +38,8 @@ LEFT JOIN {{ ref('edfi_calendar_dates') }} calendar_dates
 CROSS JOIN UNNEST(calendar_dates.calendar_events) AS calendar_events
 -- school attendance
 LEFT JOIN {{ ref('edfi_student_school_attendance_events') }} school_attendance
-    ON school_attendance.student_reference.student_unique_id = ssa.student_reference.student_unique_id
+    ON ssa.school_year = school_attendance.school_year
+    AND school_attendance.student_reference.student_unique_id = ssa.student_reference.student_unique_id
     AND school_attendance.school_reference.school_id = ssa.school_reference.school_id
     AND (
 		ssa.school_year_type_reference.school_year IS NULL
@@ -45,7 +49,8 @@ LEFT JOIN {{ ref('edfi_student_school_attendance_events') }} school_attendance
     AND school_attendance.event_date = calendar_dates.date
 -- section attendance
 LEFT JOIN{{ ref('edfi_student_section_attendance_events') }} section_attendance
-    ON section_attendance.student_reference.student_unique_id = ssa.student_reference.student_unique_id
+    ON ssa.school_year = section_attendance.school_year
+    AND section_attendance.student_reference.student_unique_id = ssa.student_reference.student_unique_id
     AND section_attendance.section_reference.school_id = ssa.school_reference.school_id
     AND section_attendance.event_date = calendar_dates.date
     AND (
@@ -54,7 +59,8 @@ LEFT JOIN{{ ref('edfi_student_section_attendance_events') }} section_attendance
 		section_attendance.section_reference.school_year = ssa.school_year_type_reference.school_year
 	)
 LEFT JOIN {{ ref('edfi_student_section_associations') }} student_section_associations
-    ON student_section_associations.student_reference.student_unique_id = section_attendance.student_reference.student_unique_id
+    ON section_attendance.school_year = student_section_associations.school_year
+    AND student_section_associations.student_reference.student_unique_id = section_attendance.student_reference.student_unique_id
     AND student_section_associations.section_reference.local_course_code = section_attendance.section_reference.local_course_code
     AND student_section_associations.section_reference.school_id = section_attendance.section_reference.school_id
     AND student_section_associations.section_reference.school_year = section_attendance.section_reference.school_year

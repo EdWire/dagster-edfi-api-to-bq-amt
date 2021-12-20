@@ -25,14 +25,14 @@ from google.api_core import exceptions
     description="Dynamically outputs Ed-Fi API enpoints for parallelization",
     out=DynamicOut(Dict)
 )
-def api_endpoint_generator(context, api_endpoints: List[Dict], use_change_queries: bool) -> Dict:
+def api_endpoint_generator(context, edfi_api_endpoints: List[Dict], use_change_queries: bool) -> Dict:
     """
     Dynamically output each Ed-Fi API endpoint
     in the job's config. If job is configured to not
     use change queries, do not output the /deletes version
     of each endpoint.
     """
-    for endpoint in api_endpoints:
+    for endpoint in edfi_api_endpoints:
         if "/deletes" in endpoint["endpoint"] and not use_change_queries:
             pass
         else:
@@ -43,19 +43,38 @@ def api_endpoint_generator(context, api_endpoints: List[Dict], use_change_querie
 
 
 @op(
+    description="Create tables in data warehouse to store raw JSON",
+    required_resource_keys={"warehouse"},
+    retry_policy=RetryPolicy(max_retries=3, delay=30),
+)
+def create_warehouse_raw_json_tables(context, edfi_api_endpoints: Dict):
+    """
+    Create a folder for each api endpoint
+    to store raw JSON.
+    """
+    for api_endpoint in edfi_api_endpoints:
+        result = context.resources.warehouse.create_table(
+            table_name=api_endpoint['table_name']
+        )
+        context.log.info(result)
+
+    return "Created data warehouse tables"
+
+
+@op(
     description="Retrieves newest change version from Ed-Fi API",
     required_resource_keys={"edfi_api_client"},
     out=Out(Union[int, None]),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "change_queries"},
 )
-def get_newest_api_change_versions(context, use_change_queries: bool):
+def get_newest_api_change_versions(context, school_year: int, use_change_queries: bool):
     """
     If job is configured to use change queries, get
     the newest change version number from the target Ed-Fi API.
     """
     if use_change_queries:
-        response = context.resources.edfi_api_client.get_available_change_versions()
+        response = context.resources.edfi_api_client.get_available_change_versions(school_year)
         context.log.debug(response)
         return response["NewestChangeVersion"]
     else:
@@ -116,7 +135,7 @@ def append_newest_change_version(context, start_after, newest_change_version:Opt
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "change_queries"}
 )
-def get_previous_change_version(context, use_change_queries: bool):
+def get_previous_change_version(context, school_year: int, use_change_queries: bool):
     """
     Run SQL query on table edfi_processed_change_versions
     to retrieve the change version number from the
@@ -129,7 +148,9 @@ def get_previous_change_version(context, use_change_queries: bool):
         query = f"""
             SELECT newest_change_version
             FROM `{{project_id}}.{{dataset}}.edfi_processed_change_versions`
-            WHERE timestamp < TIMESTAMP '{datetime.now().isoformat()}'
+            WHERE
+                SchoolYear = {school_year}
+                AND timestamp < TIMESTAMP '{datetime.now().isoformat()}'
             ORDER BY timestamp DESC
             LIMIT 1
         """
@@ -153,8 +174,8 @@ def get_previous_change_version(context, use_change_queries: bool):
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "extract"},
 )
-def get_data(context, api_endpoint: Dict, previous_change_version:Optional[int]=None,
-    newest_change_version:Optional[int]=None) -> Dict:
+def get_data(context, api_endpoint: Dict, school_year: int,
+    previous_change_version:Optional[int]=None, newest_change_version:Optional[int]=None) -> Dict:
     """
     Retrieve data from API endpoint. For each record, add the run
     timestamp to store when the data was extracted.
@@ -162,9 +183,13 @@ def get_data(context, api_endpoint: Dict, previous_change_version:Optional[int]=
     output = api_endpoint.copy()
     output["records"] = list()
     retrieved_data = context.resources.edfi_api_client.get_data(
-        output["endpoint"], previous_change_version, newest_change_version)
+        output["endpoint"], school_year,
+        previous_change_version, newest_change_version)
 
     for response in retrieved_data:
+
+        if 'schoolYear' not in response:
+            response['schoolYear'] = school_year
 
         response["extractedTimestamp"] = datetime.now().isoformat()
         output["records"].append({
@@ -177,13 +202,14 @@ def get_data(context, api_endpoint: Dict, previous_change_version:Optional[int]=
 
 
 @op(
-    description="Loads JSON strings to BigQuery",
+    description="Loads JSON strings to data warehouse",
     required_resource_keys={"warehouse"},
     out=Out(str),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
     tags={"kind": "load"}
 )
-def load_data(context, api_endpoint_records: Dict, use_change_queries: bool):
+def load_data(context, api_endpoint_records: Dict, 
+    school_year: int, use_change_queries: bool):
     """
     Load the passed in records retrieved from the
     specific API endpoint into the data warehouse.
@@ -193,7 +219,7 @@ def load_data(context, api_endpoint_records: Dict, use_change_queries: bool):
     table_name = api_endpoint_records['table_name']
     table = context.resources.warehouse.load_data(
         table_name=table_name,
-        gcs_path=f"edfi_api/{table_name}",
+        school_year=school_year,
         records=api_endpoint_records["records"],
         retain_gcs_files=use_change_queries)
 
@@ -211,8 +237,9 @@ def load_data(context, api_endpoint_records: Dict, use_change_queries: bool):
 @op(
     description="Run all dbt models tagged with edfi and amt",
     required_resource_keys={"dbt"},
+    tags={"kind": "transform"}
 )
-def run_edfi_models(context, start_after) -> DbtCliOutput:
+def run_edfi_models(context, retrieved_data, raw_tables_result) -> DbtCliOutput:
     """
     Run all dbt models tagged with edfi
     and amt. Yield asset materializations

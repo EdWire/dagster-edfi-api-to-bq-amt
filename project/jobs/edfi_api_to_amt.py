@@ -14,15 +14,16 @@ from dagster_gcp.gcs.resources import gcs_resource
 
 from ops.edfi import (
     api_endpoint_generator,
+    append_newest_change_version,
+    create_warehouse_raw_json_tables,
     get_newest_api_change_versions,
     get_previous_change_version,
-    append_newest_change_version,
     get_data,
     load_data,
     run_edfi_models
 )
 from resources.edfi_api_resource import edfi_api_resource_client
-from resources.dw_resource import bq_client
+from resources.edfi_warehouse_resource import bq_client
 
 
 @graph(
@@ -34,28 +35,33 @@ from resources.dw_resource import bq_client
         "to the Analytics Middle Tier data model."
     )
 )
-def edfi_api_to_amt(use_change_queries):
+def edfi_api_to_amt(edfi_api_endpoints, school_year, use_change_queries):
 
-    previous_change_version = get_previous_change_version(use_change_queries)
-    newest_change_version = get_newest_api_change_versions(use_change_queries)
+    previous_change_version = get_previous_change_version(school_year, use_change_queries)
+    newest_change_version = get_newest_api_change_versions(school_year, use_change_queries)
+    raw_tables_result = create_warehouse_raw_json_tables(edfi_api_endpoints)
 
-    result = api_endpoint_generator(use_change_queries=use_change_queries).map(
-        lambda mapped_value: get_data(
-            api_endpoint=mapped_value,
-            previous_change_version=previous_change_version,
-            newest_change_version=newest_change_version
-        )
+    retrieved_data = api_endpoint_generator(
+        edfi_api_endpoints=edfi_api_endpoints,
+        use_change_queries=use_change_queries).map(
+            lambda mapped_value: get_data(
+                api_endpoint=mapped_value,
+                school_year=school_year,
+                previous_change_version=previous_change_version,
+                newest_change_version=newest_change_version
+            )
     ).map(
         lambda mapped_value: load_data(
             api_endpoint_records=mapped_value,
+            school_year=school_year,
             use_change_queries=use_change_queries
         )
     ).collect()
 
     append_newest_change_version(
-        start_after=result, newest_change_version=newest_change_version)
+        start_after=retrieved_data, newest_change_version=newest_change_version)
 
-    dbt_run_result = run_edfi_models(start_after=result)
+    dbt_run_result = run_edfi_models(retrieved_data, raw_tables_result)
     dbt_test_op(start_after=dbt_run_result)
 
 
@@ -127,7 +133,6 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/raceDescriptors/deletes", "table_name": "edfi_race_descriptors_deletes"}
 ]
 
-
 edfi_api_dev_job = edfi_api_to_amt.to_job(
     executor_def=multiprocess_executor.configured({
         "max_concurrent": 8
@@ -139,7 +144,8 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "school_year": 1901 # tells job to not include year in URL
+            "api_page_limit": 100,
+            "api_mode": "YearSpecific" # DistrictSpecific, SharedInstance, YearSpecific
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV"),
@@ -153,17 +159,11 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
     },
     config={
         "inputs": {
-            "use_change_queries": {
-                "value": True
-            }
+            "edfi_api_endpoints": { "value": edfi_api_endpoints },
+            "school_year": { "value": 2022 },
+            "use_change_queries": { "value": False }
         },
-        "ops": {
-            "api_endpoint_generator": {
-                "inputs": {
-                    "api_endpoints": edfi_api_endpoints
-                }
-            }
-        }
+        "ops": {}
     },
 )
 
@@ -181,7 +181,7 @@ edfi_api_prod_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "school_year": 1901 # tells job to not include year in URL
+            "school_years": [2021, 2022] # empty list tells job to not include year in URL
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_PROD"),
@@ -206,13 +206,7 @@ def change_query_schedule(context: ScheduleEvaluationContext):
                     "value": True
                 }
             },
-            "ops": {
-                "api_endpoint_generator": {
-                    "inputs": {
-                        "api_endpoints": edfi_api_endpoints
-                    }
-                }
-            }
+            "ops": {}
         },
         tags={"date": scheduled_date},
     )
@@ -228,13 +222,7 @@ def full_run_schedule(context: ScheduleEvaluationContext):
                     "value": False
                 }
             },
-            "ops": {
-                "api_endpoint_generator": {
-                    "inputs": {
-                        "api_endpoints": edfi_api_endpoints
-                    }
-                }
-            }
+            "ops": {}
         },
         tags={"date": scheduled_date},
     )

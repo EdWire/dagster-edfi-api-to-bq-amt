@@ -24,6 +24,7 @@ SELECT
     numeric_grade_earned,
     letter_grade_earned,
     grade_type_descriptor AS grade_type
-FROM {{ ref('edfi_grades') }}
+FROM {{ ref('edfi_grades') }} grades
 LEFT JOIN {{ ref('edfi_descriptors') }} descriptors
-    ON descriptors.code_value = grading_period_reference.grading_period_descriptor
+    ON grades.school_year = descriptors.school_year
+    AND descriptors.code_value = grading_period_reference.grading_period_descriptor

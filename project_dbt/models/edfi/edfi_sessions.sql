@@ -4,6 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
+        JSON_VALUE(data, '$.schoolYear') AS school_year,
         JSON_VALUE(data, '$.sessionName') AS session_name,
         STRUCT(
             JSON_VALUE(data, '$.schoolReference.schoolId') AS school_id
@@ -32,10 +33,11 @@ ranked AS (
     SELECT
         ROW_NUMBER() OVER (
             PARTITION BY
+                school_year,
                 school_year_type_reference.school_year,
                 school_reference.school_id,
                 session_name
-            ORDER BY extracted_timestamp DESC
+            ORDER BY school_year DESC, extracted_timestamp DESC
         ) AS rank,
         *
     FROM parsed_data
@@ -47,5 +49,6 @@ FROM ranked
 WHERE
     rank = 1
     AND id NOT IN (
-        SELECT id FROM {{ ref('edfi_deletes') }}
+        SELECT id FROM {{ ref('edfi_deletes') }} edfi_deletes
+        WHERE ranked.school_year = edfi_deletes.school_year
     )
