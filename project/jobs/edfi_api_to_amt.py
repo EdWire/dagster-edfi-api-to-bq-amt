@@ -161,7 +161,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
         "inputs": {
             "edfi_api_endpoints": { "value": edfi_api_endpoints },
             "school_year": { "value": 2022 },
-            "use_change_queries": { "value": False }
+            "use_change_queries": { "value": True }
         },
         "ops": {}
     },

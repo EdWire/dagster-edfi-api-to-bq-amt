@@ -47,7 +47,8 @@ ranked AS (
 
 )
 
-SELECT * EXCEPT (extracted_timestamp, rank)
+SELECT * EXCEPT (extracted_timestamp, rank, school_year),
+    COALESCE(session_reference.school_year, school_year) AS school_year
 FROM ranked
 WHERE
     rank = 1
