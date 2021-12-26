@@ -7,6 +7,8 @@ sources:
         {%- else -%} prod_raw_sources
         {%- endif -%}
       tables:
+        - name: edfi_assessments
+        - name: edfi_assessments_deletes
         - name: edfi_calendars
         - name: edfi_calendars_deletes
         - name: edfi_calendar_dates
@@ -26,6 +28,8 @@ sources:
         - name: edfi_grades_deletes
         - name: edfi_local_education_agencies
         - name: edfi_local_education_agencies_deletes
+        - name: edfi_objective_assessments
+        - name: edfi_objective_assessments_deletes
         - name: edfi_parents
         - name: edfi_parents_deletes
         - name: edfi_schools
@@ -45,6 +49,8 @@ sources:
         - name: edfi_staff_section_associations_deletes
         - name: edfi_students
         - name: edfi_students_deletes
+        - name: edfi_student_assessments
+        - name: edfi_student_assessments_deletes
         - name: edfi_student_discipline_incident_associations
         - name: edfi_student_discipline_incident_associations_deletes
         - name: edfi_student_education_organization_associations

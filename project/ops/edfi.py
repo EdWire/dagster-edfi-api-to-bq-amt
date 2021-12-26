@@ -43,7 +43,7 @@ def api_endpoint_generator(context, edfi_api_endpoints: List[Dict], use_change_q
 
 
 @op(
-    description="Create tables in data warehouse to store raw JSON",
+    description="Create tables in BigQuery to query data lake",
     required_resource_keys={"warehouse"},
     retry_policy=RetryPolicy(max_retries=3, delay=30),
 )
@@ -83,7 +83,7 @@ def get_newest_api_change_versions(context, school_year: int, use_change_queries
 
 
 @op(
-    description="Appends newest change version to warehouse table",
+    description="Appends newest change version to BigQuery table",
     required_resource_keys={"warehouse"},
     out=Out(str, is_required=False),
     retry_policy=RetryPolicy(max_retries=3, delay=30),
@@ -202,7 +202,7 @@ def get_data(context, api_endpoint: Dict, school_year: int,
 
 
 @op(
-    description="Loads JSON strings to data warehouse",
+    description="Loads raw JSON to data lake",
     required_resource_keys={"warehouse"},
     out=Out(str),
     retry_policy=RetryPolicy(max_retries=3, delay=30),

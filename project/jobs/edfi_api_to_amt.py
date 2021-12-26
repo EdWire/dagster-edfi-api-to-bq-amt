@@ -66,6 +66,8 @@ def edfi_api_to_amt(edfi_api_endpoints, school_year, use_change_queries):
 
 
 edfi_api_endpoints = [
+    {"endpoint": "/ed-fi/assessments", "table_name": "edfi_assessments"},
+    {"endpoint": "/ed-fi/assessments/deletes", "table_name": "edfi_assessments_deletes"},
     {"endpoint": "/ed-fi/localEducationAgencies", "table_name": "edfi_local_education_agencies"},
     {"endpoint": "/ed-fi/localEducationAgencies/deletes", "table_name": "edfi_local_education_agencies_deletes"},
     {"endpoint": "/ed-fi/schools", "table_name": "edfi_schools" },
@@ -95,6 +97,8 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/gradingPeriods/deletes", "table_name": "edfi_grading_periods_deletes" },
     {"endpoint": "/ed-fi/gradingPeriodDescriptors", "table_name": "edfi_grading_period_descriptors" },
     {"endpoint": "/ed-fi/gradingPeriodDescriptors/deletes", "table_name": "edfi_grading_period_descriptors_deletes" },
+    {"endpoint": "/ed-fi/objectiveAssessments", "table_name": "edfi_objective_assessments" },
+    {"endpoint": "/ed-fi/objectiveAssessments/deletes", "table_name": "edfi_objective_assessments_deletes" },
     {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations", "table_name": "edfi_staff_discipline_incident_associations" },
     {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations/deletes", "table_name": "edfi_staff_discipline_incident_associations_deletes" },
     {"endpoint": "/ed-fi/studentDisciplineIncidentAssociations", "table_name": "edfi_student_discipline_incident_associations" }, # deprecated
@@ -111,6 +115,8 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations/deletes", "table_name": "edfi_staff_education_organization_assignment_associations_deletes" },
     {"endpoint": "/ed-fi/staffSectionAssociations", "table_name": "edfi_staff_section_associations" },
     {"endpoint": "/ed-fi/staffSectionAssociations/deletes", "table_name": "edfi_staff_section_associations_deletes" },
+    {"endpoint": "/ed-fi/studentAssessments/deletes", "table_name": "edfi_student_assessments_deletes" },
+    {"endpoint": "/ed-fi/studentAssessments", "table_name": "edfi_student_assessments" },
     {"endpoint": "/ed-fi/studentParentAssociations", "table_name": "edfi_student_parent_associations" },
     {"endpoint": "/ed-fi/studentParentAssociations/deletes", "table_name": "edfi_student_parent_associations_deletes" },
     {"endpoint": "/ed-fi/studentSchoolAttendanceEvents", "table_name": "edfi_student_school_attendance_events" },

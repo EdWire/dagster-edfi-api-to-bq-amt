@@ -1,7 +1,9 @@
 
 {%
     set tables = [
+        "edfi_assessments_deletes",
         "edfi_local_education_agencies_deletes",
+        "edfi_objective_assessments_deletes",
         "edfi_schools_deletes",
         "edfi_students_deletes",
         "edfi_student_education_organization_associations_deletes",
@@ -22,6 +24,7 @@
         "edfi_staffs_deletes",
         "edfi_staff_education_organization_assignment_associations_deletes",
         "edfi_staff_section_associations_deletes",
+        "edfi_student_assessments_deletes",
         "edfi_student_parent_associations_deletes",
         "edfi_student_school_attendance_events_deletes",
         "edfi_student_section_associations_deletes",
