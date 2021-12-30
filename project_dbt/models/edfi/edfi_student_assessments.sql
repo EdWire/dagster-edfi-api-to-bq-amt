@@ -6,7 +6,7 @@ WITH parsed_data AS (
         JSON_VALUE(data, '$.id') AS id,
         JSON_VALUE(data, '$.schoolYear') AS school_year,
         JSON_VALUE(data, '$.studentAssessmentIdentifier') AS student_assessment_identifier,
-        EXTRACT(DATE FROM PARSE_TIMESTAMP('%Y-%m-%dT%TZ', JSON_VALUE(data, '$.sadministrationDate'))) AS administration_date,
+        EXTRACT(DATE FROM PARSE_TIMESTAMP('%Y-%m-%dT%TZ', JSON_VALUE(data, '$.administrationDate'))) AS administration_date,
         -- administrationEndDate
         SPLIT(JSON_VALUE(data, "$.administrationEnvironmentDescriptor"), '#')[OFFSET(1)] AS administration_environment_descriptor,
         SPLIT(JSON_VALUE(data, "$.administrationLanguageDescriptor"), '#')[OFFSET(1)] AS administration_language_descriptor,

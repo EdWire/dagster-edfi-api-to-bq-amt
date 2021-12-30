@@ -1,5 +1,12 @@
 # Changelog
 
+# 0.3.1
+
+### New
+
+- [dbt] Adds Analytics Middle Tier Assessment and Student Assessment fact tables
+
+
 # 0.3.0
 
 ### New
