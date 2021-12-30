@@ -150,7 +150,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "api_page_limit": 100,
+            "api_page_limit": 5000,
             "api_mode": "YearSpecific" # DistrictSpecific, SharedInstance, YearSpecific
         }),
         "warehouse": bq_client.configured({
