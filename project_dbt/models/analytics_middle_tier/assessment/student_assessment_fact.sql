@@ -1,5 +1,5 @@
 
-SELECT
+SELECT DISTINCT
     CONCAT(
         student_assessments.assessment_reference.assessment_identifier, "-",
         student_assessments.assessment_reference.namespace, "-",
@@ -54,9 +54,18 @@ SELECT
         student_objective_assessments_score_results.result,
         score_results.result
     )                                                                               AS student_score,
-    -- result data type
-    -- reporting method
-    -- performance result
+    COALESCE(
+        student_objective_assessments_score_results.result_datatype_type_descriptor,
+        score_results.result_datatype_type_descriptor
+    )                                                                               AS result_data_type,
+    COALESCE(
+        student_objective_assessments_score_results.assessment_reporting_method_descriptor,
+        score_results.assessment_reporting_method_descriptor
+    )                                                                               AS reporting_method,
+    COALESCE(
+        student_objective_assessments_performance_levels.performance_level_descriptor,
+        performance_levels.performance_level_descriptor
+    )                                                                               AS performance_result
 FROM {{ ref('edfi_student_assessments') }} student_assessments
 LEFT JOIN UNNEST(student_assessments.score_results) AS score_results
 LEFT JOIN UNNEST(student_assessments.performance_levels) AS performance_levels

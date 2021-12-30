@@ -156,6 +156,45 @@ models:
 
   - name: student_assessment_fact
     description: ""
+    columns:
+      - name: student_assessment_fact_key
+        description: ""
+        tests:
+          - unique
+          - not_null
+      - name: student_assessment_key
+        description: "The unique key that describes the student assessment."
+      - name: student_objective_assessment_key
+        description: "The unique key that describes the student objective assessment."
+      - name: objective_assessment_key
+        description: "The unique key that describes the objective assessment."
+      - name: assessment_key
+        description: "The unique key that describes the assessment."
+      - name: assessment_identifier
+        description: "The unique identifier that describes the assessment."
+      - name: namespace
+        description: "The namespace is part of the uniqueness defining the assessment View."
+      - name: student_assessment_identifier
+        description: "The unique identifier that is associated with the student assessment record."
+      - name: student_unique_id
+        description: "The global unique identifier associated with the student."
+      - name: student_school_key
+        description: "For linking to the StudentSchoolDim View​."
+      - name: school_key
+        description: "For linking to SchoolDim View."
+      - name: administration_date
+        description: "The date in which the assessment was conducted."
+      - name: assessed_grade_level
+        description: "The grade level that the assessment was intended for."
+      - name: student_score
+        description: "The documented score for the student for the corresponding assessment or objective assessment."
+      - name: result_data_type
+        description: "Describes what format the results for the assessment are reported."
+      - name: reporting_method
+        description: "Describes how the results of the assessment are reported.  This will create multiple records if there are multiple reporting methods associated with the assessment."
+      - name: performance_result
+        description: "	This is the categorical result of the students assessment."
+
 
   - name: student_local_education_agency_dim
     description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."
