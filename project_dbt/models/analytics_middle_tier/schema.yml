@@ -8,6 +8,9 @@ models:
     columns:
       - name: assessment_fact_key
         description: ""
+        tests:
+          - unique
+          - not_null
       - name: assessment_key
         description: "The unique key that describes the assessment"
       - name: assessment_identifier
@@ -150,6 +153,9 @@ models:
       - name: local_education_agency_name
         description: "The name assigned to a local education agency."
 
+
+  - name: student_assessment_fact
+    description: ""
 
   - name: student_local_education_agency_dim
     description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."

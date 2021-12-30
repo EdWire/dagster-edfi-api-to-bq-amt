@@ -1,3 +1,4 @@
+
 SELECT
     CONCAT(
         student_assessments.assessment_reference.assessment_identifier, "-",
@@ -5,8 +6,12 @@ SELECT
         student_assessments.student_assessment_identifier, "-",
         score_results.assessment_reporting_method_descriptor, "-",
         performance_levels.performance_level_descriptor, "-",
-        student_objective_assessments.objective_assessment_reference.identification_code, "-"
-        -- student_objective_assessments
+        student_objective_assessments.objective_assessment_reference.identification_code, "-",
+        student_objective_assessments_score_results.assessment_reporting_method_descriptor, "-",
+        student_objective_assessments_performance_levels.performance_level_descriptor, "-",
+        student_assessments.student_reference.student_unique_id, "-",
+        student_school_associations.school_reference.school_id, "-",
+        FORMAT_DATE('%Y%m%d', student_school_associations.entry_date)
     )                                                                               AS student_assessment_fact_key,
     CONCAT(
         student_assessments.assessment_reference.assessment_identifier, "-",
@@ -56,6 +61,7 @@ FROM {{ ref('edfi_student_assessments') }} student_assessments
 LEFT JOIN UNNEST(student_assessments.score_results) AS score_results
 LEFT JOIN UNNEST(student_assessments.performance_levels) AS performance_levels
 LEFT JOIN UNNEST(student_assessments.student_objective_assessments) AS student_objective_assessments
+LEFT JOIN UNNEST(student_objective_assessments.performance_levels) AS student_objective_assessments_performance_levels
 LEFT JOIN UNNEST(student_objective_assessments.score_results) AS student_objective_assessments_score_results
 LEFT JOIN {{ ref('edfi_student_school_associations') }} student_school_associations
     ON student_assessments.school_year = student_school_associations.school_year

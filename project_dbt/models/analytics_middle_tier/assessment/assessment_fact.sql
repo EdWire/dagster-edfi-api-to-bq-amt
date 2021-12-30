@@ -3,13 +3,29 @@ SELECT
     CONCAT(
         assessments.assessment_identifier, "-",
         assessments.namespace, "-",
-        -- assessment assessed grade level,
+        IF(
+            assessed_grade_levels.grade_level_descriptor IS NOT NULL,
+            assessed_grade_levels.grade_level_descriptor,
+            "0"
+        ), "-",
         scores.assessment_reporting_method_descriptor, "-",
-        academic_subjects.academic_subject_descriptor, "-",
+        IF(
+            academic_subjects.academic_subject_descriptor IS NOT NULL,
+            academic_subjects.academic_subject_descriptor,
+            "0"
+        ), "-",
         objective_assessments.identification_code, "-",
-        -- objective assessment parent objective code
-        objective_assessment_scores.assessment_reporting_method_descriptor, "-"
-        -- objective learning standard
+        IF(
+            objective_assessments.parent_objective_assessment_reference.identification_code IS NOT NULL,
+            objective_assessments.parent_objective_assessment_reference.identification_code,
+            "0"
+        ), "-",
+        objective_assessment_scores.assessment_reporting_method_descriptor, "-",
+        IF(
+            objective_assessment_learning_standards.learning_standard_id IS NOT NULL,
+            objective_assessment_learning_standards.learning_standard_id,
+            "0"
+        )
     )                                                   AS assessment_fact_key,
     CONCAT(
         assessments.assessment_identifier, "-",
@@ -39,7 +55,14 @@ SELECT
         NULL
     )                                                  AS objective_assessment_key,
     objective_assessments.identification_code          AS identification_code,
-    -- parent_objective_assessment_key,
+    IF(objective_assessments.parent_objective_assessment_reference.identification_code IS NOT NULL,
+        CONCAT(
+            objective_assessments.parent_objective_assessment_reference.assessment_identifier, "-",
+            objective_assessments.parent_objective_assessment_reference.identification_code, "-",
+            objective_assessments.parent_objective_assessment_reference.namespace
+        ),
+        NULL
+    )                                                  AS parent_objective_assessment_key,
     objective_assessments.description                  AS objective_assessment_description,
     objective_assessments.percent_of_assessment        AS percent_of_assessment,
     COALESCE(
@@ -58,3 +81,4 @@ LEFT JOIN {{ ref('edfi_objective_assessments') }} objective_assessments
     ON assessments.assessment_identifier = objective_assessments.assessment_reference.assessment_identifier
     AND assessments.namespace = objective_assessments.assessment_reference.namespace
 LEFT JOIN UNNEST(objective_assessments.scores) AS objective_assessment_scores
+LEFT JOIN UNNEST(objective_assessments.learning_standards) AS objective_assessment_learning_standards
