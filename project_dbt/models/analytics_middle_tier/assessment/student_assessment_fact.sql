@@ -93,7 +93,7 @@ SELECT DISTINCT
         student_school_associations.school_reference.school_id
     )                                                                                    AS student_school_key,
     student_school_associations.school_reference.school_id                               AS school_key,
-    FORMAT_DATE('%Y%m%d', student_assessments.administration_date)                       AS administration_date,
+    FORMAT_DATE('%Y%m%d', student_assessments.administration_date)                       AS administration_date_key,
     student_assessments.when_assessed_grade_level_descriptor                             AS assessed_grade_level,
     student_objective_assessments_score_results.result                                   AS student_score,
     student_objective_assessments_score_results.result_datatype_type_descriptor          AS result_data_type,

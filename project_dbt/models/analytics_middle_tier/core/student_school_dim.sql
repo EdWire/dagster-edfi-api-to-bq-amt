@@ -8,8 +8,8 @@ SELECT
     students.first_name AS student_first_name,
     students.middle_name AS student_middle_name,
     students.last_surname AS student_last_surname,
-    ssa.entry_date AS enrollment_date_key,
-    ssa.exit_withdraw_date AS exit_date_key, --not in core amt
+    FORMAT_DATE('%Y%m%d', ssa.entry_date) AS enrollment_date_key,
+    FORMAT_DATE('%Y%m%d', ssa.exit_withdraw_date) AS exit_date_key, --not in core amt
     IF(
         ssa.exit_withdraw_date IS NULL
         OR CURRENT_DATE BETWEEN ssa.entry_date AND ssa.exit_withdraw_date,
