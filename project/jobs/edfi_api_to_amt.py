@@ -129,6 +129,8 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/studentSectionAssociations/deletes", "table_name": "edfi_student_section_associations_deletes" },
     {"endpoint": "/ed-fi/studentSectionAttendanceEvents", "table_name": "edfi_student_section_attendance_events" },
     {"endpoint": "/ed-fi/studentSectionAttendanceEvents/deletes", "table_name": "edfi_student_section_attendance_events_deletes" },
+    {"endpoint": "/ed-fi/studentSpecialEducationProgramAssociations", "table_name": "edfi_student_special_education_program_associations" },
+    {"endpoint": "/ed-fi/studentSpecialEducationProgramAssociations/deletes", "table_name": "edfi_student_special_education_program_associations_deletes" },
     {"endpoint": "/ed-fi/sessions", "table_name": "edfi_sessions" },
     {"endpoint": "/ed-fi/sessions/deletes", "table_name": "edfi_sessions_deletes" },
     {"endpoint": "/ed-fi/cohortTypeDescriptors", "table_name": "edfi_cohort_type_descriptors"},
