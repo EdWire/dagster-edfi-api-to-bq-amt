@@ -32,6 +32,7 @@ sources:
         - name: edfi_objective_assessments_deletes
         - name: edfi_parents
         - name: edfi_parents_deletes
+        - name: edfi_programs
         - name: edfi_schools
         - name: edfi_schools_deletes
         - name: edfi_school_year_types
@@ -57,6 +58,7 @@ sources:
         - name: edfi_student_education_organization_associations_deletes
         - name: edfi_student_parent_associations
         - name: edfi_student_parent_associations_deletes
+        - name: edfi_student_program_associations
         - name: edfi_student_school_associations
         - name: edfi_student_school_associations_deletes
         - name: edfi_student_school_attendance_events

@@ -4,7 +4,11 @@
 
 ### New
 
+- [dagster] Adds `/programs` to Ed-Fi API extract
+- [dagster] Adds `/studentProgramAssociations` to Ed-Fi API extract
 - [dbt] Adds Analytics Middle Tier Assessment and Student Assessment fact tables
+- [dbt] Creates native BigQuery table for `/programs` API spec
+- [dbt] Creates native BigQuery table for `/studentProgramAssociations` API spec
 
 
 # 0.3.0
