@@ -5,6 +5,8 @@ This repository takes the viewpoint that each ODS should be limited to a single 
 
 It is also recommended that you utilize the Ed-Fi API's change query and deletes functionality. This will allow full pulls over the weekend, but only incremental pulls throughout the week.
 
+![Ed-Fi API to AMT](/assets/edfi_api_elt.png)
+
 [YouTube demo video](https://youtu.be/A1a7C9pDVL4)
 
 More specifically, this repository is a [Dagster](https://dagster.io/) workspace that contains a job designed to:
