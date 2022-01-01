@@ -45,10 +45,11 @@ LEFT JOIN {{ ref('edfi_student_school_associations') }} student_school_associati
     ON student_assessments.school_year = student_school_associations.school_year
     AND student_assessments.student_reference.student_unique_id = student_school_associations.student_reference.student_unique_id
 
+
 UNION ALL
 
--- objective assessment score results
 
+-- objective assessment score results
 SELECT DISTINCT
     CONCAT(
         student_assessments.assessment_reference.assessment_identifier, "-",
