@@ -20,6 +20,7 @@ SELECT
         assessments.assessment_identifier, "-",
         assessments.namespace
     )                                                   AS assessment_key,
+    assessments.school_year                             AS school_year, -- not in core amt
     assessments.assessment_identifier                   AS assessment_identifier,
     assessments.namespace                               AS namespace,
     assessments.assessment_title                        AS title,
@@ -69,8 +70,8 @@ SELECT
         ), "-",
         objective_assessment_scores.assessment_reporting_method_descriptor, "-",
         IF(
-            objective_assessment_learning_standards.learning_standard_id IS NOT NULL,
-            objective_assessment_learning_standards.learning_standard_id,
+            objective_assessment_learning_standards.learning_standard_reference.learning_standard_id IS NOT NULL,
+            objective_assessment_learning_standards.learning_standard_reference.learning_standard_id,
             "0"
         )
     )                                                   AS assessment_fact_key,
@@ -78,6 +79,7 @@ SELECT
         assessments.assessment_identifier, "-",
         assessments.namespace
     )                                                   AS assessment_key,
+    assessments.school_year                             AS school_year, -- not in core amt
     assessments.assessment_identifier                   AS assessment_identifier,
     assessments.namespace                               AS namespace,
     assessments.assessment_title                        AS title,

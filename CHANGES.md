@@ -11,6 +11,8 @@
 - [dbt] Creates native BigQuery table for `/programs` API spec
 - [dbt] Creates native BigQuery table for `/studentProgramAssociations` API spec
 - [dbt] Creates native BigQuery table for `/studentSpecialEducationProgramAssociations` API spec
+- [dbt] Creates `student_dim` view that pre-joins several tables into one combined student dimension
+- [dbt] Creates `stg_student_assessment_fact` that joins `assessment_fact` and `student_dim` to provide an easy to use staging fact table
 
 
 # 0.3.0

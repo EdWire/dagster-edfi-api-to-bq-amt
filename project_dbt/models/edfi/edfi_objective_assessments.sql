@@ -36,12 +36,11 @@ WITH parsed_data AS (
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.learningObjectives")) learning_objectives 
         ) AS learning_objectives,
         ARRAY(
-            STRUCT(
-                SELECT AS STRUCT
-                    STRUCT(
-                        JSON_VALUE(learning_standards, '$.learningStandardReference.learningStandardId') AS learning_standard_id
-                    ) AS learning_standard_reference 
-                FROM UNNEST(JSON_QUERY_ARRAY(data, "$.learningStandards")) learning_standards
+            SELECT AS STRUCT
+                STRUCT(
+                    JSON_VALUE(learning_standards, '$.learningStandardReference.learningStandardId') AS learning_standard_id
+                ) AS learning_standard_reference 
+            FROM UNNEST(JSON_QUERY_ARRAY(data, "$.learningStandards")) learning_standards
         ) AS learning_standards,
         ARRAY(
             SELECT AS STRUCT 

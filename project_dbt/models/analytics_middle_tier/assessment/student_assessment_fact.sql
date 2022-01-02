@@ -22,11 +22,12 @@ SELECT DISTINCT
     CONCAT(
         student_assessments.assessment_reference.assessment_identifier, "-",
         student_assessments.assessment_reference.namespace
-)                                                                                   AS assessment_key,
+    )                                                                               AS assessment_key,
+    student_assessments.school_year                                                 AS school_year, -- not in core amt
     student_assessments.assessment_reference.assessment_identifier                  AS assessment_identifier,
     student_assessments.assessment_reference.namespace                              AS namespace,
     student_assessments.student_assessment_identifier                               AS student_assessment_identifier,
-    student_assessments.student_reference.student_unique_id                         AS student_unique_id,
+    student_assessments.student_reference.student_unique_id                         AS student_key,
     CONCAT(
         student_assessments.student_reference.student_unique_id, "-",
         student_school_associations.school_reference.school_id
@@ -85,10 +86,11 @@ SELECT DISTINCT
         student_assessments.assessment_reference.assessment_identifier, "-",
         student_assessments.assessment_reference.namespace
     )                                                                               AS assessment_key,
+    student_assessments.school_year                                                 AS school_year, -- not in core amt
     student_assessments.assessment_reference.assessment_identifier                  AS assessment_identifier,
     student_assessments.assessment_reference.namespace                              AS namespace,
     student_assessments.student_assessment_identifier                               AS student_assessment_identifier,
-    student_assessments.student_reference.student_unique_id                         AS student_unique_id,
+    student_assessments.student_reference.student_unique_id                         AS student_key,
     CONCAT(
         student_assessments.student_reference.student_unique_id, "-",
         student_school_associations.school_reference.school_id

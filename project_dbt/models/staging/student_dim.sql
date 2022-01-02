@@ -7,6 +7,7 @@ WITH enrollments_ranked AS (
         school_dim.school_key                               AS school_key,
         school_dim.school_name                              AS school_name,
         student_school_dim.student_key                      AS student_key,
+        student_school_dim.student_school_key               AS student_school_key,
         student_school_dim.student_last_surname             AS student_last_surname,
         student_school_dim.student_first_name               AS student_first_name,
         CONCAT(
@@ -29,6 +30,11 @@ WITH enrollments_ranked AS (
             "Yes",
             "No"
         )                                                   AS is_english_language_learner,
+        IF (
+            student_program_dim.program_name IS NOT NULL,
+            "Yes",
+            "No"
+        )                                                   AS in_special_education_program,
         IF(
             student_school_dim.is_hispanic IS TRUE,
             "Yes",
@@ -42,9 +48,10 @@ WITH enrollments_ranked AS (
         )                                                   AS race_and_ethnicity_roll_up,
         ROW_NUMBER() OVER (
             PARTITION BY
-                school_year,
-                school_dim.school_key
-            ORDER BY school_year DESC, enrollment_date.date DESC
+                student_school_dim.school_year,
+                school_dim.school_key,
+                student_school_dim.student_key
+            ORDER BY student_school_dim.school_year DESC, student_school_dim.student_key DESC, enrollment_date.date DESC
         ) AS rank,
     FROM {{ ref('student_school_dim') }} student_school_dim
     LEFT JOIN {{ ref('school_dim') }} school_dim
@@ -57,14 +64,18 @@ WITH enrollments_ranked AS (
         ON student_school_dim.student_key = student_local_education_agency_dim.student_key
         AND school_dim.local_education_agency_key = student_local_education_agency_dim.local_education_agency_key
     LEFT JOIN {{ ref('student_local_education_agency_demographics_bridge') }} student_local_education_agency_demographics_bridge
-        ON student_local_education_agency_dim.student_local_education_agency_key = student_local_education_agency_demographics_bridge.student_local_education_agency_key
+        ON student_school_dim.school_year = student_local_education_agency_demographics_bridge.school_year
+        AND student_local_education_agency_dim.student_local_education_agency_key = student_local_education_agency_demographics_bridge.student_local_education_agency_key
     LEFT JOIN {{ ref('demographic_dim') }} demographic_dim
         ON student_local_education_agency_demographics_bridge.demographic_key = demographic_dim.demographic_key
         AND demographic_dim.demographic_parent_key = "Race"
+    LEFT JOIN {{ ref('student_program_dim') }} student_program_dim
+        ON student_school_dim.student_school_key = student_program_dim.student_school_key
+        AND student_program_dim.program_name = "Special Education"
 
 )
 
 
-SELECT *
+SELECT * EXCEPT(rank)
 FROM enrollments_ranked
 WHERE rank = 1

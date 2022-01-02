@@ -31,3 +31,6 @@ models:
       +tags: edfi
       +labels:
           edfi_version: "5_3"
+    staging:
+      +materialized: view
+      +schema: staging

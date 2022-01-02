@@ -250,6 +250,8 @@ models:
       - name: demographic_key
         description: "Concatenation of parent key and label columns to allow for easier joins."
 
+  - name: student_program_dim
+    description: ""
 
   - name: student_school_dim
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.

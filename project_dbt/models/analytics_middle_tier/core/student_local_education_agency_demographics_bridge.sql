@@ -1,6 +1,7 @@
 
 WITH demographics AS (
     SELECT
+        seoa.school_year AS school_year,
         CONCAT('CohortYear:',
             cohort_years.school_year, '-',
             cohort_years.cohort_type_descriptor, '-', 
@@ -26,6 +27,7 @@ WITH demographics AS (
     UNION ALL
 
     SELECT
+        seoa.school_year AS school_year,
         CONCAT('LanguageUse:',
             uses.language_use_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
@@ -50,6 +52,7 @@ WITH demographics AS (
     UNION ALL
 
     SELECT
+        seoa.school_year AS school_year,
         CONCAT('Language:',
             languages.language_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
@@ -73,6 +76,7 @@ WITH demographics AS (
     UNION ALL
 
     SELECT
+        seoa.school_year AS school_year,
         CONCAT('Race:',
             races.race_descriptor, '-', 
             seoa.student_reference.student_unique_id, '-',
@@ -96,6 +100,7 @@ WITH demographics AS (
 )
 
 SELECT
+    school_year AS school_year,
     student_school_demographic_bridge_key,
     student_local_education_agency_key,
     demographic_key
@@ -112,6 +117,5 @@ WHERE
             (ssa.exit_withdraw_date IS NULL OR ssa.exit_withdraw_date >= CURRENT_DATE)
             AND schools.local_education_agency_id = demographics.education_organization_id
             AND ssa.student_reference.student_unique_id = demographics.student_unique_id
-            {# AND ssa.school_year = demographics.school_year #}
+            AND ssa.school_year = demographics.school_year
     )
-
