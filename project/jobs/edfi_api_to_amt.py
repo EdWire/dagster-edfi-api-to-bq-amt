@@ -8,7 +8,7 @@ from dagster import (
     schedule,
     ScheduleEvaluationContext
 )
-from dagster_dbt import dbt_cli_resource, dbt_test_op
+from dagster_dbt import dbt_cli_resource
 from dagster_gcp.gcs.io_manager import gcs_pickle_io_manager
 from dagster_gcp.gcs.resources import gcs_resource
 
@@ -20,7 +20,8 @@ from ops.edfi import (
     get_previous_change_version,
     get_data,
     load_data,
-    run_edfi_models
+    run_edfi_models,
+    test_edfi_models
 )
 from resources.edfi_api_resource import edfi_api_resource_client
 from resources.edfi_warehouse_resource import bq_client
@@ -62,7 +63,7 @@ def edfi_api_to_amt(edfi_api_endpoints, school_year, use_change_queries):
         start_after=retrieved_data, newest_change_version=newest_change_version)
 
     dbt_run_result = run_edfi_models(retrieved_data, raw_tables_result)
-    dbt_test_op(start_after=dbt_run_result)
+    test_edfi_models(start_after=dbt_run_result)
 
 
 edfi_api_endpoints = [
@@ -156,8 +157,8 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "base_url": os.getenv("EDFI_BASE_URL"),
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
-            "api_page_limit": 5000,
-            "api_mode": "YearSpecific" # DistrictSpecific, SharedInstance, YearSpecific
+            "api_page_limit": 100,
+            "api_mode": "SharedInstance" # DistrictSpecific, SharedInstance, YearSpecific
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV"),
@@ -174,8 +175,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "edfi_api_endpoints": { "value": edfi_api_endpoints },
             "school_year": { "value": 2022 },
             "use_change_queries": { "value": True }
-        },
-        "ops": {}
+        }
     },
 )
 

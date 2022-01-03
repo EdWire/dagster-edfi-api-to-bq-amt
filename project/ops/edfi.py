@@ -257,3 +257,20 @@ def run_edfi_models(context, retrieved_data, raw_tables_result) -> DbtCliOutput:
         yield materialization
 
     yield Output(dbt_cli_edfi_output)
+
+
+@op(
+    description="Test all dbt models tagged with edfi and amt",
+    required_resource_keys={"dbt"},
+    tags={"kind": "dbt"}
+)
+def test_edfi_models(context, start_after) -> DbtCliOutput:
+    """
+    Test all dbt models tagged with edfi and amt.
+    """
+    dbt_cli_edfi_output = context.resources.dbt.test(
+        models=["tag:edfi"],
+        data=False,
+        schema=False
+    )
+    return dbt_cli_edfi_output
