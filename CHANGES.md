@@ -1,5 +1,12 @@
 # Changelog
 
+# 0.3.2
+
+### New
+
+- [dbt] Updates `stg_student_assessment_fact` to use nested, repeated fields
+
+
 # 0.3.1
 
 ### New

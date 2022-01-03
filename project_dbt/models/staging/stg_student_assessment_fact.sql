@@ -1,4 +1,48 @@
 
+WITH assessments AS (
+
+    SELECT
+        student_assessment_fact.student_assessment_identifier,
+        ARRAY_AGG(
+            STRUCT(
+                student_assessment_fact.reporting_method                    AS reporting_method,
+                CAST(student_assessment_fact.student_score AS float64)      AS student_score
+            )
+        ) AS assessment_student_score
+    FROM {{ ref('student_assessment_fact') }} student_assessment_fact
+    LEFT JOIN {{ ref('assessment_fact') }} assessment_fact
+        ON student_assessment_fact.school_year = assessment_fact.school_year
+        AND student_assessment_fact.assessment_key = assessment_fact.assessment_key
+        AND student_assessment_fact.objective_assessment_key = assessment_fact.objective_assessment_key
+        AND student_assessment_fact.reporting_method = assessment_fact.reporting_method
+    WHERE assessment_fact.objective_assessment_key = ""
+    GROUP BY student_assessment_fact.student_assessment_identifier
+
+),
+
+objective_assessments AS (
+
+    SELECT
+        student_assessment_fact.student_assessment_identifier,
+        ARRAY_AGG(
+            STRUCT(
+                assessment_fact.identification_code                       AS identification_code,
+                assessment_fact.objective_assessment_description          AS description,
+                student_assessment_fact.reporting_method                  AS reporting_method,
+                CAST(student_assessment_fact.student_score AS float64)    AS student_score
+            )
+        ) AS objective_assessment_student_score
+    FROM {{ ref('student_assessment_fact') }} student_assessment_fact
+    LEFT JOIN {{ ref('assessment_fact') }} assessment_fact
+        ON student_assessment_fact.school_year = assessment_fact.school_year
+        AND student_assessment_fact.assessment_key = assessment_fact.assessment_key
+        AND student_assessment_fact.objective_assessment_key = assessment_fact.objective_assessment_key
+        AND student_assessment_fact.reporting_method = assessment_fact.reporting_method
+    WHERE assessment_fact.objective_assessment_key != ""
+    GROUP BY student_assessment_fact.student_assessment_identifier
+
+)
+
 SELECT
     student_assessment_fact.school_year                         AS school_year,
     assessment_fact.title                                       AS title,
@@ -7,10 +51,8 @@ SELECT
     student_assessment_fact.student_key                         AS student_key,
     student_assessment_fact.student_school_key                  AS student_school_key,
     student_assessment_fact.student_assessment_identifier       AS student_assessment_identifier,
-    assessment_fact.identification_code                         AS identification_code,
-    assessment_fact.objective_assessment_description            AS objective_assessment_description,
-    student_assessment_fact.reporting_method                    AS reporting_method,
-    student_assessment_fact.student_score                       AS student_score,
+    objective_assessments.objective_assessment_student_score    AS objective_assessment_student_score,
+    assessments.assessment_student_score                        AS assessment_student_score,
     student_dim.local_education_agency_name                     AS local_education_agency_name,
     student_dim.school_name                                     AS school_name,
     student_dim.student_last_surname                            AS student_last_surname,
@@ -33,6 +75,11 @@ LEFT JOIN {{ ref('assessment_fact') }} assessment_fact
     AND student_assessment_fact.assessment_key = assessment_fact.assessment_key
     AND student_assessment_fact.objective_assessment_key = assessment_fact.objective_assessment_key
     AND student_assessment_fact.reporting_method = assessment_fact.reporting_method
+LEFT JOIN assessments
+    ON student_assessment_fact.student_assessment_identifier = assessments.student_assessment_identifier
+LEFT JOIN objective_assessments
+    ON student_assessment_fact.student_assessment_identifier = objective_assessments.student_assessment_identifier
 LEFT JOIN {{ ref('student_dim') }} student_dim
     ON student_assessment_fact.school_year = student_dim.school_year
     AND student_assessment_fact.student_school_key = student_dim.student_school_key
+WHERE student_assessment_fact.objective_assessment_key = ""

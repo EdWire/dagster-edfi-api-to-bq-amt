@@ -47,7 +47,7 @@ UNION ALL
 
 
 -- objective assessment score results
-SELECT
+SELECT DISTINCT
     CONCAT(
         assessments.assessment_identifier, "-",
         assessments.namespace, "-",
@@ -56,7 +56,6 @@ SELECT
             assessed_grade_levels.grade_level_descriptor,
             "0"
         ), "-",
-        scores.assessment_reporting_method_descriptor, "-",
         IF(
             academic_subjects.academic_subject_descriptor IS NOT NULL,
             academic_subjects.academic_subject_descriptor,
