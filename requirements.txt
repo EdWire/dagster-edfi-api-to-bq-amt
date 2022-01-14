@@ -1,8 +1,8 @@
-dagster==0.13.12
-dagster-dbt==0.13.12
-dagster-gcp==0.13.12
-dagster-postgres==0.13.12
-dagit==0.13.12
+dagster==0.13.14
+dagster-dbt==0.13.14
+dagster-gcp==0.13.14
+dagster-postgres==0.13.14
+dagit==0.13.14
 dbt-bigquery==1.0.0
 google-api-python-client
 google-cloud-storage
