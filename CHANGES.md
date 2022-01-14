@@ -5,6 +5,7 @@
 ### New
 
 - [dbt] Updates `stg_student_assessment_fact` to use nested, repeated fields
+- [dagster] Updates BigQuery permissions to be more restrictive
 
 
 # 0.3.1
