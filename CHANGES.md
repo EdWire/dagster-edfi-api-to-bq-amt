@@ -5,6 +5,7 @@
 ### New
 
 - [dbt] Updates `stg_student_assessment_fact` to use nested, repeated fields
+- [dbt] Refactors dbt structure to match [bootcamp article](https://github.com/K12-Analytics-Engineering/bootcamp/blob/main/docs/elt_layers.md)
 - [dagster] Updates BigQuery permissions to be more restrictive
 - [dagster] Updates Dagster to v0.13.14
 
