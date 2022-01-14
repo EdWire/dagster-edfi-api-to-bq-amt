@@ -1,0 +1,17 @@
+
+version: 2
+
+models:
+  - name: attendance_fact
+    description: "Used for looking at student's attendance per day using the common methods for defining attendance."
+    columns:
+      - name: student_key
+        tests:
+          - relationships:
+              to: ref('student_local_education_agency_dim')
+              field: student_key
+      - name: "(student_key || '-' || school_key)"
+        tests:
+          - relationships:
+              to: ref('student_school_dim')
+              field: student_school_key

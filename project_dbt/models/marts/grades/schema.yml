@@ -1,0 +1,18 @@
+
+version: 2
+
+
+models:
+  - name: student_section_grade_fact
+    description: "Records describe a student's cumulative grade in a section for each grading period."
+    columns:
+      - name: student_section_key
+        tests:
+          - relationships:
+              to: ref('student_section_dim')
+              field: student_section_key
+      - name: "(student_key || '-' || school_key)"
+        tests:
+          - relationships:
+              to: ref('student_school_dim')
+              field: student_school_key
