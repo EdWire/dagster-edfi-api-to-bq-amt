@@ -39,7 +39,9 @@ Authentication with the GCP project happens through a service account. In GCP, h
 * Click **Create Service Account**
 * Choose a name (ie. dagster) and click **Create**
 * Grant the service account the following roles
-    * BigQuery Admin
+    * BigQuery Job User
+    * BigQuery User
+    * BigQuery Data Editor
     * Storage Admin
 * Click **Done** 
 * Select the actions menu and click **Create key**. Create a JSON key, rename to _service.json_ and store in the root of the repository.
