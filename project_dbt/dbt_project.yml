@@ -21,16 +21,22 @@ models:
     relation: true
     columns: true
   project:
-    analytics_middle_tier:
+    marts:
       +materialized: table
-      +tags: amt
-      +schema: analytics_middle_tier
-    edfi:
-      +materialized: table
-      +schema: edfi
-      +tags: edfi
-      +labels:
-          edfi_version: "5_3"
+      assessments:
+        +schema: assessments
+      attendance:
+        +schema: attendance
+      core:
+        +schema: core
+      grades:
+        +schema: grades
+      row_level_security:
+        +schema: row_level_security
     staging:
-      +materialized: view
-      +schema: staging
+      edfi:
+        +materialized: table
+        +schema: raw_sources
+        +tags: edfi
+        +labels:
+            edfi_version: "5_3"
