@@ -1,3 +1,8 @@
+{{
+  config(
+    labels = {'analytics_middle_tier': 'yes'}
+  )
+}}
 
 
 WITH ranked AS (

@@ -1,3 +1,9 @@
+{{
+  config(
+    labels = {'analytics_middle_tier': 'yes'}
+  )
+}}
+
 
 SELECT DISTINCT
     seoa.staff_reference.staff_unique_id AS user_key,

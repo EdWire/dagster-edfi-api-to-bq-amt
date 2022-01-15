@@ -37,6 +37,5 @@ models:
       edfi:
         +materialized: table
         +schema: raw_sources
-        +tags: edfi
         +labels:
             edfi_version: "5_3"

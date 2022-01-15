@@ -1,3 +1,9 @@
+{{
+  config(
+    labels = {'analytics_middle_tier': 'yes'}
+  )
+}}
+
 
 WITH staff_to_scope_map AS (
     SELECT

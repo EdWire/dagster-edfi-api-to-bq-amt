@@ -1,3 +1,9 @@
+{{
+  config(
+    labels = {'analytics_middle_tier': 'yes'}
+  )
+}}
+
 
 SELECT DISTINCT
     local_education_agency_id AS local_education_agency_key,

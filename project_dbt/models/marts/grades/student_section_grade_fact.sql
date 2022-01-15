@@ -1,3 +1,9 @@
+{{
+  config(
+    labels = {'analytics_middle_tier': 'yes'}
+  )
+}}
+
 
 SELECT
     student_section_association_reference.student_unique_id AS student_key,

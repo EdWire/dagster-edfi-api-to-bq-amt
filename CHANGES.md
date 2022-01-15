@@ -1,5 +1,11 @@
 # Changelog
 
+# 0.3.3
+
+### New
+
+- [dbt] Adds labels noting which data models are a part of Ed-Fi's Analytics Middle Tier
+
 # 0.3.2
 
 ### New
