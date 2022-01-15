@@ -19,7 +19,7 @@ SELECT
     IF(
         ssa.exit_withdraw_date IS NULL
         OR CURRENT_DATE BETWEEN ssa.entry_date AND ssa.exit_withdraw_date,
-        TRUE, FALSE) AS is_enrolled, --not in core amt
+        1, 0) AS is_enrolled, --not in core amt
     ssa.entry_grade_level_descriptor AS grade_level,
     COALESCE(
         school_ed_org.limited_english_proficiency_descriptor,

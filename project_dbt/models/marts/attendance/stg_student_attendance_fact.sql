@@ -1,17 +1,17 @@
 
 SELECT
-    attendance_fact.student_school_key,
-    attendance_fact.student_key,
-    attendance_fact.school_key,
-    date_dim.date,
-    attendance_fact.school_attendance_event_category_descriptor,
-    attendance_fact.event_duration,
-    attendance_fact.reported_as_present_at_school,
-    attendance_fact.reported_as_absent_from_school,
-    attendance_fact.reported_as_present_at_home_room,
-    attendance_fact.reported_as_absent_from_home_room,
-    attendance_fact.reported_as_is_present_in_all_sections,
-    attendance_fact.reported_as_absent_from_any_section,
+    student_attendance_fact.student_school_key                              AS student_school_key,
+    student_attendance_fact.student_key                                     AS student_key,
+    student_attendance_fact.school_key                                      AS school_key,
+    date_dim.date                                                   AS date,
+    student_attendance_fact.school_attendance_event_category_descriptor     AS school_attendance_event_category_descriptor,
+    student_attendance_fact.event_duration                                  AS event_duration,
+    student_attendance_fact.reported_as_present_at_school                   AS reported_as_present_at_school,
+    student_attendance_fact.reported_as_absent_from_school                  AS reported_as_absent_from_school,
+    student_attendance_fact.reported_as_present_at_home_room                AS reported_as_present_at_home_room,
+    student_attendance_fact.reported_as_absent_from_home_room               AS reported_as_absent_from_home_room,
+    student_attendance_fact.reported_as_is_present_in_all_sections          AS reported_as_is_present_in_all_sections,
+    student_attendance_fact.reported_as_absent_from_any_section             AS reported_as_absent_from_any_section,
     stg_student_dim.local_education_agency_name                     AS local_education_agency_name,
     stg_student_dim.school_name                                     AS school_name,
     stg_student_dim.student_last_surname                            AS student_last_surname,
@@ -28,8 +28,8 @@ SELECT
     stg_student_dim.is_hispanic                                     AS is_hispanic,
     stg_student_dim.race                                            AS race,
     stg_student_dim.race_and_ethnicity_roll_up                      AS race_and_ethnicity_roll_up
-FROM {{ ref('attendance_fact') }} attendance_fact
+FROM {{ ref('student_attendance_fact') }} student_attendance_fact
 LEFT JOIN {{ ref('stg_student_dim') }} stg_student_dim
-    ON attendance_fact.student_school_key = stg_student_dim.student_school_key
+    ON student_attendance_fact.student_school_key = stg_student_dim.student_school_key
 LEFT JOIN {{ ref('date_dim') }} date_dim
-    ON attendance_fact.date_key = date_dim.date_key
+    ON student_attendance_fact.date_key = date_dim.date_key

@@ -17,11 +17,7 @@ WITH enrollments_ranked AS (
         )                                                   AS student_display_name,
         enrollment_date.date                                AS enrollment_date,
         exit_date.date                                      AS exit_date,
-        IF(
-            student_school_dim.is_enrolled IS TRUE,
-            "Yes",
-            "No"
-        )                                                   AS is_enrolled,
+        student_school_dim.is_enrolled                      AS is_enrolled,
         {{ convert_grade_level('student_school_dim.grade_level') }} AS grade_level,
         student_school_dim.sex                              AS gender,
         student_school_dim.limited_english_proficiency      AS limited_english_proficiency,

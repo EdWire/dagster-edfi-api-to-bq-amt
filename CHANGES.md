@@ -5,8 +5,13 @@
 ### New
 
 - [dbt] Adds labels noting which data models are a part of Ed-Fi's Analytics Middle Tier
-- [dbt] Renames `attendance_fact` table to `student_attendance_fact`
 - [dbt] Adds a new `stg_student_attendance` fact table that joins on various dims to add contextual information
+- [dbt] Adds student attendance metric for chronically absent and early warning
+
+### Breaking Changes
+
+- [dbt] Renames `attendance_fact` table to `student_attendance_fact`
+
 
 # 0.3.2
 

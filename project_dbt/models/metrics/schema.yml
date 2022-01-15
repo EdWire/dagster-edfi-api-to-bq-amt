@@ -1,0 +1,12 @@
+
+version: 2
+
+models:
+  - name: is_chronically_absent
+    description: >
+      Metric that flags a student as chronically absent if they have 15
+      or more absensces. This data model will also give an early warning indicator
+      if their average daily attendance is below 92%
+    config:
+      materialization: view
+      schema: attendance
