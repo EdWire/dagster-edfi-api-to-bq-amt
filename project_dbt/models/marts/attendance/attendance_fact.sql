@@ -73,7 +73,7 @@ LEFT JOIN {{ ref('stg_edfi_student_section_associations') }} student_section_ass
     AND student_section_associations.section_reference.section_identifier = section_attendance.section_reference.section_identifier
     AND student_section_associations.section_reference.session_name = section_attendance.section_reference.session_name
 WHERE
-    calendar_dates.date <= CURRENT_DATE
+    calendar_dates.date < CURRENT_DATE
     AND calendar_events.calendar_event_descriptor = 'Instructional day'
 GROUP BY
     ssa.student_reference.student_unique_id,

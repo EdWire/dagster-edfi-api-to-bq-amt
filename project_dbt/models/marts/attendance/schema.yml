@@ -3,7 +3,9 @@ version: 2
 
 models:
   - name: attendance_fact
-    description: "Used for looking at student's attendance per day using the common methods for defining attendance."
+    description: >
+      Used for looking at a student's attendance per day. This fact table provides a row
+      for each instructional day the student holds an enrollment up to the previous date.
     columns:
       - name: student_key
         tests:
@@ -15,3 +17,8 @@ models:
           - relationships:
               to: ref('student_school_dim')
               field: student_school_key
+
+  - name: stg_attendance_fact
+    description: >
+      Staging version of the attendance fact table that joins on the date dim and student dim
+      to add contextual information.

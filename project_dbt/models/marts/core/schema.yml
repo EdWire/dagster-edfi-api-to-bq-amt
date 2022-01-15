@@ -97,6 +97,13 @@ models:
         description: "The name assigned to a local education agency."
 
 
+  - name: stg_student_dim
+    description: >
+      Ed-Fi's Analytics Middle Tier provides two student dims related to the student's LEA association and the student's
+      school association. This stg_student_dim combines those two dims to provide one student dim that can be used downstream.
+      If a student has multiple school enrollments, only their most recent will show in this dim.
+
+
   - name: student_local_education_agency_dim
     description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."
     columns:
