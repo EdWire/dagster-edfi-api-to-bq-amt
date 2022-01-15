@@ -4,9 +4,28 @@ version: 2
 models:
   - name: is_chronically_absent
     description: >
-      Metric that flags a student as chronically absent if they have 15
+      Flags a student as chronically absent if they have 15
       or more absensces. This data model will also give an early warning indicator
       if their average daily attendance is below 92%
     config:
       materialization: view
       schema: attendance
+
+metrics:
+  - name: is_chronically_absent
+    label: Is chronically absent
+    model: ref('stg_student_attendance_fact')
+    description: >
+      Flags a student as chronically absent if they have 15
+      or more absensces.
+
+    type: count
+    sql: SUM(event_duration) >= 15
+
+    timestamp: date
+    time_grains: [year]
+
+    dimensions:
+      - student_school_key
+      - student_key
+      - school_key
