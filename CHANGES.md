@@ -1,6 +1,6 @@
 # Changelog
 
-# 0.3.3
+# 0.4.0
 
 ### New
 
@@ -10,6 +10,8 @@
 
 ### Breaking Changes
 
+- [dagster] Adds `base_` prefix to all BigQuery tables created in Dagster job
+- [dbt] Updates naming convention of data models to match [bootcamp article](https://github.com/K12-Analytics-Engineering/bootcamp/blob/main/docs/elt_layers.md)
 - [dbt] Renames `attendance_fact` table to `student_attendance_fact`
 
 

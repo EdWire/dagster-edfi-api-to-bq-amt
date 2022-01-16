@@ -158,7 +158,7 @@ edfi_api_dev_job = edfi_api_to_amt.to_job(
             "api_key": os.getenv("EDFI_API_KEY"),
             "api_secret": os.getenv("EDFI_API_SECRET"),
             "api_page_limit": 100,
-            "api_mode": "SharedInstance" # DistrictSpecific, SharedInstance, YearSpecific
+            "api_mode": "YearSpecific" # DistrictSpecific, SharedInstance, YearSpecific
         }),
         "warehouse": bq_client.configured({
             "staging_gcs_bucket": os.getenv("GCS_BUCKET_DEV"),
