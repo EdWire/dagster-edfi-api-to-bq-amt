@@ -18,7 +18,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.personReference.personId') AS person_id,
             SPLIT(JSON_VALUE(data, "$.personReference.sourceSystemDescriptor"), '#')[OFFSET(1)] AS source_system_descriptor
         ) AS person_reference,
-    FROM {{ source('raw_sources', 'edfi_students') }}
+    FROM {{ source('staging', 'base_edfi_students') }}
 
 ),
 

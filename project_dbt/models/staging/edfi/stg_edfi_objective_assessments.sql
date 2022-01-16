@@ -59,7 +59,7 @@ WITH parsed_data AS (
                 JSON_VALUE(scores, "$.minimumScore") AS minimum_score
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.scores")) scores 
         ) AS scores
-    FROM {{ source('raw_sources', 'edfi_objective_assessments') }}
+    FROM {{ source('staging', 'base_edfi_objective_assessments') }}
 
 ),
 

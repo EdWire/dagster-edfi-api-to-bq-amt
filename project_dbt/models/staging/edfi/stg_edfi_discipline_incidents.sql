@@ -33,7 +33,7 @@ WITH parsed_data AS (
                 JSON_VALUE(external_participants, "$.lastSurname") AS last_surname
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.externalParticipants")) external_participants 
         ) AS external_participants,
-    FROM {{ source('raw_sources', 'edfi_discipline_incidents') }}
+    FROM {{ source('staging', 'base_edfi_discipline_incidents') }}
 
 ),
 

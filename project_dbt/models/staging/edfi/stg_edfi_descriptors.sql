@@ -1,11 +1,11 @@
 
 {%
-    set tables = [{"table": "edfi_cohort_type_descriptors", "descriptorId": "cohortTypeDescriptorId"},
-    {"table": "edfi_disability_descriptors", "descriptorId": "disabilityDescriptorId" },
-    {"table": "edfi_language_descriptors", "descriptorId": "languageDescriptorId" }, 
-    {"table": "edfi_language_use_descriptors", "descriptorId": "languageUseDescriptorId" }, 
-    {"table": "edfi_race_descriptors", "descriptorId": "raceDescriptorId" }, 
-    {"table": "edfi_grading_period_descriptors", "descriptorId": "gradingPeriodDescriptorId" }]
+    set tables = [{"table": "base_edfi_cohort_type_descriptors", "descriptorId": "cohortTypeDescriptorId"},
+    {"table": "base_edfi_disability_descriptors", "descriptorId": "disabilityDescriptorId" },
+    {"table": "base_edfi_language_descriptors", "descriptorId": "languageDescriptorId" }, 
+    {"table": "base_edfi_language_use_descriptors", "descriptorId": "languageUseDescriptorId" }, 
+    {"table": "base_edfi_race_descriptors", "descriptorId": "raceDescriptorId" }, 
+    {"table": "base_edfi_grading_period_descriptors", "descriptorId": "gradingPeriodDescriptorId" }]
 %}
 
 
@@ -21,7 +21,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.description') AS description,
             JSON_VALUE(data, '$.namespace') AS namespace,
             JSON_VALUE(data, '$.shortDescription') AS short_description
-        FROM {{ source('raw_sources', table['table']) }}
+        FROM {{ source('staging', table['table']) }}
         {% if not loop.last %} UNION ALL {% endif %}
     {% endfor %}
 

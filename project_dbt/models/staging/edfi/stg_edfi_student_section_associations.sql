@@ -21,7 +21,7 @@ WITH parsed_data AS (
         CAST(JSON_VALUE(data, '$.homeroomIndicator') AS BOOL) AS homeroom_indicator,
         SPLIT(JSON_VALUE(data, "$.repeatIdentifierDescriptor"), '#')[OFFSET(1)] AS repeat_identifier_descriptor,
         CAST(JSON_VALUE(data, '$.teacherStudentDataLinkExclusion') AS BOOL) AS teacher_student_data_link_exclusion
-    FROM {{ source('raw_sources', 'edfi_student_section_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_section_associations') }}
 
 ),
 

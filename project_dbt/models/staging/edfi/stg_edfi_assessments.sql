@@ -79,7 +79,7 @@ WITH parsed_data AS (
                 JSON_VALUE(sections, '$.sectionReference.sessionName') AS session_name
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.sections")) sections 
         ) AS sections
-    FROM {{ source('raw_sources', 'edfi_assessments') }}
+    FROM {{ source('staging', 'base_edfi_assessments') }}
 
 ),
 

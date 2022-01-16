@@ -3,7 +3,7 @@ version: 2
 
 
 models:
-  - name: date_dim
+  - name: dim_date
     description: ""
     columns:
       - name: date_key
@@ -27,7 +27,7 @@ models:
         description: "Full four digit year"
 
 
-  - name: demographic_dim
+  - name: dim_demographic
     description: "Describes the student demographics available for analysis via the student_school_demographics_bridgeand student_local_education_agency_demographics_bridge tables."
     columns:
       - name: demographic_key
@@ -41,7 +41,7 @@ models:
         description: "Descriptor code value."
 
 
-  - name: grading_period_dim
+  - name: dim_grading_period
     description: ""
     columns:
       - name: grading_period_key
@@ -53,7 +53,7 @@ models:
         description: "School ID."
         tests:
           - relationships:
-              to: ref('school_dim')
+              to: ref('dim_school')
               field: school_key
       - name: grading_period_description
         description: "Grading period descriptor code value."
@@ -67,7 +67,7 @@ models:
         description: "Total days available for educational instruction during the grading period."
 
 
-  - name: local_education_agency_dim
+  - name: dim_local_education_agency
     description: ""
     columns:
       - name: local_education_agency_key
@@ -79,7 +79,7 @@ models:
         description: "The name assigned to a local education agency."
 
 
-  - name: school_dim
+  - name: dim_school
     description: ""
     columns:
       - name: school_key
@@ -97,14 +97,14 @@ models:
         description: "The name assigned to a local education agency."
 
 
-  - name: stg_student_dim
+  - name: dim_student
     description: >
       Ed-Fi's Analytics Middle Tier provides two student dims related to the student's LEA association and the student's
-      school association. This stg_student_dim combines those two dims to provide one student dim that can be used downstream.
+      school association. This dim combines those two dims to provide one student dim that can be used downstream.
       If a student has multiple school enrollments, only their most recent will show in this dim.
 
 
-  - name: student_local_education_agency_dim
+  - name: dim_student_local_education_agency
     description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."
     columns:
       - name: student_local_education_agency_key
@@ -146,10 +146,10 @@ models:
 
 
   - name: student_local_education_agency_demographics_bridge
-    description: "This view provides student demographic information by linking the student_local_education_agency_dim to the demographic_dim."
+    description: "This view provides student demographic information by linking the dim_student_local_education_agency to the dim_demographic."
     columns:
       - name: student_school_demographic_bridge_key
-        description: "Concatenation of the demographic_key found in the demographic_dim with the student_local_education_agency_key found in the student_local_education_agency_dim."
+        description: "Concatenation of the demographic_key found in the dim_demographic with the student_local_education_agency_key found in the dim_student_local_education_agency."
         tests:
           - unique
           - not_null
@@ -158,10 +158,10 @@ models:
       - name: demographic_key
         description: "Concatenation of parent key and label columns to allow for easier joins."
 
-  - name: student_program_dim
+  - name: dim_student_program
     description: ""
 
-  - name: student_school_dim
+  - name: dim_student_school
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
     columns:
       - name: "(student_school_key || '-' || enrollment_date_key)"

@@ -18,7 +18,7 @@ WITH parsed_data AS (
         CAST(JSON_VALUE(data, '$.livesWith') AS BOOL) AS lives_with,
         CAST(JSON_VALUE(data, '$.primaryContactStatus') AS BOOL) AS primary_contact_status,
         SPLIT(JSON_VALUE(data, '$.relationDescriptor'), '#')[OFFSET(1)] AS relation_descriptor
-    FROM {{ source('raw_sources', 'edfi_student_parent_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_parent_associations') }}
 
 ),
 

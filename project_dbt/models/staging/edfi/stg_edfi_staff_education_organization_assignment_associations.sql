@@ -14,7 +14,7 @@ WITH parsed_data AS (
         ) AS education_organization_reference,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, '$.beginDate')) AS begin_date,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, '$.endDate')) AS end_date
-    FROM {{ source('raw_sources', 'edfi_staff_education_organization_assignment_associations') }}
+    FROM {{ source('staging', 'base_edfi_staff_education_organization_assignment_associations') }}
 
 ),
 

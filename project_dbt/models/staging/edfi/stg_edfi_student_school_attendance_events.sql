@@ -24,7 +24,7 @@ WITH parsed_data AS (
         CAST(JSON_VALUE(data, '$.schoolAttendanceDuration') AS float64) AS school_attendance_duration,
         SPLIT(JSON_VALUE(data, '$.attendanceEventCategoryDescriptor'), '#')[OFFSET(1)] AS attendance_event_category_descriptor,
         SPLIT(JSON_VALUE(data, '$.educationalEnvironmentDescriptor'), '#')[OFFSET(1)] AS educational_environment_descriptor,
-    FROM {{ source('raw_sources', 'edfi_student_school_attendance_events') }}
+    FROM {{ source('staging', 'base_edfi_student_school_attendance_events') }}
 
 ),
 

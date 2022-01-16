@@ -79,7 +79,7 @@ WITH parsed_data AS (
                     ) AS score_results
                 FROM UNNEST(JSON_QUERY_ARRAY(data, "$.studentObjectiveAssessments")) assessments
         ) AS student_objective_assessments,
-    FROM {{ source('raw_sources', 'edfi_student_assessments') }}
+    FROM {{ source('staging', 'base_edfi_student_assessments') }}
 
 ),
 

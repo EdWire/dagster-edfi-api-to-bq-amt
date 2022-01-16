@@ -18,7 +18,7 @@ WITH parsed_data AS (
                 SPLIT(JSON_VALUE(grade_levels, "$.gradeLevelDescriptor"), '#')[OFFSET(1)] AS grade_level_descriptor
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.gradeLevels")) grade_levels 
         ) AS grade_levels
-    FROM {{ source('raw_sources', 'edfi_calendars') }}
+    FROM {{ source('staging', 'base_edfi_calendars') }}
 
 ),
 

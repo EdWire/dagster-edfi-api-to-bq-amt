@@ -36,6 +36,6 @@ models:
     staging:
       edfi:
         +materialized: table
-        +schema: raw_sources
+        +schema: staging
         +labels:
             edfi_version: "5_3"

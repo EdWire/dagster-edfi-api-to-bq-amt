@@ -23,7 +23,7 @@ WITH parsed_data AS (
         STRUCT(
             JSON_VALUE(data, '$.locationSchoolReference.schoolId') AS school_id
         ) AS location_school_reference,
-    FROM {{ source('raw_sources', 'edfi_sections') }}
+    FROM {{ source('staging', 'base_edfi_sections') }}
 
 ),
 

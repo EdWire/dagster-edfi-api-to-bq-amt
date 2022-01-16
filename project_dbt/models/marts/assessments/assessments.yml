@@ -3,7 +3,7 @@ version: 2
 
 
 models:
-  - name: assessment_fact
+  - name: fct_assessment
     description: ""
     columns:
       - name: assessment_fact_key
@@ -45,7 +45,7 @@ models:
         description: "This is the maximum score that can be achieved for this assessment or objective assessment."
 
 
-  - name: student_assessment_fact
+  - name: fct_student_assessment
     description: ""
     columns:
       - name: student_assessment_fact_key

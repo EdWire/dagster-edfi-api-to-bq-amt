@@ -16,7 +16,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.calendarReference.schoolId') AS school_id,
             JSON_VALUE(data, '$.calendarReference.schoolYear') AS school_year
         ) AS calendar_reference
-    FROM {{ source('raw_sources', 'edfi_calendar_dates') }}
+    FROM {{ source('staging', 'base_edfi_calendar_dates') }}
 
 ),
 

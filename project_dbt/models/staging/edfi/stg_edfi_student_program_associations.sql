@@ -43,7 +43,7 @@ WITH parsed_data AS (
                 PARSE_DATE('%Y-%m-%d', JSON_VALUE(services, "$.statusEndDate")) AS status_end_date
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.services")) services 
         ) AS services
-    FROM {{ source('raw_sources', 'edfi_student_program_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_program_associations') }}
 
 ),
 

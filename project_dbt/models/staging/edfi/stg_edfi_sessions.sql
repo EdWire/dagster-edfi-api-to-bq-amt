@@ -24,7 +24,7 @@ WITH parsed_data AS (
                 JSON_VALUE(grading_periods, "$.gradingPeriodReference.schoolYear") AS school_year
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.gradingPeriods")) grading_periods 
         ) AS grading_periods
-    FROM {{ source('raw_sources', 'edfi_sessions') }}
+    FROM {{ source('staging', 'base_edfi_sessions') }}
 
 ),
 

@@ -25,7 +25,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.studentSectionAssociationReference.sessionName') AS session_name,
             JSON_VALUE(data, '$.studentSectionAssociationReference.studentUniqueId') AS student_unique_id
         ) AS student_section_association_reference
-    FROM {{ source('raw_sources', 'edfi_grades') }}
+    FROM {{ source('staging', 'base_edfi_grades') }}
 
 ),
 

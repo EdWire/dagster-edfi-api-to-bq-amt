@@ -19,7 +19,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.sessionReference.schoolYear') AS school_year,
             JSON_VALUE(data, '$.sessionReference.sessionName') AS session_name
         ) AS session_reference,
-    FROM {{ source('raw_sources', 'edfi_course_offerings') }}
+    FROM {{ source('staging', 'base_edfi_course_offerings') }}
 
 ),
 

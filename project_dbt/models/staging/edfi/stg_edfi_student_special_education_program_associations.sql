@@ -54,7 +54,7 @@ WITH parsed_data AS (
                 PARSE_DATE('%Y-%m-%d', JSON_VALUE(statuses, "$.statusEndDate")) AS status_end_date
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.programParticipationStatuses")) statuses 
         ) AS program_participation_statuses,
-    FROM {{ source('raw_sources', 'edfi_student_special_education_program_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_special_education_program_associations') }}
 
 ),
 

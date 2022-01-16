@@ -24,7 +24,7 @@ WITH parsed_data AS (
         CAST(JSON_VALUE(data, '$.repeatGradeIndicator') AS BOOL) AS repeat_grade_indicator,
         CAST(JSON_VALUE(data, '$.schoolChoiceTransfer') AS BOOL) AS school_choice_transfer,
         CAST(JSON_VALUE(data, '$.termCompletionIndicator') AS BOOL) AS term_completion_indicator
-    FROM {{ source('raw_sources', 'edfi_student_school_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_school_associations') }}
 
 ),
 

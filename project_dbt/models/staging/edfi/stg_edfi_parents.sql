@@ -48,7 +48,7 @@ WITH parsed_data AS (
                 CAST(JSON_VALUE(telephones, "$.textMessageCapabilityIndicator") AS BOOL) AS text_message_capability_indicator
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.telephones")) telephones 
         ) AS telephones,
-    FROM {{ source('raw_sources', 'edfi_parents') }}
+    FROM {{ source('staging', 'base_edfi_parents') }}
 
 ),
 

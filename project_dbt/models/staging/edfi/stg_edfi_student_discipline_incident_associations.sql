@@ -19,7 +19,7 @@ WITH parsed_data AS (
                 JSON_VALUE(behaviors, "$.behaviorDetailedDescription") AS behavior_detailed_description
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.behaviors")) behaviors 
         ) AS behaviors
-    FROM {{ source('raw_sources', 'edfi_student_discipline_incident_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_discipline_incident_associations') }}
 
 ),
 

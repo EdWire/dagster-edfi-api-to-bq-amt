@@ -57,7 +57,7 @@ WITH parsed_data AS (
                 SPLIT(JSON_VALUE(races, "$.raceDescriptor"), '#')[OFFSET(1)] AS race_descriptor
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.races")) races 
         ) AS races,
-    FROM {{ source('raw_sources', 'edfi_student_education_organization_associations') }}
+    FROM {{ source('staging', 'base_edfi_student_education_organization_associations') }}
 
 ),
 

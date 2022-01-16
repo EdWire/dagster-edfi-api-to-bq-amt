@@ -20,7 +20,7 @@ WITH parsed_data AS (
         SPLIT(JSON_VALUE(data, "$.classroomPositionDescriptor"), '#')[OFFSET(1)] AS classroom_position_descriptor,
         CAST(JSON_VALUE(data, '$.highlyQualifiedTeacher') AS BOOL) AS highly_qualified_teacher,
         JSON_VALUE(data, '$.percentageContribution') AS percentage_contribution
-    FROM {{ source('raw_sources', 'edfi_staff_section_associations') }}
+    FROM {{ source('staging', 'base_edfi_staff_section_associations') }}
 
 ),
 

@@ -36,7 +36,7 @@ WITH parsed_data AS (
                 JSON_VALUE(codes, "$.identificationCodes.identificationCode") AS identification_code
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.identificationCodes")) codes 
         ) AS identification_codes
-    FROM {{ source('raw_sources', 'edfi_courses') }}
+    FROM {{ source('staging', 'base_edfi_courses') }}
 
 ),
 
