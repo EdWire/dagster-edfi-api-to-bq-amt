@@ -1,6 +1,15 @@
 # Changelog
 
-# 0.4.0
+# v0.4.1
+
+### New
+
+### Breaking Changes
+
+- [dbt] Fixes bug that flagged all students as early warning for attendance
+
+
+# v0.4.0
 
 ### New
 
@@ -15,7 +24,7 @@
 - [dbt] Renames `attendance_fact` table to `student_attendance_fact`
 
 
-# 0.3.2
+# v0.3.2
 
 ### New
 
@@ -25,7 +34,7 @@
 - [dagster] Updates Dagster to v0.13.14
 
 
-# 0.3.1
+# v0.3.1
 
 ### New
 
@@ -40,7 +49,7 @@
 - [dbt] Creates `stg_student_assessment_fact` that joins `assessment_fact` and `student_dim` to provide an easy to use staging fact table
 
 
-# 0.3.0
+# v0.3.0
 
 ### New
 

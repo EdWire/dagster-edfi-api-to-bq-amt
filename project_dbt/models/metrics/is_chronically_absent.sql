@@ -18,7 +18,7 @@ SELECT
     student_attendance.student_school_key                                              AS student_school_key,
     student_attendance.student_key                                                     AS student_key,
     IF(student_attendance.sum_of_absences >= 15, 1, 0)                                 AS is_chronically_absent,
-    IF(student_attendance.average_daily_attendance < 0.92, 1, 1)                       AS early_warning,
+    IF(student_attendance.average_daily_attendance < 0.92, 1, 0)                       AS early_warning,
     dim_student.local_education_agency_name                     AS local_education_agency_name,
     dim_student.school_name                                     AS school_name,
     dim_student.student_last_surname                            AS student_last_surname,
