@@ -4,6 +4,8 @@
 
 ### New
 
+- [dbt] Adds `month_sort_order` column to date dim
+
 ### Breaking Changes
 
 - [dbt] Fixes bug that flagged all students as early warning for attendance
