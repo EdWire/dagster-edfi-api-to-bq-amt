@@ -7,35 +7,35 @@
 
 SELECT
     CONCAT(ssa.student_reference.student_unique_id, '-',
-        ssa.school_reference.school_id) AS student_school_key,
-    ssa.student_reference.student_unique_id AS student_key,
-    ssa.school_reference.school_id AS school_key,
-    FORMAT_DATE('%Y%m%d', calendar_dates.date) AS date_key,
-    MIN(school_attendance.attendance_event_category_descriptor) AS school_attendance_event_category_descriptor, --not in core amt
-    school_attendance.event_duration, --not in core amt
-    MAX(IF(school_attendance.attendance_event_category_descriptor = 'In Attendance', 1, 0)) AS reported_as_present_at_school,
+        ssa.school_reference.school_id)                                                                 AS student_school_key,
+    ssa.student_reference.student_unique_id                                                             AS student_key,
+    ssa.school_reference.school_id                                                                      AS school_key,
+    FORMAT_DATE('%Y%m%d', calendar_dates.date)                                                          AS date_key,
+    IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor, --not in core amt
+    IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration, --not in core amt
+    MAX(IF(school_attendance.attendance_event_category_descriptor = 'In Attendance', 1, 0))             AS reported_as_present_at_school,
     MAX(IF(
         school_attendance.attendance_event_category_descriptor IN ('Excused Absence', 'Unexcused Absence'), 1, 0
-    )) AS reported_as_absent_from_school,
+    ))                                                                                                  AS reported_as_absent_from_school,
     MAX(IF(
         school_attendance.attendance_event_category_descriptor = 'In Attendance' 
             AND student_section_associations.homeroom_indicator IS TRUE,
         1, 0
-    )) AS reported_as_present_at_home_room,
+    ))                                                                                                  AS reported_as_present_at_home_room,
     MAX(IF(
         school_attendance.attendance_event_category_descriptor IN ('Excused Absence', 'Unexcused Absence') 
             AND student_section_associations.homeroom_indicator IS TRUE,
         1, 0
-    )) AS reported_as_absent_from_home_room,
-    NULL AS reported_as_is_present_in_all_sections,
-    NULL AS reported_as_absent_from_any_section
+    ))                                                                                                  AS reported_as_absent_from_home_room,
+    NULL                                                                                                AS reported_as_is_present_in_all_sections,
+    NULL                                                                                                AS reported_as_absent_from_any_section
 FROM {{ ref('stg_edfi_student_school_associations') }} ssa
 LEFT JOIN {{ ref('stg_edfi_students') }} students 
     ON ssa.school_year = students.school_year
-    AND students.student_unique_id = ssa.student_reference.student_unique_id
+    AND ssa.student_reference.student_unique_id = students.student_unique_id
 LEFT JOIN {{ ref('stg_edfi_calendar_dates') }} calendar_dates
     ON ssa.school_year = calendar_dates.school_year
-    AND calendar_dates.calendar_reference.school_id = ssa.school_reference.school_id
+    AND ssa.school_reference.school_id = calendar_dates.calendar_reference.school_id
     AND ssa.entry_date <= calendar_dates.date
     AND (
         ssa.exit_withdraw_date IS NULL
