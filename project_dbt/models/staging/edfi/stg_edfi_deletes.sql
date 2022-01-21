@@ -24,6 +24,7 @@
         "base_edfi_sections_deletes",
         "base_edfi_staffs_deletes",
         "base_edfi_staff_education_organization_assignment_associations_deletes",
+        "base_edfi_staff_school_associations_deletes",
         "base_edfi_staff_section_associations_deletes",
         "base_edfi_student_assessments_deletes",
         "base_edfi_student_parent_associations_deletes",

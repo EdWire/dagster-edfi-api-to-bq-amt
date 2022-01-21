@@ -47,6 +47,8 @@ sources:
         - name: base_edfi_staff_discipline_incident_associations_deletes
         - name: base_edfi_staff_education_organization_assignment_associations
         - name: base_edfi_staff_education_organization_assignment_associations_deletes
+        - name: base_edfi_staff_school_associations
+        - name: base_edfi_staff_school_associations_deletes
         - name: base_edfi_staff_section_associations
         - name: base_edfi_staff_section_associations_deletes
         - name: base_edfi_students
