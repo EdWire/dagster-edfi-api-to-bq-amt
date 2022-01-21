@@ -16,6 +16,7 @@ WITH student_attendance AS (
 
 SELECT
     student_attendance.student_school_key                                              AS student_school_key,
+    student_attendance.school_key                                                      AS school_key,
     student_attendance.student_key                                                     AS student_key,
     IF(student_attendance.sum_of_absences >= 15, 1, 0)                                 AS is_chronically_absent,
     IF(student_attendance.average_daily_attendance < 0.92, 1, 0)                       AS early_warning,
