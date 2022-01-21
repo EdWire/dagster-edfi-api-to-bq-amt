@@ -106,6 +106,8 @@ edfi_api_endpoints = [
     {"endpoint": "/ed-fi/staffDisciplineIncidentAssociations/deletes", "table_name": "base_edfi_staff_discipline_incident_associations_deletes" },
     {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations", "table_name": "base_edfi_staff_education_organization_assignment_associations" },
     {"endpoint": "/ed-fi/staffEducationOrganizationAssignmentAssociations/deletes", "table_name": "base_edfi_staff_education_organization_assignment_associations_deletes" },
+    {"endpoint": "/ed-fi/staffSchoolAssociations", "table_name": "base_edfi_staff_school_associations" },
+    {"endpoint": "/ed-fi/staffSchoolAssociations/deletes", "table_name": "base_edfi_staff_school_associations_deletes" },
     {"endpoint": "/ed-fi/staffSectionAssociations", "table_name": "base_edfi_staff_section_associations" },
     {"endpoint": "/ed-fi/staffSectionAssociations/deletes", "table_name": "base_edfi_staff_section_associations_deletes" },
     {"endpoint": "/ed-fi/students", "table_name": "base_edfi_students" },
