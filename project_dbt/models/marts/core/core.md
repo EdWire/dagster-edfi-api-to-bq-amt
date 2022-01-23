@@ -41,12 +41,25 @@ This dimension table contains one row per school per grading period.
 
 # Section dim
 
-Grain: `dim_section` has one record per class section per school.
+Grain: `dim_section` has one record per section per school.
 
 ---------------------------
 Differences from Ed-Fi AMT
 * Removed `description`
 * Added `section_identifier` to allow for a natural key for section id
+
+
+{% enddocs %}
+
+{% docs dim_student_section %}
+
+# Student section dim
+
+Grain: `dim_student_section` has one record per student section per section enrollment. The `teacher_name` field is a concatenation of all teachers currently assigned to the class section.
+
+---------------------------
+Differences from Ed-Fi AMT
+* Renames `subject` to `academic_subject`
 
 
 {% enddocs %}

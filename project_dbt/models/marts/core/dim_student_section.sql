@@ -25,30 +25,36 @@ WITH teachers AS (
 )
 
 SELECT
-    CONCAT(student_reference.student_unique_id, '-',
-        section_reference.school_id, '-',
-        section_reference.local_course_code, '-',
-        section_reference.school_year, '-',
-        section_reference.section_identifier, '-',
-        section_reference.session_name, '-',
-        FORMAT_DATE('%Y%m%d', begin_date)
-    ) AS student_section_key,
-    student_reference.student_unique_id AS student_key,
-    CONCAT(section_reference.school_id, '-',
-        section_reference.local_course_code, '-',
-        section_reference.school_year, '-',
-        section_reference.section_identifier, '-',
-        section_reference.session_name, '-',
-        FORMAT_DATE('%Y%m%d', begin_date)
-    ) AS section_key,
-    section_reference.local_course_code,
-    courses.academic_subject_descriptor AS subject,
-    courses.course_title,
-    teachers.teachers AS teacher_name,
-    ssa.begin_date AS student_section_start_date,
-    ssa.end_date AS student_section_end_date,
-    section_reference.school_id AS school_key,
-    section_reference.school_year
+    {{ dbt_utils.surrogate_key([
+        'ssa.section_reference.school_id',
+        'ssa.section_reference.school_year',
+        'ssa.section_reference.session_name',
+        'ssa.section_reference.local_course_code',
+        'ssa.section_reference.section_identifier',
+        'ssa.student_reference.student_unique_id',
+        'ssa.begin_date'
+    ]) }}                                               AS student_section_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.section_reference.school_id'
+    ]) }}                                               AS school_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.section_reference.school_id',
+        'ssa.section_reference.local_course_code',
+        'ssa.section_reference.school_year',
+        'ssa.section_reference.section_identifier',
+        'ssa.section_reference.session_name',
+        'ssa.begin_date'
+    ]) }}                                               AS section_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id'
+     ]) }}                                              AS student_key,
+    section_reference.school_year                       AS school_year,
+    section_reference.local_course_code                 AS local_course_code,
+    courses.academic_subject_descriptor                 AS academic_subject,
+    courses.course_title                                AS course_title,
+    teachers.teachers                                   AS teacher_name,
+    ssa.begin_date                                      AS student_section_start_date,
+    ssa.end_date                                        AS student_section_end_date
 FROM {{ ref('stg_edfi_student_section_associations') }} ssa
 LEFT JOIN {{ ref('stg_edfi_course_offerings') }} course_offerings
     ON ssa.school_year = course_offerings.school_year

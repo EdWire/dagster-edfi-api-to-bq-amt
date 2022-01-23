@@ -7,18 +7,18 @@
 
 SELECT
     {{ dbt_utils.surrogate_key([
-        'stg_edfi_schools.local_education_agency_id'
-    ]) }}                                                       AS local_education_agency_key,
-    {{ dbt_utils.surrogate_key([
-        'sections.course_offering_reference.school_id'
-    ]) }}                                                       AS school_key,
-    {{ dbt_utils.surrogate_key([
         'sections.course_offering_reference.school_id',
         'sections.course_offering_reference.school_year',
         'sections.course_offering_reference.session_name',
         'sections.course_offering_reference.local_course_code',
         'sections.section_identifier'
-    ]) }}                                                      AS section_key,
+    ]) }}                                                       AS section_key,
+    {{ dbt_utils.surrogate_key([
+        'stg_edfi_schools.local_education_agency_id'
+    ]) }}                                                       AS local_education_agency_key,
+    {{ dbt_utils.surrogate_key([
+        'sections.course_offering_reference.school_id'
+    ]) }}                                                       AS school_key,
     {{ dbt_utils.surrogate_key([
         'sections.course_offering_reference.school_id',
         'sections.course_offering_reference.school_year',
