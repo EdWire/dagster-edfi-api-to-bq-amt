@@ -13,9 +13,10 @@ SELECT
         'grades.student_section_association_reference.student_unique_id'
     ]) }}                                                                   AS student_key,
     {{ dbt_utils.surrogate_key([
-        'grades.student_section_association_reference.school_id',
-        'descriptors.code_value',
-        'grades.student_section_association_reference.begin_date'
+        'grades.grading_period_reference.school_id',
+        'grades.grading_period_reference.school_year',
+        'grades.grading_period_reference.grading_period_descriptor',
+        'grades.grading_period_reference.period_sequence'
     ]) }}                                                                   AS grading_period_key,
     {{ dbt_utils.surrogate_key([
         'student_section_association_reference.school_id',

@@ -8,9 +8,9 @@
 SELECT
     {{ dbt_utils.surrogate_key([
         'school_reference.school_id',
+        'school_year',
         'grading_period_descriptor',
-        'period_sequence',
-        'begin_date'
+        'period_sequence'
     ]) }}                                      AS grading_period_key,
     {{ dbt_utils.surrogate_key([
         'school_reference.school_id'
