@@ -6,27 +6,32 @@
 
 
 SELECT
-    stg_edfi_schools.local_education_agency_id                  AS local_education_agency_key,
-    sections.course_offering_reference.school_id                AS school_key,
-    CONCAT(
-        sections.course_offering_reference.school_id, "-",
-        sections.course_offering_reference.local_course_code, "-",
-        sections.course_offering_reference.school_year, "-",
-        sections.section_identifier, "-",
-        sections.course_offering_reference.session_name
-    )                                                           AS section_key,
-    CONCAT(
-        sections.course_offering_reference.school_id, "-",
-        sections.course_offering_reference.school_year, "-",
-        sections.course_offering_reference.session_name
-    )                                                           AS session_key,
-    CONCAT(
+    {{ dbt_utils.surrogate_key([
+        'stg_edfi_schools.local_education_agency_id'
+    ]) }}                                                       AS local_education_agency_key,
+    {{ dbt_utils.surrogate_key([
+        'sections.course_offering_reference.school_id'
+    ]) }}                                                       AS school_key,
+    {{ dbt_utils.surrogate_key([
+        'sections.course_offering_reference.school_id',
+        'sections.course_offering_reference.school_year',
+        'sections.course_offering_reference.session_name',
+        'sections.course_offering_reference.local_course_code',
+        'sections.section_identifier'
+    ]) }}                                                      AS section_key,
+    {{ dbt_utils.surrogate_key([
+        'sections.course_offering_reference.school_id',
+        'sections.course_offering_reference.school_year',
+        'sections.course_offering_reference.session_name'
+    ]) }}                                                       AS session_key,
+    sections.section_identifier                                 AS section_identifier,
+    {# CONCAT(
         courses.academic_subject_descriptor, "-",
         course_offering_reference.local_course_code, "-",
         courses.course_title, "-",
         class_period.class_period_reference.class_period_name, "-",
         sessions.term_descriptor
-    )                                                           AS description,
+    )                                                           AS description, #}
     COALESCE(
         sections.section_name,
         CONCAT(

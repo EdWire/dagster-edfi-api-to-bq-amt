@@ -118,6 +118,47 @@ models:
 
   - name: dim_section
     description: ""
+    columns:
+      - name: local_education_agency_key
+        description: ""
+        tests:
+          - not_null
+
+      - name: school_key
+        description: ""
+        tests:
+          - not_null
+
+      - name: section_key
+        description: ""
+        tests:
+          - unique
+          - not_null
+
+      - name: session_key
+        description: ""
+        tests:
+          - not_null
+
+      - name: section_identifier
+        description: ""
+        tests:
+          - not_null
+
+      - name: section_name
+        description: ""
+
+      - name: session_name
+        description: ""
+
+      - name: local_course_code
+        description: ""
+
+      - name: course_title
+        description: ""
+
+      - name: school_year
+        description: ""
 
 
   - name: dim_student

@@ -35,3 +35,18 @@ This dimension table contains one row per school per grading period.
 
 
 {% enddocs %}
+
+
+{% docs dim_section %}
+
+# Section dim
+
+Grain: `dim_section` has one record per class section per school.
+
+---------------------------
+Differences from Ed-Fi AMT
+* Removed `description`
+* Added `section_identifier` to allow for a natural key for section id
+
+
+{% enddocs %}
