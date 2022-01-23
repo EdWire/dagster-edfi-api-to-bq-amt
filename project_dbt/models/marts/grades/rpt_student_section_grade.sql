@@ -1,8 +1,8 @@
 
 SELECT
-    fct_student_section_grade.school_year                       AS school_year,
     dim_student.student_unique_id                               AS student_unique_id,
     dim_student.student_display_name                            AS student_display_name,
+    fct_student_section_grade.school_year                       AS school_year,
     dim_student_section.local_course_code                       AS local_course_code,
     dim_student_section.course_title                            AS course_title,
     dim_student_section.academic_subject                        AS academic_subject,
