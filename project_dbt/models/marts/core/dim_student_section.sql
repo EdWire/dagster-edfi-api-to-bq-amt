@@ -42,8 +42,7 @@ SELECT
         'ssa.section_reference.local_course_code',
         'ssa.section_reference.school_year',
         'ssa.section_reference.section_identifier',
-        'ssa.section_reference.session_name',
-        'ssa.begin_date'
+        'ssa.section_reference.session_name'
     ]) }}                                               AS section_key,
     {{ dbt_utils.surrogate_key([
         'ssa.student_reference.student_unique_id'
