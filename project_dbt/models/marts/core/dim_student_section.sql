@@ -45,8 +45,8 @@ SELECT
     courses.academic_subject_descriptor AS subject,
     courses.course_title,
     teachers.teachers AS teacher_name,
-    FORMAT_DATE('%Y%m%d', ssa.begin_date) AS student_section_start_date_key,
-    FORMAT_DATE('%Y%m%d', ssa.end_date) AS student_section_end_date_key,
+    ssa.begin_date AS student_section_start_date,
+    ssa.end_date AS student_section_end_date,
     section_reference.school_id AS school_key,
     section_reference.school_year
 FROM {{ ref('stg_edfi_student_section_associations') }} ssa
