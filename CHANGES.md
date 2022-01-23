@@ -7,6 +7,7 @@
 - [dbt] Adds `month_sort_order` column to date dim
 - [dbt] Updates student attendance fact table to show 'In Attendance' as the attendance event descriptor when no negative attendance exists
 - [dbt] Adds user school authorization table for row level security
+- [dbt] Adds section dim to core collection
 
 ### Breaking Changes
 

@@ -116,6 +116,10 @@ models:
         description: "The name assigned to a local education agency."
 
 
+  - name: dim_section
+    description: ""
+
+
   - name: dim_student
     description: >
       Ed-Fi's Analytics Middle Tier provides two student dims related to the student's LEA association and the student's

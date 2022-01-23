@@ -18,8 +18,10 @@ WITH parsed_data AS (
         ) AS section_reference,
         ARRAY(
             SELECT AS STRUCT 
-                JSON_VALUE(class_periods, "$.classPeriodName") AS class_period_name,
-                JSON_VALUE(class_periods, '$.schoolId') AS school_id,
+                STRUCT(
+                    JSON_VALUE(class_periods, "$.classPeriodReference.classPeriodName") AS class_period_name,
+                    JSON_VALUE(class_periods, '$.classPeriodReference.schoolId') AS school_id
+                ) AS class_period_reference
             FROM UNNEST(JSON_QUERY_ARRAY(data, "$.classPeriods")) class_periods 
         ) AS class_periods,
         JSON_VALUE(data, '$.arrivalTime') AS arrival_time,

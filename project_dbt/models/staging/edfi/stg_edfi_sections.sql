@@ -16,6 +16,7 @@ WITH parsed_data AS (
         CAST(JSON_VALUE(data, '$.availableCreditConversion') AS float64) AS available_credit_conversion,
         CAST(JSON_VALUE(data, '$.availableCredits') AS float64) AS available_credits,
         SPLIT(JSON_VALUE(data, '$.availableCreditTypeDescriptor'), '#')[OFFSET(1)] AS available_credit_type_descriptor,
+        SPLIT(JSON_VALUE(data, '$.educationalEnvironmentDescriptor'), '#')[OFFSET(1)] AS educational_environment_descriptor,
         STRUCT(
             JSON_VALUE(data, '$.locationReference.classroomIdentificationCode') AS classroom_identification_code,
             JSON_VALUE(data, '$.locationReference.schoolId') AS school_id
@@ -23,6 +24,14 @@ WITH parsed_data AS (
         STRUCT(
             JSON_VALUE(data, '$.locationSchoolReference.schoolId') AS school_id
         ) AS location_school_reference,
+        ARRAY(
+            SELECT AS STRUCT 
+                STRUCT(
+                    JSON_VALUE(class_periods, "$.classPeriodReference.classPeriodName") AS class_period_name,
+                    JSON_VALUE(class_periods, '$.classPeriodReference.schoolId') AS school_id
+                ) AS class_period_reference
+            FROM UNNEST(JSON_QUERY_ARRAY(data, "$.classPeriods")) class_periods 
+        ) AS class_periods,
     FROM {{ source('staging', 'base_edfi_sections') }}
 
 ),

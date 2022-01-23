@@ -24,8 +24,7 @@ SELECT
         student_section_association_reference.local_course_code, '-',
         student_section_association_reference.school_year, '-',
         student_section_association_reference.section_identifier, '-',
-        student_section_association_reference.session_name, '-',
-        FORMAT_DATE('%Y%m%d', student_section_association_reference.begin_date)
+        student_section_association_reference.session_name
     )                                                                       AS section_key,
     numeric_grade_earned                                                    AS numeric_grade_earned,
     letter_grade_earned                                                     AS letter_grade_earned,
