@@ -33,6 +33,9 @@ Differences from Ed-Fi AMT
 
 This dimension table contains one row per school per grading period.
 
+<!-- ---------------------------
+Differences from Ed-Fi AMT
+* Renames `description` -->
 
 {% enddocs %}
 

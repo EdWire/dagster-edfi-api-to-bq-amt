@@ -8,12 +8,17 @@
 WITH ranked AS (
 
     SELECT
-        CONCAT(
-            seoa.student_reference.student_unique_id, "-",
-            seoa.education_organization_reference.education_organization_id
-        )                                                                       AS student_local_education_agency_key,
-        seoa.student_reference.student_unique_id                                AS student_key,
-        seoa.education_organization_reference.education_organization_id         AS local_education_agency_key,
+        {{ dbt_utils.surrogate_key([
+            'seoa.student_reference.student_unique_id',
+            'seoa.education_organization_reference.education_organization_id'
+        ]) }}                                                                   AS student_local_education_agency_key,
+         {{ dbt_utils.surrogate_key([
+            'seoa.education_organization_reference.education_organization_id'
+        ]) }}                                                                   AS local_education_agency_key,
+        {{ dbt_utils.surrogate_key([
+            'seoa.student_reference.student_unique_id'
+        ]) }}                                                                   AS student_key,
+        seoa.student_reference.student_unique_id                                AS student_unique_id,
         students.first_name                                                     AS student_first_name,
         students.middle_name                                                    AS student_middle_name,
         students.last_surname                                                   AS student_last_surname,

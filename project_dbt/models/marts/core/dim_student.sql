@@ -2,52 +2,50 @@
 WITH enrollments_ranked AS (
 
     SELECT
-        dim_student_school.school_year                      AS school_year,
-        dim_school.local_education_agency_name              AS local_education_agency_name,
-        dim_school.school_key                               AS school_key,
-        dim_school.school_name                              AS school_name,
-        dim_student_school.student_key                      AS student_key,
-        dim_student_school.student_school_key               AS student_school_key,
-        dim_student_school.student_last_surname             AS student_last_surname,
-        dim_student_school.student_first_name               AS student_first_name,
+        dim_student_school.student_key                                  AS student_key,
+        dim_student_local_education_agency.local_education_agency_key   AS local_education_agency_key,
+        dim_school.school_key                                           AS school_key,
+        dim_student_school.school_year                                  AS school_year,
+        dim_student_school.student_unique_id                            As student_unique_id,
+        dim_student_school.student_last_surname                         AS student_last_surname,
+        dim_student_school.student_first_name                           AS student_first_name,
         CONCAT(
             dim_student_school.student_last_surname, ", ",
             dim_student_school.student_first_name, " ",
             COALESCE(LEFT(dim_student_school.student_middle_name, 1), "")
-        )                                                   AS student_display_name,
-        enrollment_date.date                                AS enrollment_date,
-        exit_date.date                                      AS exit_date,
-        dim_student_school.is_enrolled                      AS is_enrolled,
-        {{ convert_grade_level('dim_student_school.grade_level') }} AS grade_level,
-        dim_student_school.sex                              AS gender,
-        dim_student_school.limited_english_proficiency      AS limited_english_proficiency,
+        )                                                               AS student_display_name,
+        enrollment_date.date                                            AS school_enrollment_date,
+        exit_date.date                                                  AS school_exit_date,
+        dim_student_school.is_enrolled                                  AS is_enrolled_at_school,
+        {{ convert_grade_level('dim_student_school.grade_level') }}     AS grade_level,
+        dim_student_school.sex                                          AS gender,
+        dim_student_school.limited_english_proficiency                  AS limited_english_proficiency,
         IF(
             dim_student_school.limited_english_proficiency = "Limited",
             "Yes",
             "No"
-        )                                                   AS is_english_language_learner,
+        )                                                               AS is_english_language_learner,
         IF (
             dim_student_program.program_name IS NOT NULL,
             "Yes",
             "No"
-        )                                                   AS in_special_education_program,
+        )                                                               AS in_special_education_program,
         IF(
             dim_student_school.is_hispanic IS TRUE,
             "Yes",
             "No"
-        )                                                   AS is_hispanic,
-        dim_demographic.demographic_label                   AS race,
+        )                                                               AS is_hispanic,
+        dim_demographic.demographic_label                               AS race,
         IF(
             dim_student_school.is_hispanic IS TRUE,
             "Hispanic or Latino",
             dim_demographic.demographic_label
-        )                                                   AS race_and_ethnicity_roll_up,
+        )                                                               AS race_and_ethnicity_roll_up,
         ROW_NUMBER() OVER (
             PARTITION BY
-                dim_student_school.school_year,
                 dim_school.school_key,
                 dim_student_school.student_key
-            ORDER BY dim_student_school.school_year DESC, dim_student_school.student_key DESC, enrollment_date.date DESC
+            ORDER BY dim_school.school_key DESC, dim_student_school.student_key DESC, enrollment_date.date DESC
         ) AS rank,
     FROM {{ ref('dim_student_school') }} dim_student_school
     LEFT JOIN {{ ref('dim_school') }} dim_school

@@ -6,10 +6,17 @@
 
 
 SELECT
-    CONCAT(ssa.student_reference.student_unique_id, '-',
-           ssa.school_reference.school_id)                          AS student_school_key,
-    ssa.student_reference.student_unique_id                         AS student_key,
-    ssa.school_reference.school_id                                  AS school_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id',
+        'ssa.school_reference.school_id'
+    ]) }}                                                           AS student_school_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.school_reference.school_id'
+    ]) }}                                                           AS school_key,
+    {{ dbt_utils.surrogate_key([
+            'ssa.student_reference.student_unique_id'
+    ]) }}                                                           AS student_key,
+    ssa.student_reference.student_unique_id                         AS student_unique_id,
     ssa.school_year_type_reference.school_year                      AS school_year,
     students.first_name                                             AS student_first_name,
     students.middle_name                                            AS student_middle_name,
