@@ -11,6 +11,7 @@
 ### Breaking Changes
 
 - [dbt] Fixes bug that flagged all students as early warning for attendance
+- [dbt] School year is now an int in all data models
 
 
 # v0.4.0

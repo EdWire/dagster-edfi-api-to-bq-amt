@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, '$.date')) AS date,
         ARRAY(
             SELECT AS STRUCT 
@@ -14,7 +14,7 @@ WITH parsed_data AS (
         STRUCT(
             JSON_VALUE(data, '$.calendarReference.calendarCode') AS calendar_code,
             JSON_VALUE(data, '$.calendarReference.schoolId') AS school_id,
-            JSON_VALUE(data, '$.calendarReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.calendarReference.schoolYear') AS int64) AS school_year
         ) AS calendar_reference
     FROM {{ source('staging', 'base_edfi_calendar_dates') }}
 

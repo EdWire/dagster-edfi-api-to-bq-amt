@@ -7,40 +7,40 @@
 
 SELECT
     CONCAT(ssa.student_reference.student_unique_id, '-',
-           ssa.school_reference.school_id)  AS student_school_key,
-    ssa.student_reference.student_unique_id AS student_key,
-    ssa.school_reference.school_id AS school_key,
-    IF(ssa.school_year_type_reference.school_year IS NULL, 'Unknown', ssa.school_year_type_reference.school_year) AS school_year,
-    students.first_name AS student_first_name,
-    students.middle_name AS student_middle_name,
-    students.last_surname AS student_last_surname,
-    FORMAT_DATE('%Y%m%d', ssa.entry_date) AS enrollment_date_key,
-    FORMAT_DATE('%Y%m%d', ssa.exit_withdraw_date) AS exit_date_key, --not in core amt
+           ssa.school_reference.school_id)                          AS student_school_key,
+    ssa.student_reference.student_unique_id                         AS student_key,
+    ssa.school_reference.school_id                                  AS school_key,
+    ssa.school_year_type_reference.school_year                      AS school_year,
+    students.first_name                                             AS student_first_name,
+    students.middle_name                                            AS student_middle_name,
+    students.last_surname                                           AS student_last_surname,
+    ssa.entry_date                                                  AS enrollment_date,
+    ssa.exit_withdraw_date                                          AS exit_date, --not in core amt
     IF(
         ssa.exit_withdraw_date IS NULL
         OR CURRENT_DATE BETWEEN ssa.entry_date AND ssa.exit_withdraw_date,
         1, 0) AS is_enrolled, --not in core amt
-    ssa.entry_grade_level_descriptor AS grade_level,
+    ssa.entry_grade_level_descriptor                                AS grade_level,
     COALESCE(
         school_ed_org.limited_english_proficiency_descriptor,
         district_ed_org.limited_english_proficiency_descriptor,
         'Not applicable'
-    ) AS limited_english_proficiency,
+    )                                                               AS limited_english_proficiency,
     COALESCE(
         school_ed_org.hispanic_latino_ethnicity,
         district_ed_org.hispanic_latino_ethnicity,
         FALSE
-    ) AS is_hispanic,
+    )                                                               AS is_hispanic,
     COALESCE(
         school_ed_org.sex_descriptor,
         district_ed_org.sex_descriptor
-    ) AS sex,
-    students.birth_date,
+    )                                                               AS sex,
+    students.birth_date                                             AS birth_date,
     COALESCE(
         (SELECT indicator FROM UNNEST(school_ed_org.student_indicators) WHERE name = 'Internet Access In Residence'),
         (SELECT indicator FROM UNNEST(district_ed_org.student_indicators) WHERE name = 'Internet Access In Residence'),
         'n/a'
-    ) AS internet_access_in_residence
+    )                                                               AS internet_access_in_residence
 FROM {{ ref('stg_edfi_student_school_associations') }} ssa
 LEFT JOIN {{ ref('stg_edfi_schools') }} schools
     ON ssa.school_year = schools.school_year

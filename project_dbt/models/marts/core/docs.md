@@ -25,3 +25,13 @@ Differences from Ed-Fi AMT
 * The descriptor's short description is used in place of code value for the demographic label
 
 {% enddocs %}
+
+
+{% docs dim_grading_period %}
+
+# Grading period dim
+
+This dimension table contains one row per school per grading period.
+
+
+{% enddocs %}

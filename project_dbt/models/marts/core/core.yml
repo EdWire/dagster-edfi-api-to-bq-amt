@@ -37,7 +37,7 @@ models:
     description: '{{ doc("dim_demographic") }}'
     columns:
       - name: demographic_key
-        description: Concatenation of parent key and descrptor code value
+        description: Concatenation of parent key and descriptor code value
         tests:
           - unique
           - not_null
@@ -50,29 +50,35 @@ models:
 
 
   - name: dim_grading_period
-    description: ""
+    description: '{{ doc("dim_grading_period") }}'
     columns:
       - name: grading_period_key
-        description: "Concatenation of grading period descriptor code value, school id, and grading period begin date."
+        description: Concatenation of grading period descriptor code value, school id, and grading period begin date
         tests:
           - unique
           - not_null
+
       - name: school_key
-        description: "School ID."
+        description: School id
         tests:
           - relationships:
               to: ref('dim_school')
               field: school_key
+
       - name: grading_period_description
-        description: "Grading period descriptor code value."
+        description: Grading period descriptor code value
+
       - name: period_sequence
-        description: "The sequential order of this period relative to other periods."
+        description: The sequential order of this period relative to other periods
+
       - name: grading_period_begin_date_key
-        description: "Month, day, and year of the first day of the grading period."
+        description: Month, day, and year of the first day of the grading period
+
       - name: grading_period_end_date_key
-        description: "Month, day, and year of the last day of the grading period."
+        description: Month, day, and year of the last day of the grading period
+
       - name: number_of_days
-        description: "Total days available for educational instruction during the grading period."
+        description: Total days available for educational instruction during the grading period
 
 
   - name: dim_local_education_agency
@@ -83,6 +89,7 @@ models:
         tests:
           - unique
           - not_null
+
       - name: local_education_agency_name
         description: "The name assigned to a local education agency."
 
@@ -95,12 +102,16 @@ models:
         tests:
           - unique
           - not_null
+
       - name: school_name
         description: "The name assigned to a school."
+
       - name: school_type
         description: "The type of education institution as classified by its primary focus."
+
       - name: local_education_agency_key
         description: "The identifier assigned to a local education agency."
+
       - name: local_education_agency_name
         description: "The name assigned to a local education agency."
 
@@ -120,26 +131,33 @@ models:
         tests:
           - unique
           - not_null
+
       - name: student_key
         description: "A unique alphanumeric code assigned to a student."
         tests:
           - not_null
+
       - name: local_education_agency_key
         description: "The identifier assigned to a local education agency."
         tests:
           - not_null
+
       - name: student_first_name
         description: "A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change."
         tests:
           - not_null
+
       - name: student_middle_name
         description: "A secondary name given to an individual at birth, baptism, or during another naming ceremony."
+
       - name: student_last_surname
         description: "The name borne in common by members of a family."
         tests:
           - not_null
+
       - name: limited_english_proficiency
         description: "An indication that the student has been identified as limited English proficient by the Language Proficiency Assessment Committee (LPAC), or English proficient."
+
       - name: is_hispanic
         description: "An indication that the individual traces his or her origin or descent to Mexico, Puerto Rico, Cuba, Central, and South America, and other Spanish cultures, regardless of race, as last reported to the education organization."
         tests:
@@ -147,8 +165,10 @@ models:
           - accepted_values:
               values: ['true', 'false']
               quote: false
+
       - name: sex
         description: "The student's gender as last reported to the education organization."
+
       - name: internet_access_in_residence
         description: "The primary type of internet service used in the student's primary place of residence."
 
@@ -161,8 +181,10 @@ models:
         tests:
           - unique
           - not_null
+
       - name: student_local_education_agency_key
         description: "Concatenation of the student unique id and the LEA id."
+
       - name: demographic_key
         description: "Concatenation of parent key and label columns to allow for easier joins."
 
@@ -176,42 +198,54 @@ models:
         tests:
           - unique
           - not_null
+
       - name: student_school_key
         description: Primary key
         tests:
           - not_null
+
       - name: student_key
         description: A unique alphanumeric code assigned to a student.
         tests:
           - not_null
+
       - name: school_year
         description: School year
         tests:
           - not_null
+
       - name: school_key
         description: The identifier assigned to a school.
+
       - name: student_first_name
         description: A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change.
         tests:
           - not_null
+
       - name: student_middle_name
         description: A secondary name given to an individual at birth, baptism, or during another naming ceremony.
+
       - name: student_last_surname
         description: The name borne in common by members of a family.
         tests:
           - not_null
+
       - name: enrollment_date_key
         description: The month, day, and year on which an individual enters and begins to receive instructional services in a school.
         tests:
           - not_null
+
       - name: exit_date_key
         description: "The recorded exit or withdraw date for the student."
+
       - name: grade_level
         description: The grade level or primary instructional level at which a student enters and receives services in a school or an educational institution during a given academic session.
         tests:
           - not_null
+
       - name: limited_english_proficiency
         description: An indication that the student has been identified as limited English proficient by the Language Proficiency Assessment Committee (LPAC), or English proficient.
+
       - name: is_hispanic
         description: An indication that the individual traces his or her origin or descent to Mexico, Puerto Rico, Cuba, Central, and South America, and other Spanish cultures, regardless of race, as last reported to the education organization. The term, "Spanish origin," can be used in addition to "Hispanic or Latino."
         tests:
@@ -219,9 +253,12 @@ models:
           - accepted_values:
               values: ['true', 'false']
               quote: false
+
       - name: sex
         description: The student's gender as last reported to the education organization.
+
       - name: birth_date
         description: The month, day, and year on which an individual was born.
+
       - name: internet_access_in_residence
         description: An indication of whether the student is able to access the internet in their primary place of residence.

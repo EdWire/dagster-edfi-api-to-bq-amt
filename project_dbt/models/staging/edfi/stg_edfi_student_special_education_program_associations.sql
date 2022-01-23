@@ -5,7 +5,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, "$.beginDate")) AS begin_date,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, "$.endDate")) AS end_date,
         PARSE_DATE('%Y-%m-%d', JSON_VALUE(data, "$.iepBeginDate")) AS iep_begin_date,

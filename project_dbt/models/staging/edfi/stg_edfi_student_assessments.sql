@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.studentAssessmentIdentifier') AS student_assessment_identifier,
         EXTRACT(DATE FROM PARSE_TIMESTAMP('%Y-%m-%dT%TZ', JSON_VALUE(data, '$.administrationDate'))) AS administration_date,
         -- administrationEndDate
@@ -22,7 +22,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.assessmentReference.namespace') AS namespace
         ) AS assessment_reference,
         STRUCT(
-            JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS int64) AS school_year
         ) AS school_year_type_reference,
         STRUCT(
             JSON_VALUE(data, '$.studentReference.studentUniqueId') AS student_unique_id

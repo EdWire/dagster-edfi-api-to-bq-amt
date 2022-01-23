@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         STRUCT(
             JSON_VALUE(data, '$.schoolReference.schoolId') AS school_id
         ) AS school_reference,
@@ -12,7 +12,7 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.studentReference.studentUniqueId') AS student_unique_id
         ) AS student_reference,
         STRUCT(
-            JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS int64) AS school_year
         ) AS school_year_type_reference,
         SPLIT(JSON_VALUE(data, '$.entryTypeDescriptor'), '#')[OFFSET(1)] AS entry_type_descriptor,
         SPLIT(JSON_VALUE(data, '$.entryGradeLevelDescriptor'), '#')[OFFSET(1)] AS entry_grade_level_descriptor,

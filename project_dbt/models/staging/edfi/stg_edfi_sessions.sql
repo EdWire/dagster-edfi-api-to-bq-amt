@@ -4,13 +4,13 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.sessionName') AS session_name,
         STRUCT(
             JSON_VALUE(data, '$.schoolReference.schoolId') AS school_id
         ) AS school_reference,
         STRUCT(
-            JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS int64) AS school_year
         ) AS school_year_type_reference,
         SPLIT(JSON_VALUE(data, "$.termDescriptor"), '#')[OFFSET(1)] AS term_descriptor,
         CAST(JSON_VALUE(data, "$.totalInstructionalDays") AS int64) AS total_instructional_days,

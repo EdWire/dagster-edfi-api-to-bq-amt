@@ -4,14 +4,14 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         STRUCT(
             JSON_VALUE(data, '$.staffReference.staffUniqueId') AS staff_unique_id
         ) AS staff_reference,
         STRUCT(
             JSON_VALUE(data, '$.sectionReference.localCourseCode') AS local_course_code,
             JSON_VALUE(data, '$.sectionReference.schoolId') AS school_id,
-            JSON_VALUE(data, '$.sectionReference.schoolYear') AS school_year,
+            CAST(JSON_VALUE(data, '$.sectionReference.schoolYear') AS int64) AS school_year,
             JSON_VALUE(data, '$.sectionReference.sectionIdentifier') AS section_identifier,
             JSON_VALUE(data, '$.sectionReference.sessionName') AS session_name
         ) AS section_reference,

@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.courseCode') AS course_code,
         JSON_VALUE(data, '$.courseTitle') AS course_title,
         JSON_VALUE(data, '$.courseDescription') AS course_description,

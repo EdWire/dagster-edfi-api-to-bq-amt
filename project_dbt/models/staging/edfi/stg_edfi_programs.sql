@@ -5,7 +5,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.programName') AS program_name,
         JSON_VALUE(data, '$.programId') AS program_id,
         SPLIT(JSON_VALUE(data, '$.programTypeDescriptor'), '#')[OFFSET(1)] AS program_type_descriptor,

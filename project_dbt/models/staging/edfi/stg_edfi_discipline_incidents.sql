@@ -3,7 +3,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.incidentIdentifier') AS incident_identifier,
         JSON_VALUE(data, '$.caseNumber') AS case_number,
         CAST(JSON_VALUE(data, '$.incidentCost') AS float64) AS incident_cost,

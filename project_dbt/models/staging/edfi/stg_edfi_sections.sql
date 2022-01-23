@@ -4,13 +4,13 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.sectionIdentifier') AS section_identifier,
         JSON_VALUE(data, '$.sectionName') AS section_name,
         STRUCT(
             JSON_VALUE(data, '$.courseOfferingReference.localCourseCode') AS local_course_code,
             JSON_VALUE(data, '$.courseOfferingReference.schoolId') AS school_id,
-            JSON_VALUE(data, '$.courseOfferingReference.schoolYear') AS school_year,
+            CAST(JSON_VALUE(data, '$.courseOfferingReference.schoolYear') AS int64) AS school_year,
             JSON_VALUE(data, '$.courseOfferingReference.sessionName') AS session_name
         ) AS course_offering_reference,
         CAST(JSON_VALUE(data, '$.availableCreditConversion') AS float64) AS available_credit_conversion,

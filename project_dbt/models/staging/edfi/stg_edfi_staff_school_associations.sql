@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         STRUCT(
             JSON_VALUE(data, '$.staffReference.staffUniqueId') AS staff_unique_id
         ) AS staff_reference,
@@ -12,12 +12,12 @@ WITH parsed_data AS (
             JSON_VALUE(data, '$.schoolReference.schoolId') AS school_id
         ) AS school_reference,
         STRUCT(
-            JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.schoolYearTypeReference.schoolYear') AS int64) AS school_year
         ) AS school_year_type_reference,
         STRUCT(
             JSON_VALUE(data, '$.calendarReference.calendarCode') AS calendar_code,
             JSON_VALUE(data, '$.calendarReference.schoolId') AS school_id,
-            JSON_VALUE(data, '$.calendarReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.calendarReference.schoolYear') AS int64) AS school_year
         ) AS calendar_reference,
         SPLIT(JSON_VALUE(data, "$.programAssignmentDescriptor"), '#')[OFFSET(1)] AS program_assignment_descriptor,
         ARRAY(

@@ -4,7 +4,7 @@ WITH parsed_data AS (
     SELECT
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
         JSON_VALUE(data, '$.id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         CAST(JSON_VALUE(data, '$.numericGradeEarned') AS float64) AS numeric_grade_earned,
         JSON_VALUE(data, '$.letterGradeEarned') AS letter_grade_earned,
         SPLIT(JSON_VALUE(data, '$.performanceBaseConversionDescriptor'), '#')[OFFSET(1)] AS performance_base_conversion_descriptor, 
@@ -14,7 +14,7 @@ WITH parsed_data AS (
             SPLIT(JSON_VALUE(data, '$.gradingPeriodReference.gradingPeriodDescriptor'), '#')[OFFSET(1)] AS grading_period_descriptor,
             CAST(JSON_VALUE(data, '$.gradingPeriodReference.periodSequence') AS int64) AS period_sequence,
             JSON_VALUE(data, '$.gradingPeriodReference.schoolId') AS school_id,
-            JSON_VALUE(data, '$.gradingPeriodReference.schoolYear') AS school_year
+            CAST(JSON_VALUE(data, '$.gradingPeriodReference.schoolYear') AS int64) AS school_year
         ) AS grading_period_reference,
         STRUCT(
             EXTRACT(DATE FROM PARSE_TIMESTAMP('%Y-%m-%dT%TZ', JSON_VALUE(data, '$.studentSectionAssociationReference.beginDate'))) AS begin_date,

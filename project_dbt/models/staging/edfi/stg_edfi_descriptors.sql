@@ -15,7 +15,7 @@ WITH parsed_data AS (
         SELECT
             JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
             JSON_VALUE(data, '$.id') AS id,
-            JSON_VALUE(data, '$.schoolYear') AS school_year,
+            CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
             JSON_VALUE(data, '$.codeValue') AS code_value,
             JSON_VALUE(data, '{{ "$." ~ table["descriptorId"] }}') AS descriptor_id,
             JSON_VALUE(data, '$.description') AS description,

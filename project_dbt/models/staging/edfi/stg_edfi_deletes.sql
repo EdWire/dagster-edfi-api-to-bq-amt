@@ -47,7 +47,7 @@
 
     SELECT
         JSON_VALUE(data, '$.Id') AS id,
-        JSON_VALUE(data, '$.schoolYear') AS school_year,
+        CAST(JSON_VALUE(data, '$.schoolYear') AS int64) school_year,
         JSON_VALUE(data, '$.ChangeVersion') AS change_version,
         JSON_VALUE(data, '$.extractedTimestamp') AS extracted_timestamp,
     FROM {{ source('staging', table) }}
