@@ -194,7 +194,7 @@ models:
   - name: dim_student_school
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
     columns:
-      - name: "(student_school_key || '-' || enrollment_date_key)"
+      - name: "(student_school_key || '-' || enrollment_date)"
         tests:
           - unique
           - not_null
@@ -230,12 +230,12 @@ models:
         tests:
           - not_null
 
-      - name: enrollment_date_key
+      - name: enrollment_date
         description: The month, day, and year on which an individual enters and begins to receive instructional services in a school.
         tests:
           - not_null
 
-      - name: exit_date_key
+      - name: exit_date
         description: "The recorded exit or withdraw date for the student."
 
       - name: grade_level

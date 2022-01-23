@@ -10,7 +10,7 @@ SELECT
         ssa.school_reference.school_id)                                                                 AS student_school_key,
     ssa.student_reference.student_unique_id                                                             AS student_key,
     ssa.school_reference.school_id                                                                      AS school_key,
-    FORMAT_DATE('%Y%m%d', calendar_dates.date)                                                          AS date_key,
+    calendar_dates.date                                                                                 AS date,
     IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor, --not in core amt
     IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration, --not in core amt
     MAX(IF(school_attendance.attendance_event_category_descriptor = 'In Attendance', 1, 0))             AS reported_as_present_at_school,

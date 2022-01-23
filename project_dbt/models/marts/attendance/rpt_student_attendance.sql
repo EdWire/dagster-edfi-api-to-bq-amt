@@ -34,4 +34,4 @@ FROM {{ ref('fct_student_attendance') }} fct_student_attendance
 LEFT JOIN {{ ref('dim_student') }} dim_student
     ON fct_student_attendance.student_school_key = dim_student.student_school_key
 LEFT JOIN {{ ref('dim_date') }} dim_date
-    ON fct_student_attendance.date_key = dim_date.date_key
+    ON fct_student_attendance.date = dim_date.date

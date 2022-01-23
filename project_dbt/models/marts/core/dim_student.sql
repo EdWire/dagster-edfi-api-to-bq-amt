@@ -53,9 +53,9 @@ WITH enrollments_ranked AS (
     LEFT JOIN {{ ref('dim_school') }} dim_school
         ON dim_student_school.school_key = dim_school.school_key
     LEFT JOIN {{ ref('dim_date') }} enrollment_date
-        ON dim_student_school.enrollment_date_key = enrollment_date.date_key
+        ON dim_student_school.enrollment_date = enrollment_date.date
     LEFT JOIN {{ ref('dim_date') }} exit_date
-        ON dim_student_school.exit_date_key = exit_date.date_key
+        ON dim_student_school.exit_date = exit_date.date
     LEFT JOIN {{ ref('dim_student_local_education_agency') }} dim_student_local_education_agency
         ON dim_student_school.student_key = dim_student_local_education_agency.student_key
         AND dim_school.local_education_agency_key = dim_student_local_education_agency.local_education_agency_key

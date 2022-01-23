@@ -244,6 +244,7 @@ def run_edfi_models(context, retrieved_data, raw_tables_result) -> DbtCliOutput:
     Run all dbt models tagged with edfi
     and amt. Yield asset materializations
     """
+    context.resources.dbt.cli(command='deps')
     dbt_cli_edfi_output = context.resources.dbt.run(models=["tag:edfi"])
     for materialization in generate_materializations(
         dbt_cli_edfi_output, asset_key_prefix=["edfi"]):
