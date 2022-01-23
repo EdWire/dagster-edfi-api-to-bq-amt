@@ -44,23 +44,21 @@ objective_assessments AS (
 )
 
 SELECT
-    fct_student_assessment.school_year                         AS school_year,
-    fct_assessment.title                                       AS title,
-    fct_assessment.namespace                                   AS namespace,
-    fct_assessment.academic_subject                            AS academic_subject,
-    fct_student_assessment.student_key                         AS student_key,
-    fct_student_assessment.student_school_key                  AS student_school_key,
-    fct_student_assessment.student_assessment_identifier       AS student_assessment_identifier,
+    fct_student_assessment.school_year                          AS school_year,
+    fct_assessment.title                                        AS title,
+    fct_assessment.namespace                                    AS namespace,
+    fct_assessment.academic_subject                             AS academic_subject,
+    dim_student.student_unique_id                               AS student_unique_id,
+    fct_student_assessment.student_assessment_identifier        AS student_assessment_identifier,
     objective_assessments.objective_assessment_student_score    AS objective_assessment_student_score,
     assessments.assessment_student_score                        AS assessment_student_score,
-    dim_student.local_education_agency_name                     AS local_education_agency_name,
-    dim_student.school_name                                     AS school_name,
+    dim_school.school_name                                     AS school_name,
     dim_student.student_last_surname                            AS student_last_surname,
     dim_student.student_first_name                              AS student_first_name,
     dim_student.student_display_name                            AS student_display_name,
-    dim_student.enrollment_date                                 AS enrollment_date,
-    dim_student.exit_date                                       AS exit_date,
-    dim_student.is_enrolled                                     AS is_enrolled,
+    dim_student.school_enrollment_date                          AS school_enrollment_date,
+    dim_student.school_exit_date                                AS school_exit_date,
+    dim_student.is_enrolled_at_school                           AS is_enrolled_at_school,
     dim_student.grade_level                                     AS grade_level,
     dim_student.gender                                          AS gender,
     dim_student.limited_english_proficiency                     AS limited_english_proficiency,
@@ -80,6 +78,8 @@ LEFT JOIN assessments
 LEFT JOIN objective_assessments
     ON fct_student_assessment.student_assessment_identifier = objective_assessments.student_assessment_identifier
 LEFT JOIN {{ ref('dim_student') }} dim_student
-    ON fct_student_assessment.school_year = dim_student.school_year
-    AND fct_student_assessment.student_school_key = dim_student.student_school_key
+    ON fct_student_assessment.school_key = dim_student.school_key
+    AND fct_student_assessment.student_key = dim_student.student_key
+LEFT JOIN {{ ref('dim_school') }} dim_school
+    ON dim_student.school_key = dim_school.school_key
 WHERE fct_student_assessment.objective_assessment_key = ""
