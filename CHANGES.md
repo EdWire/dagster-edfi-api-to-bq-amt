@@ -9,6 +9,7 @@
 - [dbt] Adds user school authorization table for row level security
 - [dbt] Adds section dim to core collection
 - [dbt] Adds `rpt_student_section_grade` data model
+- [dbt] Adds `dim_session`
 
 ### Breaking Changes
 
