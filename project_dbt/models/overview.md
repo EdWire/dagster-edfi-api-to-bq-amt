@@ -1,0 +1,5 @@
+{% docs __overview__ %}
+
+The [Ed-Fi API ➡ Analytics Middle Tier repo](https://github.com/K12-Analytics-Engineering/dagster-edfi-api-to-bq-amt) pulls data from the Ed-Fi API to create data marts in BigQuery for use in analytics. It also sets the analytics engineer up to continue to build additional data models and metrics on top of that through the use of [dbt](https://www.getdbt.com). The dbt models that are included with the repo already do this a little bit to create things like a student dim that is not in Ed-Fi's Analytics Middle Tier. This documentation should serve as a companion guide to Ed-Fi's [official documentation](https://techdocs.ed-fi.org/display/EDFITOOLS/AMT+User+Guide) as well as go into depth with respect to the additions that we made with this implementation of the Ed-Fi spec.
+
+{% enddocs %}

@@ -11,21 +11,21 @@ models:
       materialization: view
       schema: attendance
 
-metrics:
-  - name: is_chronically_absent
-    label: Is chronically absent
-    model: ref('rpt_student_attendance')
-    description: >
-      Flags a student as chronically absent if they have 15
-      or more absensces.
+# metrics:
+#   - name: is_chronically_absent
+#     label: Is chronically absent
+#     model: ref('rpt_student_attendance')
+#     description: >
+#       Flags a student as chronically absent if they have 15
+#       or more absensces.
 
-    type: count
-    sql: SUM(event_duration) >= 15
+#     type: count
+#     sql: SUM(event_duration) >= 15
 
-    timestamp: date
-    time_grains: [year]
+#     timestamp: date
+#     time_grains: [year]
 
-    dimensions:
-      - student_school_key
-      - student_key
-      - school_key
+#     dimensions:
+#       - student_school_key
+#       - student_key
+#       - school_key
