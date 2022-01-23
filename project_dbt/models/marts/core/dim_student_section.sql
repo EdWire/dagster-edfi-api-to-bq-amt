@@ -38,6 +38,11 @@ SELECT
         'ssa.section_reference.school_id'
     ]) }}                                               AS school_key,
     {{ dbt_utils.surrogate_key([
+        'course_offerings.session_reference.school_id',
+        'course_offerings.session_reference.school_year',
+        'course_offerings.session_reference.session_name'
+    ]) }}                                               AS session_key,
+    {{ dbt_utils.surrogate_key([
         'ssa.section_reference.school_id',
         'ssa.section_reference.local_course_code',
         'ssa.section_reference.school_year',

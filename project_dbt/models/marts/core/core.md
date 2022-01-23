@@ -63,6 +63,7 @@ Grain: `dim_student_section` has one record per student section per section enro
 ---------------------------
 Differences from Ed-Fi AMT
 * Renames `subject` to `academic_subject`
+* Adds `session_key` to enable join between student section dim and session dim
 
 
 {% enddocs %}

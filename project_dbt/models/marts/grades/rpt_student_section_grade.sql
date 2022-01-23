@@ -1,11 +1,13 @@
 
-SELECT
+SELECT DISTINCT
     dim_student.student_unique_id                               AS student_unique_id,
     dim_student.student_display_name                            AS student_display_name,
     fct_student_section_grade.school_year                       AS school_year,
     dim_student_section.local_course_code                       AS local_course_code,
     dim_student_section.course_title                            AS course_title,
     dim_student_section.academic_subject                        AS academic_subject,
+    dim_session.session_name                                    AS session_name,
+    dim_session.term                                            AS term,
     dim_grading_period.grading_period_description               AS grading_period_description,
     fct_student_section_grade.grade_type                        AS grade_type,
     fct_student_section_grade.numeric_grade_earned              AS numeric_grade_earned,
@@ -33,6 +35,8 @@ SELECT
 FROM {{ ref('fct_student_section_grade') }} fct_student_section_grade
 LEFT JOIN {{ ref('dim_student_section') }} dim_student_section
     ON fct_student_section_grade.student_section_key = dim_student_section.student_section_key
+LEFT JOIN {{ ref('dim_session') }} dim_session
+    ON dim_student_section.session_key = dim_session.session_key
 LEFT JOIN {{ ref('dim_grading_period') }} dim_grading_period
     ON fct_student_section_grade.grading_period_key = dim_grading_period.grading_period_key
 LEFT JOIN {{ ref('dim_student') }} dim_student
