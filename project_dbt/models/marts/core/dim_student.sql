@@ -62,7 +62,7 @@ WITH enrollments_ranked AS (
         AND dim_student_local_education_agency.student_local_education_agency_key = student_local_education_agency_demographics_bridge.student_local_education_agency_key
     LEFT JOIN {{ ref('dim_demographic') }} dim_demographic
         ON student_local_education_agency_demographics_bridge.demographic_key = dim_demographic.demographic_key
-        AND dim_demographic.demographic_parent_key = "Race"
+        AND dim_demographic.demographic_parent = "Race"
     LEFT JOIN {{ ref('dim_student_program') }} dim_student_program
         ON dim_student_school.student_school_key = dim_student_program.student_school_key
         AND dim_student_program.program_name = "Special Education"

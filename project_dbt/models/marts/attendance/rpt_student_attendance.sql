@@ -2,7 +2,7 @@
 SELECT
     dim_student.student_unique_id                                          AS student_unique_id,
     dim_student.student_display_name                                       AS student_display_name,
-    fct_student_attendance.school_key                                      AS school_key,
+    dim_school.school_id                                                   AS school_id,
     dim_date.date                                                          AS date,
     dim_date.month                                                         AS month,
     dim_date.month_sort_order                                              AS month_sort_order,
