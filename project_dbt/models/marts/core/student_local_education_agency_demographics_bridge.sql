@@ -43,7 +43,7 @@ WITH demographics AS (
             'seoa.education_organization_reference.education_organization_id'
         ]) }}                                                                       AS student_school_demographic_bridge_key,
         {{ dbt_utils.surrogate_key([
-            'seoa.student_reference.student_unique_id'
+            'seoa.student_reference.student_unique_id',
             'seoa.education_organization_reference.education_organization_id'
         ]) }}                                                                       AS student_local_education_agency_key,
         {{ dbt_utils.surrogate_key([

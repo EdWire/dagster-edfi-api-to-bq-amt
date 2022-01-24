@@ -23,6 +23,7 @@ This dimension table contains a row per descriptor parent key and descriptor. Th
 ---------------------------
 Differences from Ed-Fi AMT
 * The descriptor's short description is used in place of code value for the demographic label
+* Renames `demographic_parent_key` to `demographic_parent`
 
 {% enddocs %}
 

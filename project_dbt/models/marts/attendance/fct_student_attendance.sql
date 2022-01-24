@@ -6,10 +6,16 @@
 
 
 SELECT
-    CONCAT(ssa.student_reference.student_unique_id, '-',
-        ssa.school_reference.school_id)                                                                 AS student_school_key,
-    ssa.student_reference.student_unique_id                                                             AS student_key,
-    ssa.school_reference.school_id                                                                      AS school_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id',
+        'ssa.school_reference.school_id'
+    ]) }}                                                                                               AS student_school_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id'
+    ]) }}                                                                                               AS student_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.school_reference.school_id'
+    ]) }}                                                                                               AS school_key,
     calendar_dates.date                                                                                 AS date,
     IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor, --not in core amt
     IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration, --not in core amt
