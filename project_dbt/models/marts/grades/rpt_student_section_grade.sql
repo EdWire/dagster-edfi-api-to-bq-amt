@@ -25,6 +25,7 @@ SELECT DISTINCT
     dim_student.school_exit_date                                AS school_exit_date,
     dim_student.is_enrolled_at_school                           AS is_enrolled_at_school,
     dim_student.grade_level                                     AS grade_level,
+    dim_student.grade_level_id                                  AS grade_level_id,
     dim_student.gender                                          AS gender,
     dim_student.limited_english_proficiency                     AS limited_english_proficiency,
     dim_student.is_english_language_learner                     AS is_english_language_learner,

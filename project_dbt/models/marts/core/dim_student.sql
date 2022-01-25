@@ -18,7 +18,8 @@ WITH enrollments_ranked AS (
         enrollment_date.date                                            AS school_enrollment_date,
         exit_date.date                                                  AS school_exit_date,
         dim_student_school.is_enrolled                                  AS is_enrolled_at_school,
-        {{ convert_grade_level('dim_student_school.grade_level') }}     AS grade_level,
+        {{ convert_grade_level_to_short_label('dim_student_school.grade_level') }}     AS grade_level,
+        {{ convert_grade_level_to_id('dim_student_school.grade_level') }}              AS grade_level_id,
         dim_student_school.sex                                          AS gender,
         dim_student_school.limited_english_proficiency                  AS limited_english_proficiency,
         IF(

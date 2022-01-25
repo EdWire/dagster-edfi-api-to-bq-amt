@@ -1,7 +1,7 @@
 -- this macro converts grade level descriptors
 -- to shorted, often numeric grade levels
 -- Fifth grade --> 5
-{% macro convert_grade_level(grade_level) %}
+{% macro convert_grade_level_to_short_label(grade_level) %}
     CASE
         WHEN {{ grade_level }} = 'Infant/toddler' THEN 'Infant'
         WHEN {{ grade_level }} = 'Preschool/Prekindergarten' THEN 'PreK'
@@ -18,6 +18,6 @@
         WHEN {{ grade_level }} = 'Tenth grade' THEN '10'
         WHEN {{ grade_level }} = 'Eleventh grade' THEN '11'
         WHEN {{ grade_level }} = 'Twelfth grade' THEN '12'
-        ELSE '0'
+        ELSE '999999999'
     END
 {% endmacro %}

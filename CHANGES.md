@@ -1,5 +1,12 @@
 # Changelog
 
+# v0.5.1
+
+### New
+
+- [dbt] Adds numeric `grade_level_id` columns to `dim_student` for proper sorting in bi layer
+
+
 # v0.5.0
 
 ### New
