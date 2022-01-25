@@ -2,6 +2,7 @@
 SELECT
     dim_student.student_unique_id                                          AS student_unique_id,
     dim_student.student_display_name                                       AS student_display_name,
+    dim_student.school_key                                                 AS school_key,
     dim_school.school_id                                                   AS school_id,
     dim_date.date                                                          AS date,
     dim_date.month                                                         AS month,
