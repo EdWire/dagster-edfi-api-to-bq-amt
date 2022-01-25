@@ -3,16 +3,14 @@ version: 2
 
 
 models:
-  - name: fct_assessment
+  - name: dim_assessment
     description: ""
     columns:
-      - name: assessment_fact_key
-        description: ""
+      - name: assessment_key
+        description: The unique key that describes the assessment
         tests:
           - unique
           - not_null
-      - name: assessment_key
-        description: "The unique key that describes the assessment"
       - name: assessment_identifier
         description: "The unique identifier that describes the assessment"
       - name: namespace

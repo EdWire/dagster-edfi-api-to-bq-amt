@@ -5,6 +5,7 @@ WITH enrollments_ranked AS (
         dim_student_school.student_key                                  AS student_key,
         dim_student_local_education_agency.local_education_agency_key   AS local_education_agency_key,
         dim_school.school_key                                           AS school_key,
+        dim_student_school.student_school_key                           AS student_school_key,
         dim_student_school.school_year                                  AS school_year,
         dim_student_school.student_unique_id                            As student_unique_id,
         dim_student_school.student_last_surname                         AS student_last_surname,
