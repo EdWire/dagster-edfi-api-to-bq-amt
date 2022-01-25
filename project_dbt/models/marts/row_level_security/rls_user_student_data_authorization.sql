@@ -6,8 +6,12 @@
 
 
 SELECT DISTINCT
-    seoa.staff_reference.staff_unique_id AS user_key,
-    ssa.student_reference.student_unique_id AS student_key
+    {{ dbt_utils.surrogate_key([
+        'seoa.staff_reference.staff_unique_id' 
+    ]) }}                                                   AS user_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id'
+    ]) }}                                                   AS student_key
 FROM  {{ ref('stg_edfi_staff_education_organization_assignment_associations') }} seoa
 LEFT JOIN {{ ref('stg_edfi_schools') }} schools
     ON seoa.school_year = schools.school_year
@@ -23,8 +27,12 @@ WHERE
 UNION ALL
 
 SELECT
-    seoa.staff_reference.staff_unique_id AS user_key,
-    ssa.student_reference.student_unique_id AS student_key
+    {{ dbt_utils.surrogate_key([
+        'seoa.staff_reference.staff_unique_id'
+    ]) }}                                                   AS user_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id'
+    ]) }}                                                   AS student_key
 FROM  {{ ref('stg_edfi_staff_education_organization_assignment_associations') }} seoa
 LEFT JOIN{{ ref('stg_edfi_student_school_associations') }} ssa
     ON seoa.school_year = ssa.school_year
@@ -37,8 +45,12 @@ WHERE
 UNION ALL
 
 SELECT
-    seoa.staff_reference.staff_unique_id AS user_key,
-    student_section_associations.student_reference.student_unique_id AS student_key
+    {{ dbt_utils.surrogate_key([
+        'seoa.staff_reference.staff_unique_id' ])
+    }}                                                      AS user_key,
+    {{ dbt_utils.surrogate_key([
+        'student_section_associations.student_reference.student_unique_id'
+    ]) }}                                                   AS student_key
 FROM  {{ ref('stg_edfi_staff_education_organization_assignment_associations') }} seoa
 LEFT JOIN {{ ref('stg_edfi_staff_section_associations') }} staff_section_associations
     ON seoa.school_year = staff_section_associations.school_year

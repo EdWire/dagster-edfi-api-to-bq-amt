@@ -18,17 +18,19 @@ WITH staff_to_scope_map AS (
 )
 
 SELECT DISTINCT
-    staff_to_scope_map.staff_unique_id AS user_key,
-    staff_to_scope_map.user_scope,
-    'ALL' AS student_permission,
+    {{ dbt_utils.surrogate_key([
+        'staff_to_scope_map.staff_unique_id'
+     ]) }}                                          AS user_key,
+    staff_to_scope_map.user_scope                   AS user_scope,
+    'ALL'                                           AS student_permission,
     CASE staff_to_scope_map.user_scope
         WHEN 'Superintendent' THEN 'ALL'
         WHEN 'Principal' THEN 'ALL'
         ELSE edfi_sections.section_identifier
-    END AS section_permission,
+    END                                             AS section_permission,
     CASE staff_to_scope_map.user_scope
         WHEN 'Superintendent' THEN 'ALL'
-		WHEN 'Principal' THEN 'ALL'
+		WHEN 'Principal'      THEN 'ALL'
         ELSE CONCAT(
             edfi_sections.course_offering_reference.school_id, '-',
             edfi_sections.course_offering_reference.local_course_code, '-',
@@ -36,12 +38,12 @@ SELECT DISTINCT
             edfi_sections.section_identifier, '-',
             edfi_sections.course_offering_reference.session_name
         )
-    END AS section_key_permission,
+    END                                             AS section_key_permission,
     CASE staff_to_scope_map.user_scope
         WHEN 'Superintendent' THEN 'ALL'
         ELSE staff_to_scope_map.education_organization_id
-    END AS school_permission,
-    IF(staff_to_scope_map.user_scope = 'Superintendent', staff_to_scope_map.education_organization_id, NULL) AS district_id,
+    END                                             AS school_permission,
+    IF(staff_to_scope_map.user_scope = 'Superintendent', staff_to_scope_map.education_organization_id, NULL) AS district_id
 FROM staff_to_scope_map
 LEFT JOIN {{ ref('stg_edfi_staff_section_associations') }} staff_section_associations
     ON staff_to_scope_map.school_year = staff_section_associations.school_year

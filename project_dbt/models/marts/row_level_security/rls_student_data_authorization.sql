@@ -6,9 +6,15 @@
 
 
 SELECT
-    ssa.student_reference.student_unique_id AS student_key,
-    ssa.section_reference.school_id AS school_key,
-    sections.id AS section_id,
+    {{ dbt_utils.surrogate_key([
+        'ssa.student_reference.student_unique_id'
+    ]) }}                                           AS student_key,
+    {{ dbt_utils.surrogate_key([
+        'ssa.section_reference.school_id'
+    ]) }}                                           AS school_key,
+    {{ dbt_utils.surrogate_key([
+        'sections.id'
+     ]) }}                                          AS section_id,
     ssa.begin_date,
     ssa.end_date
 FROM {{ ref('stg_edfi_student_section_associations') }} ssa
