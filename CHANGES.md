@@ -1,6 +1,6 @@
 # Changelog
 
-# v0.4.1
+# v0.5.0
 
 ### New
 
@@ -15,6 +15,7 @@
 
 - [dbt] Fixes bug that flagged all students as early warning for attendance
 - [dbt] School year is now an int in all data models
+- [dbt] Breaks apart assessment data models into new dimension and fact tables
 
 
 # v0.4.0
