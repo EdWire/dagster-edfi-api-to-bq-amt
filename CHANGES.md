@@ -5,7 +5,12 @@
 ### New
 
 - [dbt] Adds numeric `grade_level_id` columns to `dim_student` for proper sorting in bi layer
+- [dbt] Adds `course_gpa_applicability` column to `dim_section`
+- [dbt] Adds new unweighted current gpa metric
 
+### Breaking Changes
+
+- [dbt] Renames `dim_session` to `dim_academic_time_period` and updates schema to match AMT table
 
 # v0.5.0
 

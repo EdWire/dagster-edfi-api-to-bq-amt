@@ -25,13 +25,6 @@ SELECT
         'sections.course_offering_reference.session_name'
     ]) }}                                                       AS session_key,
     sections.section_identifier                                 AS section_identifier,
-    {# CONCAT(
-        courses.academic_subject_descriptor, "-",
-        course_offering_reference.local_course_code, "-",
-        courses.course_title, "-",
-        class_period.class_period_reference.class_period_name, "-",
-        sessions.term_descriptor
-    )                                                           AS description, #}
     COALESCE(
         sections.section_name,
         CONCAT(
@@ -42,7 +35,9 @@ SELECT
     sessions.session_name                                       AS session_name,
     course_offering_reference.local_course_code                 AS local_course_code,
     courses.course_title                                        AS course_title,
-    course_offerings.session_reference.school_year              AS school_year
+    courses.course_gpa_applicability_descriptor                 AS course_gpa_applicability,
+    course_offerings.session_reference.school_year              AS school_year,
+    sections.available_credits                                  AS available_credits
 FROM {{ ref('stg_edfi_sections') }} sections
 CROSS JOIN UNNEST(sections.class_periods) AS class_period
 LEFT JOIN {{ ref('stg_edfi_schools') }} stg_edfi_schools

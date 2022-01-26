@@ -11,6 +11,14 @@ models:
       materialization: view
       schema: attendance
 
+  - name: current_gpa
+    description: >
+      Unweighted GPA taking into account grades from the
+      current grading period and active section enrollments
+    config:
+      materialization: view
+      schema: grades
+
 # metrics:
 #   - name: is_chronically_absent
 #     label: Is chronically absent
