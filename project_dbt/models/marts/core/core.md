@@ -1,3 +1,4 @@
+
 {% docs dim_date %}
 
 # Date dim
@@ -8,8 +9,8 @@ This dimension table notably lacks the date key found in Ed-Fi's Analytics Middl
 
 ---------------------------
 Differences from Ed-Fi AMT
-* Removed `date_key`
-* Added `month_sort_order`
+* Removes `date_key`
+* Adds `month_sort_order`
 
 {% enddocs %}
 
@@ -18,7 +19,9 @@ Differences from Ed-Fi AMT
 
 # Demographic dim
 
-This dimension table contains a row per descriptor parent key and descriptor. This table is usually joined to the student demographic bridge tables.
+Grain: one row per descriptor parent key and descriptor
+
+This table is usually joined to the student demographic bridge tables.
 
 ---------------------------
 Differences from Ed-Fi AMT
@@ -32,11 +35,28 @@ Differences from Ed-Fi AMT
 
 # Grading period dim
 
-This dimension table contains one row per school per grading period.
+Grain: one row per school per grading period
 
-<!-- ---------------------------
-Differences from Ed-Fi AMT
-* Renames `description` -->
+
+{% enddocs %}
+
+
+{% docs dim_local_education_agency %}
+
+# Local education agency dim
+
+Grain: one row per local education agency
+
+
+{% enddocs %}
+
+
+{% docs dim_school %}
+
+# School dim
+
+Grain: one row per school
+
 
 {% enddocs %}
 
@@ -45,15 +65,42 @@ Differences from Ed-Fi AMT
 
 # Section dim
 
-Grain: `dim_section` has one record per section per school.
+Grain: one row per section per school
 
 ---------------------------
 Differences from Ed-Fi AMT
-* Removed `description`
-* Added `section_identifier` to allow for a natural key for section id
+* Removes `description`
+* Adds `section_identifier` to allow for a natural key for section id
 
 
 {% enddocs %}
+
+
+{% docs dim_session %}
+
+# Session dim
+
+Grain: one row per school per session
+
+---------------------------
+Differences from Ed-Fi AMT
+* Adds `total_instructional_days`
+* Adds `session_begin_date`
+* Adds `session_end_date`
+
+{% enddocs %}
+
+
+{% docs dim_student %}
+
+# Student dim
+
+Grain: one record per student
+
+Ed-Fi's Analytics Middle Tier provides two student dims related to the student's LEA association and the student's school association. This dim combines those two dims to provide one student dim that can be used downstream. If a student has multiple school enrollments, only their most recent will show in this dim.
+
+{% enddocs %}
+
 
 {% docs dim_student_section %}
 

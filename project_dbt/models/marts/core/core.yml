@@ -37,29 +37,33 @@ models:
     description: '{{ doc("dim_demographic") }}'
     columns:
       - name: demographic_key
-        description: Concatenation of parent key and descriptor code value
+        description: Primary key for dimension table
         tests:
           - unique
           - not_null
 
-      - name: demographic_parent_key
-        description: Descriptor parent key. For example, 'RaceDescriptors' will show 'Race' here
+      - name: demographic_parent
+        description: Descriptor parent. For example, 'RaceDescriptors' will show 'Race'.
+        tests:
+          - not_null
 
       - name: demographic_label
         description: Short description of the descriptor
+        tests:
+          - not_null
 
 
   - name: dim_grading_period
     description: '{{ doc("dim_grading_period") }}'
     columns:
       - name: grading_period_key
-        description: Concatenation of grading period descriptor code value, school id, and grading period begin date
+        description: Primary key for dimension table
         tests:
           - unique
           - not_null
 
       - name: school_key
-        description: School id
+        description: Foreign key to `dim_school`
         tests:
           - relationships:
               to: ref('dim_school')
@@ -82,10 +86,16 @@ models:
 
 
   - name: dim_local_education_agency
-    description: ""
+    description: '{{ doc("dim_local_education_agency") }}'
     columns:
       - name: local_education_agency_key
-        description: "The identifier assigned to a local education agency."
+        description: Primary key for dimension table
+        tests:
+          - unique
+          - not_null
+
+      - name: local_education_agency_id
+        description: Unique identifier for local education agency
         tests:
           - unique
           - not_null
@@ -95,53 +105,69 @@ models:
 
 
   - name: dim_school
-    description: ""
+    description: '{{ doc("dim_school") }}'
     columns:
       - name: school_key
-        description: "The identifier assigned to a school."
+        description: Primary key for dimension table
+        tests:
+          - unique
+          - not_null
+
+      - name: local_education_agency_key
+        description: Foreign key to `dim_local_education_agency`
+        tests:
+          - relationships:
+              to: ref('dim_local_education_agency')
+              field: local_education_agency_key
+
+      - name: school_id
+        description: School unique identifier
         tests:
           - unique
           - not_null
 
       - name: school_name
-        description: "The name assigned to a school."
+        description: The name assigned to a school.
 
       - name: school_type
-        description: "The type of education institution as classified by its primary focus."
-
-      - name: local_education_agency_key
-        description: "The identifier assigned to a local education agency."
+        description: The type of education institution as classified by its primary focus.
 
       - name: local_education_agency_name
-        description: "The name assigned to a local education agency."
+        description: The name assigned to a local education agency.
 
 
   - name: dim_section
-    description: ""
+    description: '{{ doc("dim_section") }}'
     columns:
-      - name: local_education_agency_key
-        description: ""
-        tests:
-          - not_null
-
-      - name: school_key
-        description: ""
-        tests:
-          - not_null
-
       - name: section_key
-        description: ""
+        description: Primary key for dimension table
         tests:
           - unique
           - not_null
 
-      - name: session_key
-        description: ""
+      - name: local_education_agency_key
+        description: Foreign key to `dim_local_education_agency`
         tests:
-          - not_null
+          - relationships:
+              to: ref('dim_local_education_agency')
+              field: local_education_agency_key
+
+      - name: school_key
+        description: Foreign key to `dim_school`
+        tests:
+          - relationships:
+              to: ref('dim_school')
+              field: school_key
+
+      - name: session_key
+        description: Foreign key to `dim_session`
+        tests:
+          - relationships:
+              to: ref('dim_session')
+              field: session_key
 
       - name: section_identifier
-        description: ""
+        description: Section unique identifier
         tests:
           - not_null
 
@@ -161,44 +187,100 @@ models:
         description: ""
 
 
-  - name: dim_student
-    description: >
-      Ed-Fi's Analytics Middle Tier provides two student dims related to the student's LEA association and the student's
-      school association. This dim combines those two dims to provide one student dim that can be used downstream.
-      If a student has multiple school enrollments, only their most recent will show in this dim.
-
-
-  - name: dim_student_local_education_agency
-    description: "Contains attributes of a student including name and demographic information as defined in relationship to the local education agency. If a student has multiple school year records for a LEA, only the latest is shown."
+  - name: dim_session
+    description: '{{ doc("dim_session") }}'
     columns:
-      - name: student_local_education_agency_key
-        description: "Primary key"
+      - name: session_key
+        description: Primary key for dimension table
         tests:
           - unique
           - not_null
 
-      - name: student_key
-        description: "A unique alphanumeric code assigned to a student."
+      - name: school_key
+        description: Foreign key to `dim_school`
         tests:
+          - relationships:
+              to: ref('dim_school')
+              field: school_key
+
+      - name: school_year
+        description: Four-digit school year
+
+      - name: school_year_name
+        description: School year name (ie. 2021-2022)
+
+      - name: is_current_school_year
+        description: TRUE/FALSE for if school year is the current one
+
+      - name: session_name
+        description: Session name
+
+      - name: term_name
+        description: Ed-Fi term descriptor
+
+      - name: total_instructional_days
+        description: Number of instructional days for the sesssion
+
+      - name: session_begin_date
+        description: Session begin date
+
+      - name: session_end_date
+        description: Session end date
+
+
+  - name: dim_student
+    description: '{{ doc("dim_student") }}'
+    columns:
+      - name: student_key
+        description: Primary key for dimension table. This surrogate key is based on the student's unique id
+        tests:
+          - unique
           - not_null
 
       - name: local_education_agency_key
-        description: "The identifier assigned to a local education agency."
+        description: Foreign key to `dim_local_education_agency`
+        tests:
+          - relationships:
+              to: ref('dim_local_education_agency')
+              field: local_education_agency_key
+
+      - name: school_key
+        description: Foreign key to `dim_school`
+        tests:
+          - relationships:
+              to: ref('dim_school')
+              field: school_key
+
+      - name: student_school_key
+        description: Foreign key to `dim_student_school`
+        tests:
+          - relationships:
+              to: ref('dim_student_school')
+              field: student_school_key
+
+      - name: school_year
+        description: School year
+        tests:
+          - not_null
+
+      - name: student_unique_id
+        description: Student unique identifier
+        tests:
+          - unique
+          - not_null
+
+      - name: student_last_surname
+        description: The name borne in common by members of a family.
         tests:
           - not_null
 
       - name: student_first_name
-        description: "A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change."
+        description: A name given to an individual at birth, baptism, or during another naming ceremony, or through legal change.
         tests:
           - not_null
 
-      - name: student_middle_name
-        description: "A secondary name given to an individual at birth, baptism, or during another naming ceremony."
-
-      - name: student_last_surname
-        description: "The name borne in common by members of a family."
-        tests:
-          - not_null
+      - name: student_display_name
+        description: Concatenation of student's last name, first name, and first letter of middle name
 
       - name: limited_english_proficiency
         description: "An indication that the student has been identified as limited English proficient by the Language Proficiency Assessment Committee (LPAC), or English proficient."
@@ -208,8 +290,7 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['true', 'false']
-              quote: false
+              values: ['Yes', 'No']
 
       - name: sex
         description: "The student's gender as last reported to the education organization."

@@ -7,8 +7,8 @@ SELECT DISTINCT
     dim_student_section.course_title                            AS course_title,
     dim_section.section_identifier                              AS section_identifier,
     dim_student_section.academic_subject                        AS academic_subject,
-    dim_academic_time_period.session_name                       AS session_name,
-    dim_academic_time_period.term_name                          AS term_name,
+    dim_session.session_name                       AS session_name,
+    dim_session.term_name                          AS term_name,
     dim_section.course_gpa_applicability                        AS course_gpa_applicability,
     dim_section.available_credits                               AS available_credits,
     dim_grading_period.grading_period_description               AS grading_period_description,
@@ -46,8 +46,8 @@ LEFT JOIN {{ ref('dim_student_section') }} dim_student_section
     ON fct_student_section_grade.student_section_key = dim_student_section.student_section_key
 LEFT JOIN {{ ref('dim_section') }} dim_section
     ON dim_student_section.section_key = dim_section.section_key
-LEFT JOIN {{ ref('dim_academic_time_period') }} dim_academic_time_period
-    ON dim_student_section.session_key = dim_academic_time_period.session_key
+LEFT JOIN {{ ref('dim_session') }} dim_session
+    ON dim_student_section.session_key = dim_session.session_key
 LEFT JOIN {{ ref('dim_grading_period') }} dim_grading_period
     ON fct_student_section_grade.grading_period_key = dim_grading_period.grading_period_key
 LEFT JOIN {{ ref('dim_student') }} dim_student

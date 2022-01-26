@@ -23,6 +23,7 @@ models:
   project:
     marts:
       +materialized: table
+      +tags: amt
       assessments:
         +schema: assessments
       attendance:
@@ -37,5 +38,6 @@ models:
       edfi:
         +materialized: table
         +schema: staging
+        +tags: amt
         +labels:
             edfi_version: "5_3"

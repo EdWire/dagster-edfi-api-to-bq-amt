@@ -8,9 +8,14 @@
 - [dbt] Adds `course_gpa_applicability` column to `dim_section`
 - [dbt] Adds new unweighted current gpa metric
 
-### Breaking Changes
+### Bugfixes
 
-- [dbt] Renames `dim_session` to `dim_academic_time_period` and updates schema to match AMT table
+- [dbt] Fixes dbt data model tagging issue that caused certain tables to not refresh
+
+### Documentation
+
+- [dbt] Documents all macros
+- [dbt] Documents core tables
 
 # v0.5.0
 
