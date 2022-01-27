@@ -29,6 +29,8 @@ active_enrollments AS (
             AND CURRENT_DATE < student_school_associations.exit_withdraw_date
         )
         -- if student exited a previous year on the final day of the session
+        -- replace school_year_end_dates.school_year_end_date with DATE 'YYYY-MM-DD' if MAX session end date does
+        -- not represent school year end date
         OR student_school_associations.exit_withdraw_date >= school_year_end_dates.school_year_end_date
 
 ),
