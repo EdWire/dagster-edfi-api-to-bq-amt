@@ -7,7 +7,8 @@
 
 SELECT DISTINCT
     {{ dbt_utils.surrogate_key([
-        'local_education_agency_id'
+        'local_education_agency_id',
+        'school_year'
     ]) }}                               AS local_education_agency_key,
     local_education_agency_id           AS local_education_agency_id,
     name_of_institution                 AS local_education_agency_name

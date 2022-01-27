@@ -8,15 +8,16 @@
 SELECT
     {{ dbt_utils.surrogate_key([
         'ssa.student_reference.student_unique_id',
-        'session_reference.school_year'
+        'ssa.school_year_type_reference.school_year'
     ]) }}                                                                                               AS student_key,
     {{ dbt_utils.surrogate_key([
-        'ssa.school_reference.school_id'
+        'ssa.school_reference.school_id',
+        'ssa.school_year_type_reference.school_year'
     ]) }}                                                                                               AS school_key,
-    session_reference.school_year                                                                       AS school_year,
+    ssa.school_year_type_reference.school_year                                                          AS school_year,
     calendar_dates.date                                                                                 AS date,
-    IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor, --not in core amt
-    IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration, --not in core amt
+    IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor,
+    IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration,
     MAX(IF(school_attendance.attendance_event_category_descriptor = 'In Attendance', 1, 0))             AS reported_as_present_at_school,
     MAX(IF(
         school_attendance.attendance_event_category_descriptor IN ('Excused Absence', 'Unexcused Absence'), 1, 0
@@ -82,6 +83,6 @@ WHERE
 GROUP BY
     ssa.student_reference.student_unique_id,
     ssa.school_reference.school_id,
-    session_reference.school_year,
+    ssa.school_year_type_reference.school_year,
     calendar_dates.date,
     school_attendance.event_duration

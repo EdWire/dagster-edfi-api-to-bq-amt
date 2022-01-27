@@ -5,12 +5,14 @@
 }}
 
 
-SELECT DISTINCT
+SELECT
     {{ dbt_utils.surrogate_key([
-        'schools.school_id'
+        'schools.school_id',
+        'schools.school_year'
     ]) }}                                   AS school_key,
     {{ dbt_utils.surrogate_key([
-        'schools.local_education_agency_id'
+        'leas.local_education_agency_id',
+        'leas.school_year'
     ]) }}                                   AS local_education_agency_key,
     schools.school_id                       AS school_id,
     schools.name_of_institution             AS school_name,
