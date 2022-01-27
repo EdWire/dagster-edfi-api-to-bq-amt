@@ -1,17 +1,35 @@
 
-WITH active_enrollments AS (
+WITH school_year_end_dates AS (
 
     SELECT
-        student_reference.student_unique_id            AS student_unique_id,
-        school_year_type_reference.school_year         AS school_year,
-        'Yes'                                          AS is_actively_enrolled
-    FROM {{ ref('stg_edfi_student_school_associations') }}
+        school_year_type_reference.school_year,
+        school_reference.school_id,
+        MAX(end_date) AS school_year_end_date
+    FROM {{ ref('stg_edfi_sessions') }}
+    GROUP BY 1, 2
+
+
+),
+
+active_enrollments AS (
+
+    SELECT
+        student_school_associations.student_reference.student_unique_id            AS student_unique_id,
+        student_school_associations.school_year_type_reference.school_year         AS school_year,
+        'Yes'                                                                      AS is_actively_enrolled
+    FROM {{ ref('stg_edfi_student_school_associations') }} student_school_associations
+    LEFT JOIN school_year_end_dates
+        ON student_school_associations.school_year_type_reference.school_year = school_year_end_dates.school_year
+        AND student_school_associations.school_reference.school_id = school_year_end_dates.school_id
     WHERE
-        exit_withdraw_date IS NULL
+        student_school_associations.exit_withdraw_date IS NULL
         OR (
-            CURRENT_DATE >= entry_date
-            AND CURRENT_DATE < exit_withdraw_date
+            -- active enrollment for current year
+            CURRENT_DATE >= student_school_associations.entry_date
+            AND CURRENT_DATE < student_school_associations.exit_withdraw_date
         )
+        -- if student exited a previous year on the final day of the session
+        OR student_school_associations.exit_withdraw_date >= school_year_end_dates.school_year_end_date
 
 ),
 

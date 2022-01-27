@@ -51,16 +51,13 @@ SELECT
     dim_student.student_last_surname                            AS student_last_surname,
     dim_student.student_first_name                              AS student_first_name,
     dim_student.student_display_name                            AS student_display_name,
-    dim_student.school_enrollment_date                          AS school_enrollment_date,
-    dim_student.school_exit_date                                AS school_exit_date,
-    dim_student.is_enrolled_at_school                           AS is_enrolled_at_school,
+    dim_student.is_actively_enrolled                            AS is_actively_enrolled,
     dim_student.grade_level                                     AS grade_level,
     dim_student.gender                                          AS gender,
     dim_student.limited_english_proficiency                     AS limited_english_proficiency,
     dim_student.is_english_language_learner                     AS is_english_language_learner,
     dim_student.in_special_education_program                    AS in_special_education_program,
     dim_student.is_hispanic                                     AS is_hispanic,
-    dim_student.race                                            AS race,
     dim_student.race_and_ethnicity_roll_up                      AS race_and_ethnicity_roll_up
 FROM {{ ref('fct_student_assessment') }} fct_student_assessment
 LEFT JOIN {{ ref('dim_assessment') }} dim_assessment
@@ -70,7 +67,7 @@ LEFT JOIN assessments
 LEFT JOIN objective_assessments
     ON fct_student_assessment.student_assessment_identifier = objective_assessments.student_assessment_identifier
 LEFT JOIN {{ ref('dim_student') }} dim_student
-    ON fct_student_assessment.student_school_key = dim_student.student_school_key
+    ON fct_student_assessment.student_key = dim_student.student_key
 LEFT JOIN {{ ref('dim_school') }} dim_school
-    ON dim_student.school_key = dim_school.school_key
+    ON fct_student_assessment.school_key = dim_school.school_key
 WHERE fct_student_assessment.objective_assessment_key = ""

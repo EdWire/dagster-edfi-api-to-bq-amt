@@ -209,9 +209,6 @@ models:
       - name: school_year_name
         description: School year name (ie. 2021-2022)
 
-      - name: is_current_school_year
-        description: TRUE/FALSE for if school year is the current one
-
       - name: session_name
         description: Session name
 

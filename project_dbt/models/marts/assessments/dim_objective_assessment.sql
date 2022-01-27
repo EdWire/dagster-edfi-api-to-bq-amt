@@ -11,6 +11,7 @@ SELECT
         'assessments.namespace',
         'assessments.school_year'
     ]) }}                                               AS assessment_key,
+    objective_assessments.school_year                   AS school_year,
     objective_assessments.identification_code           AS identification_code,
     objective_assessments.academic_subject_descriptor   AS academic_subject,
     objective_assessments.description                   AS description
