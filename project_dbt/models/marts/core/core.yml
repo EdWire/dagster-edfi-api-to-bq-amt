@@ -251,13 +251,6 @@ models:
               to: ref('dim_school')
               field: school_key
 
-      - name: student_school_key
-        description: Foreign key to `dim_student_school`
-        tests:
-          - relationships:
-              to: ref('dim_student_school')
-              field: student_school_key
-
       - name: school_year
         description: School year
         tests:
@@ -349,14 +342,9 @@ models:
   - name: dim_student_program
     description: ""
 
-  - name: dim_student_school
+  - name: fct_student_school
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
     columns:
-      - name: "(student_school_key || '-' || enrollment_date)"
-        tests:
-          - unique
-          - not_null
-
       - name: student_school_key
         description: Primary key
         tests:

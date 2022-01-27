@@ -8,12 +8,6 @@ models:
       - dbt_utils.expression_is_true:
           expression: "numeric_grade_earned >= 0"
     columns:
-      - name: "(student_key || '-' || school_key)"
-        tests:
-          - relationships:
-              to: ref('dim_student_school')
-              field: student_school_key
-
       - name: student_key
         description: Unique student identifier
         tests:

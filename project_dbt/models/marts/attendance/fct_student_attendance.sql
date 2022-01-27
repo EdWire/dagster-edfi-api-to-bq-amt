@@ -8,14 +8,12 @@
 SELECT
     {{ dbt_utils.surrogate_key([
         'ssa.student_reference.student_unique_id',
-        'ssa.school_reference.school_id'
-    ]) }}                                                                                               AS student_school_key,
-    {{ dbt_utils.surrogate_key([
-        'ssa.student_reference.student_unique_id'
+        'session_reference.school_year'
     ]) }}                                                                                               AS student_key,
     {{ dbt_utils.surrogate_key([
         'ssa.school_reference.school_id'
     ]) }}                                                                                               AS school_key,
+    session_reference.school_year                                                                       AS school_year,
     calendar_dates.date                                                                                 AS date,
     IFNULL(MIN(school_attendance.attendance_event_category_descriptor), 'In Attendance')                AS school_attendance_event_category_descriptor, --not in core amt
     IFNULL(school_attendance.event_duration, 0)                                                         AS event_duration, --not in core amt
@@ -36,7 +34,7 @@ SELECT
     NULL                                                                                                AS reported_as_is_present_in_all_sections,
     NULL                                                                                                AS reported_as_absent_from_any_section
 FROM {{ ref('stg_edfi_student_school_associations') }} ssa
-LEFT JOIN {{ ref('stg_edfi_students') }} students 
+LEFT JOIN {{ ref('stg_edfi_students') }} students
     ON ssa.school_year = students.school_year
     AND ssa.student_reference.student_unique_id = students.student_unique_id
 LEFT JOIN {{ ref('stg_edfi_calendar_dates') }} calendar_dates
@@ -84,5 +82,6 @@ WHERE
 GROUP BY
     ssa.student_reference.student_unique_id,
     ssa.school_reference.school_id,
+    session_reference.school_year,
     calendar_dates.date,
     school_attendance.event_duration

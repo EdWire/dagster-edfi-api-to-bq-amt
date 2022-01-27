@@ -1,77 +1,108 @@
 
-WITH enrollments_ranked AS (
+WITH active_enrollments AS (
 
     SELECT
-        dim_student_school.student_key                                  AS student_key,
-        dim_student_local_education_agency.local_education_agency_key   AS local_education_agency_key,
-        dim_school.school_key                                           AS school_key,
-        dim_student_school.student_school_key                           AS student_school_key,
-        dim_student_school.school_year                                  AS school_year,
-        dim_student_school.student_unique_id                            As student_unique_id,
-        dim_student_school.student_last_surname                         AS student_last_surname,
-        dim_student_school.student_first_name                           AS student_first_name,
-        CONCAT(
-            dim_student_school.student_last_surname, ", ",
-            dim_student_school.student_first_name, " ",
-            COALESCE(LEFT(dim_student_school.student_middle_name, 1), "")
-        )                                                               AS student_display_name,
-        enrollment_date.date                                            AS school_enrollment_date,
-        exit_date.date                                                  AS school_exit_date,
-        dim_student_school.is_enrolled                                  AS is_enrolled_at_school,
-        {{ convert_grade_level_to_short_label('dim_student_school.grade_level') }}     AS grade_level,
-        {{ convert_grade_level_to_id('dim_student_school.grade_level') }}              AS grade_level_id,
-        dim_student_school.sex                                          AS gender,
-        dim_student_school.limited_english_proficiency                  AS limited_english_proficiency,
-        IF(
-            dim_student_school.limited_english_proficiency = "Limited",
-            "Yes",
-            "No"
-        )                                                               AS is_english_language_learner,
-        IF (
-            dim_student_program.program_name IS NOT NULL,
-            "Yes",
-            "No"
-        )                                                               AS in_special_education_program,
-        IF(
-            dim_student_school.is_hispanic IS TRUE,
-            "Yes",
-            "No"
-        )                                                               AS is_hispanic,
-        dim_demographic.demographic_label                               AS race,
-        IF(
-            dim_student_school.is_hispanic IS TRUE,
-            "Hispanic or Latino",
-            dim_demographic.demographic_label
-        )                                                               AS race_and_ethnicity_roll_up,
+        student_reference.student_unique_id            AS student_unique_id,
+        school_year_type_reference.school_year         AS school_year,
+        'Yes'                                          AS is_actively_enrolled
+    FROM {{ ref('stg_edfi_student_school_associations') }}
+    WHERE
+        exit_withdraw_date IS NULL
+        OR (
+            CURRENT_DATE >= entry_date
+            AND CURRENT_DATE < exit_withdraw_date
+        )
+
+),
+
+student_grade_level_ranked AS (
+
+    SELECT
+        school_year_type_reference.school_year,
+        student_reference.student_unique_id,
+        {{ convert_grade_level_to_short_label('entry_grade_level_descriptor') }}     AS grade_level,
+        {{ convert_grade_level_to_id('entry_grade_level_descriptor') }}              AS grade_level_id,
         ROW_NUMBER() OVER (
             PARTITION BY
-                dim_school.school_key,
-                dim_student_school.student_key
-            ORDER BY dim_school.school_key DESC, dim_student_school.student_key DESC, enrollment_date.date DESC
+                student_reference.student_unique_id,
+                school_year_type_reference.school_year
+            ORDER BY
+                school_year_type_reference.school_year DESC,
+                student_reference.student_unique_id,
+                entry_date DESC
         ) AS rank,
-    FROM {{ ref('dim_student_school') }} dim_student_school
-    LEFT JOIN {{ ref('dim_school') }} dim_school
-        ON dim_student_school.school_key = dim_school.school_key
-    LEFT JOIN {{ ref('dim_date') }} enrollment_date
-        ON dim_student_school.enrollment_date = enrollment_date.date
-    LEFT JOIN {{ ref('dim_date') }} exit_date
-        ON dim_student_school.exit_date = exit_date.date
-    LEFT JOIN {{ ref('dim_student_local_education_agency') }} dim_student_local_education_agency
-        ON dim_student_school.student_key = dim_student_local_education_agency.student_key
-        AND dim_school.local_education_agency_key = dim_student_local_education_agency.local_education_agency_key
-    LEFT JOIN {{ ref('student_local_education_agency_demographics_bridge') }} student_local_education_agency_demographics_bridge
-        ON dim_student_school.school_year = student_local_education_agency_demographics_bridge.school_year
-        AND dim_student_local_education_agency.student_local_education_agency_key = student_local_education_agency_demographics_bridge.student_local_education_agency_key
-    LEFT JOIN {{ ref('dim_demographic') }} dim_demographic
-        ON student_local_education_agency_demographics_bridge.demographic_key = dim_demographic.demographic_key
-        AND dim_demographic.demographic_parent = "Race"
-    LEFT JOIN {{ ref('dim_student_program') }} dim_student_program
-        ON dim_student_school.student_school_key = dim_student_program.student_school_key
-        AND dim_student_program.program_name = "Special Education"
+    FROM {{ ref('stg_edfi_student_school_associations') }}
+
+),
+
+student_grade_level AS (
+
+    SELECT * FROM student_grade_level_ranked WHERE rank = 1
 
 )
 
-
-SELECT * EXCEPT(rank)
-FROM enrollments_ranked
-WHERE rank = 1
+SELECT
+    {{ dbt_utils.surrogate_key([
+            'students.student_unique_id',
+            'students.school_year'
+    ]) }}                                                           AS student_key,
+    students.school_year                                            AS school_year,
+    students.student_unique_id                                      AS student_unique_id,
+    students.first_name                                             AS student_first_name,
+    students.middle_name                                            AS student_middle_name,
+    students.last_surname                                           AS student_last_surname,
+    CONCAT(
+        students.last_surname, ', ',
+        students.first_name, ' ',
+        COALESCE(LEFT(students.middle_name, 1), '')
+    )                                                               AS student_display_name,
+    IFNULL(active_enrollments.is_actively_enrolled, 'No')           AS is_actively_enrolled,
+    student_grade_level.grade_level                                 AS grade_level,
+    student_grade_level.grade_level_id                              AS grade_level_id,
+    COALESCE(
+        seoa.limited_english_proficiency_descriptor,
+        'Not applicable'
+    )                                                               AS limited_english_proficiency,
+    IF(
+        seoa.limited_english_proficiency_descriptor = "Limited",
+        "Yes",
+        "No"
+    )                                                               AS is_english_language_learner,
+    IF (
+        edfi_programs.program_name IS NOT NULL,
+        "Yes",
+        "No"
+    )                                                               AS in_special_education_program,
+    IF(seoa.hispanic_latino_ethnicity IS TRUE, 'Yes', 'No')         AS is_hispanic,
+    CASE
+        WHEN seoa.hispanic_latino_ethnicity IS TRUE THEN 'Hispanic or Latino'
+        WHEN ARRAY_LENGTH(seoa.races) > 1 THEN 'Two or more races'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'Asian') THEN 'Asian'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'White') THEN 'White'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'Choose Not to Respond') THEN 'Choose Not to Respond'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'American Indian - Alaska Native') THEN 'American Indian - Alaska Native'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'Black - African American') THEN 'Black - African American'
+        WHEN EXISTS(SELECT * FROM UNNEST(races) AS race WHERE race.race_descriptor = 'Native Hawaiian - Pacific Islander') THEN 'Native Hawaiian - Pacific Islander'
+        ELSE 'Unknown'
+    END                                                             AS race_and_ethnicity_roll_up,
+    seoa.sex_descriptor                                             AS gender,
+    students.birth_date                                             AS birth_date
+FROM {{ ref('stg_edfi_students') }} students
+LEFT JOIN {{ ref('stg_edfi_student_education_organization_associations') }} seoa 
+    ON students.student_unique_id = seoa.student_reference.student_unique_id
+    AND students.school_year = seoa.school_year
+LEFT JOIN {{ ref('stg_edfi_student_special_education_program_associations') }} edfi_student_sped_associations
+    ON students.school_year = edfi_student_sped_associations.school_year
+    AND seoa.education_organization_reference.education_organization_id = edfi_student_sped_associations.program_reference.education_organization_id
+    AND students.student_unique_id = edfi_student_sped_associations.student_reference.student_unique_id
+LEFT JOIN {{ ref('stg_edfi_programs') }} edfi_programs
+    ON edfi_student_sped_associations.school_year = edfi_programs.school_year
+    AND edfi_student_sped_associations.program_reference.program_type_descriptor = edfi_programs.program_type_descriptor
+    AND edfi_student_sped_associations.program_reference.education_organization_id = edfi_programs.education_organization_reference.education_organization_id
+    AND edfi_programs.program_name = "Special Education"
+LEFT JOIN active_enrollments
+    ON students.student_unique_id = active_enrollments.student_unique_id
+    AND students.school_year = active_enrollments.school_year
+LEFT JOIN student_grade_level
+    ON students.student_unique_id = student_grade_level.student_unique_id
+    AND students.school_year = student_grade_level.school_year

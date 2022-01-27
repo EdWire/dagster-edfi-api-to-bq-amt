@@ -10,13 +10,8 @@ models:
       - name: student_key
         tests:
           - relationships:
-              to: ref('dim_student_local_education_agency')
+              to: ref('dim_student')
               field: student_key
-      - name: "(student_key || '-' || school_key)"
-        tests:
-          - relationships:
-              to: ref('dim_student_school')
-              field: student_school_key
 
   - name: rpt_student_attendance
     description: >
