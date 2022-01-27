@@ -14,10 +14,12 @@ SELECT
         'sections.section_identifier'
     ]) }}                                                       AS section_key,
     {{ dbt_utils.surrogate_key([
-        'stg_edfi_schools.local_education_agency_id'
+        'stg_edfi_schools.local_education_agency_id',
+        'sections.course_offering_reference.school_year'
     ]) }}                                                       AS local_education_agency_key,
     {{ dbt_utils.surrogate_key([
-        'sections.course_offering_reference.school_id'
+        'sections.course_offering_reference.school_id',
+        'sections.course_offering_reference.school_year'
     ]) }}                                                       AS school_key,
     {{ dbt_utils.surrogate_key([
         'sections.course_offering_reference.school_id',

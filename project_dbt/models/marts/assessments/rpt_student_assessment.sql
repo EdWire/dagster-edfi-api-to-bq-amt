@@ -2,6 +2,7 @@
 WITH assessments AS (
 
     SELECT
+        fct_student_assessment.school_year,
         fct_student_assessment.student_assessment_identifier,
         ARRAY_AGG(
             STRUCT(
@@ -11,13 +12,14 @@ WITH assessments AS (
         ) AS assessment_student_score
     FROM {{ ref('fct_student_assessment') }} fct_student_assessment
     WHERE fct_student_assessment.objective_assessment_key = ""
-    GROUP BY fct_student_assessment.student_assessment_identifier
+    GROUP BY 1, 2
 
 ),
 
 objective_assessments AS (
 
     SELECT
+        fct_student_assessment.school_year,
         fct_student_assessment.student_assessment_identifier,
         ARRAY_AGG(
             STRUCT(
@@ -31,8 +33,9 @@ objective_assessments AS (
     LEFT JOIN {{ ref('dim_objective_assessment') }} dim_objective_assessment
         ON fct_student_assessment.assessment_key = dim_objective_assessment.assessment_key
         AND fct_student_assessment.objective_assessment_key = dim_objective_assessment.objective_assessment_key
+        AND fct_student_assessment.school_year = dim_objective_assessment.school_year
     WHERE fct_student_assessment.objective_assessment_key != ""
-    GROUP BY fct_student_assessment.student_assessment_identifier
+    GROUP BY 1, 2
 
 )
 

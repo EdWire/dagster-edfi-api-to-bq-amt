@@ -14,6 +14,7 @@ SELECT
         'leas.local_education_agency_id',
         'leas.school_year'
     ]) }}                                   AS local_education_agency_key,
+    schools.school_year                     AS school_year,
     schools.school_id                       AS school_id,
     schools.name_of_institution             AS school_name,
     schools.school_type_descriptor          AS school_type,

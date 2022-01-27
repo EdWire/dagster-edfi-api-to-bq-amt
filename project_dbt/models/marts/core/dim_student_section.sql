@@ -6,6 +6,7 @@
 
 
 WITH teachers AS (
+
     SELECT
         ssa.section_reference.school_id,
         ssa.section_reference.local_course_code,
@@ -22,7 +23,9 @@ WITH teachers AS (
         ssa.section_reference.school_year,
         ssa.section_reference.section_identifier,
         ssa.section_reference.session_name
+
 )
+
 
 SELECT
     {{ dbt_utils.surrogate_key([
@@ -35,7 +38,8 @@ SELECT
         'ssa.begin_date'
     ]) }}                                               AS student_section_key,
     {{ dbt_utils.surrogate_key([
-        'ssa.section_reference.school_id'
+        'ssa.section_reference.school_id',
+        'ssa.section_reference.school_year'
     ]) }}                                               AS school_key,
     {{ dbt_utils.surrogate_key([
         'course_offerings.session_reference.school_id',
@@ -50,7 +54,8 @@ SELECT
         'ssa.section_reference.section_identifier'
     ]) }}                                               AS section_key,
     {{ dbt_utils.surrogate_key([
-        'ssa.student_reference.student_unique_id'
+        'ssa.student_reference.student_unique_id',
+        'ssa.section_reference.school_year'
      ]) }}                                              AS student_key,
     section_reference.school_year                       AS school_year,
     section_reference.local_course_code                 AS local_course_code,

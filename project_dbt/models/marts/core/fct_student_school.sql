@@ -5,10 +5,12 @@ SELECT
             'ssa.school_year_type_reference.school_year'
     ]) }}                                                           AS student_key,
     {{ dbt_utils.surrogate_key([
-        'schools.local_education_agency_id'
+        'schools.local_education_agency_id',
+        'ssa.school_year_type_reference.school_year'
     ]) }}                                                           AS local_education_agency_key,
     {{ dbt_utils.surrogate_key([
-        'ssa.school_reference.school_id'
+        'ssa.school_reference.school_id',
+        'ssa.school_year_type_reference.school_year'
     ]) }}                                                           AS school_key,
     ssa.school_year_type_reference.school_year                      AS school_year,
     {{ convert_grade_level_to_short_label('ssa.entry_grade_level_descriptor') }}     AS grade_level,

@@ -6,7 +6,8 @@ SELECT
         'sessions.session_name'
     ]) }}                                                                                   AS session_key,
     {{ dbt_utils.surrogate_key([
-        'sessions.school_reference.school_id'
+        'sessions.school_reference.school_id',
+        'sessions.school_year_type_reference.school_year'
     ]) }}                                                                                   AS school_key,
     sessions.school_year_type_reference.school_year                                         AS school_year,
     school_year_types.school_year_description                                               AS school_year_name,

@@ -15,7 +15,8 @@ SELECT
         'edfi_student_sped_associations.begin_date'
     ]) }}                                                                       AS student_program_key,
     {{ dbt_utils.surrogate_key([
-        'edfi_programs.education_organization_reference.education_organization_id'
+        'edfi_programs.education_organization_reference.education_organization_id',
+        'edfi_student_sped_associations.school_year'
     ]) }}                                                                       AS education_organization_key,
     {{ dbt_utils.surrogate_key([
         'edfi_student_sped_associations.student_reference.student_unique_id',

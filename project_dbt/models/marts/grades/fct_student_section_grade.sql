@@ -7,10 +7,12 @@
 
 SELECT
     {{ dbt_utils.surrogate_key([
-        'grades.student_section_association_reference.school_id'
+        'grades.student_section_association_reference.school_id',
+        'grades.grading_period_reference.school_year'
     ]) }}                                                                   AS school_key,
     {{ dbt_utils.surrogate_key([
-        'grades.student_section_association_reference.student_unique_id'
+        'grades.student_section_association_reference.student_unique_id',
+        'grades.grading_period_reference.school_year'
     ]) }}                                                                   AS student_key,
     {{ dbt_utils.surrogate_key([
         'grades.grading_period_reference.school_id',

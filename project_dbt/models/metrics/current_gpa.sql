@@ -27,7 +27,7 @@ SELECT
     student_display_name                                AS student_display_name,
     school_year                                         AS school_year,
     local_education_agency_name                         AS local_education_agency_name,
-    is_enrolled_at_school                               AS is_enrolled_at_school,
+    is_actively_enrolled                                AS is_actively_enrolled,
     grade_level                                         AS grade_level,
     grade_level_id                                      AS grade_level_id,
     gender                                              AS gender,
@@ -35,9 +35,8 @@ SELECT
     is_english_language_learner                         AS is_english_language_learner,
     in_special_education_program                        AS in_special_education_program,
     is_hispanic                                         AS is_hispanic,
-    race                                                AS race,
     race_and_ethnicity_roll_up                          AS race_and_ethnicity_roll_up,
     grading_period_description                          AS grading_period_description,
     SUM(unweighted_gpa_points) / SUM(available_credits) AS unweighted_current_gpa
 FROM gpa_points
-GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16
+GROUP BY 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15

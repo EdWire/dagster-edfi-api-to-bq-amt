@@ -2,10 +2,12 @@
 SELECT
     {{ dbt_utils.surrogate_key([
         'assessments.assessment_identifier',
-        'assessments.namespace'
+        'assessments.namespace',
+        'assessments.school_year'
     ]) }}                                               AS assessment_key,
     {{ dbt_utils.surrogate_key([
-        'education_organization_reference.education_organization_id'
+        'education_organization_reference.education_organization_id',
+        'assessments.school_year'
     ]) }}                                               AS education_organization_key,
     assessments.school_year                             AS school_year,
     assessments.assessment_identifier                   AS assessment_identifier,
