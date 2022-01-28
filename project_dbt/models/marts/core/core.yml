@@ -257,6 +257,9 @@ models:
       - name: student_display_name
         description: Concatenation of student's last name, first name, and first letter of middle name
 
+      - name: email
+        description: Student email
+
       - name: school_enrollment_date
         description: The date the student began their school enrollment
 

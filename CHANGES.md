@@ -7,6 +7,7 @@
 - [dbt] Adds numeric `grade_level_id` columns to `dim_student` for proper sorting in bi layer
 - [dbt] Adds `course_gpa_applicability` column to `dim_section`
 - [dbt] Adds new unweighted current gpa metric
+- [dbt] Adds `student_email` to `dim_student`
 
 ### Bugfixes
 

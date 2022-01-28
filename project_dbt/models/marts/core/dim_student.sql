@@ -76,6 +76,7 @@ SELECT DISTINCT
         students.first_name, ' ',
         COALESCE(LEFT(students.middle_name, 1), '')
     )                                                               AS student_display_name,
+    seoa.electronic_mail[SAFE_OFFSET(0)].address                    AS email,
     IFNULL(active_enrollments.is_actively_enrolled, 'No')           AS is_actively_enrolled,
     student_grade_level.grade_level                                 AS grade_level,
     student_grade_level.grade_level_id                              AS grade_level_id,
