@@ -3,15 +3,60 @@ version: 2
 
 models:
   - name: fct_student_attendance
-    description: >
-      Used for looking at a student's attendance per day. This fact table provides a row
-      for each instructional day the student holds an enrollment up to the previous date.
+    description: '{{ doc("fct_student_attendance") }}'
     columns:
       - name: student_key
+        description: Foreign key to `dim_student`
         tests:
           - relationships:
               to: ref('dim_student')
               field: student_key
+
+      - name: school_key
+        description: Foreign key to `dim_school`
+        tests:
+          - relationships:
+              to: ref('dim_school')
+              field: school_key
+
+      - name: school_year
+        description: School year
+        tests:
+          - not_null
+
+      - name: date
+        description: Attendance date
+        tests:
+          - not_null
+
+      - name: school_attendance_event_category_descriptor
+        description: Descriptor for student school attendance event
+        tests:
+          - not_null
+
+      - name: event_duration
+        description: Absence event duration
+        tests:
+          - not_null
+
+      - name: reported_as_present_at_school
+        description: 1 if the student was present for the school day
+
+      - name: reported_as_absent_from_school
+        description: 1 if the student was absent for the school day
+
+      - name: reported_as_present_at_home_room
+        description: 1 if the student was present during their home room class
+
+      - name: reported_as_absent_from_home_room
+        description: 1 if the student was absent during their home room class
+
+      - name: reported_as_is_present_in_all_sections
+        description: SQL logic not complete
+
+      - name: reported_as_absent_from_any_section
+        description: SQL logic not complete
+
 
   - name: rpt_student_attendance
     description: >

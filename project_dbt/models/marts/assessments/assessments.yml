@@ -4,7 +4,7 @@ version: 2
 
 models:
   - name: dim_assessment
-    description: ""
+    description: '{{ doc("dim_assessment") }}'
     columns:
       - name: assessment_key
         description: Primary key for dimension table
@@ -83,7 +83,7 @@ models:
 
 
   - name: fct_student_assessment
-    description: ""
+    description: '{{ doc("fct_student_assessment") }}'
     columns:
       - name: assessment_key
         description: Foreign key to `dim_assessment`
