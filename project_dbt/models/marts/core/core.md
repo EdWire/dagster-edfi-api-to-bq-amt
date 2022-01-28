@@ -55,7 +55,7 @@ Grain: one row per local education agency
 
 # School dim
 
-Grain: one row per school
+Grain: one row per school per school year
 
 
 {% enddocs %}

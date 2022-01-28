@@ -61,7 +61,7 @@ student_grade_level AS (
 
 )
 
-SELECT
+SELECT DISTINCT
     {{ dbt_utils.surrogate_key([
             'students.student_unique_id',
             'students.school_year'

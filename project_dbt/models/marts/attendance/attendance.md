@@ -9,6 +9,6 @@ Used for looking at a student's attendance per day. This fact table provides a r
 ---------------------------
 Differences from Ed-Fi AMT
 * Adds `event_duration` columns
-* Addes `` column
+* Adds `school_attendance_event_category_descriptor` column
 
 {% enddocs %}
