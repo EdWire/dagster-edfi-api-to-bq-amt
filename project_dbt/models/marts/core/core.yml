@@ -342,11 +342,6 @@ models:
   - name: fct_student_school
     description: Contains attributes of a student including name, enrollment, and demographic information as defined in relationship to a school at which the student is currently enrolled.
     columns:
-      - name: student_school_key
-        description: Primary key
-        tests:
-          - not_null
-
       - name: student_key
         description: A unique alphanumeric code assigned to a student.
         tests:

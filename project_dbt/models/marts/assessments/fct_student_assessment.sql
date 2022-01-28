@@ -7,16 +7,14 @@ SELECT DISTINCT
     ]) }}                                                                           AS assessment_key,
     ""                                                                              AS objective_assessment_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.student_reference.student_unique_id',
-        'student_school_associations.school_reference.school_id'
-    ]) }}                                                                           AS student_school_key,
-    {{ dbt_utils.surrogate_key([
-        'student_assessments.student_reference.student_unique_id'
+        'student_assessments.student_reference.student_unique_id',
+        'student_assessments.school_year'
     ]) }}                                                                           AS student_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.school_reference.school_id'
+        'student_school_associations.school_reference.school_id',
+        'student_assessments.school_year'
     ]) }}                                                                           AS school_key,
-    student_assessments.school_year                                                 AS school_year, -- not in core amt
+    student_assessments.school_year                                                 AS school_year,
     student_assessments.student_assessment_identifier                               AS student_assessment_identifier,
     student_assessments.administration_date                                         AS administration_date,
     student_assessments.when_assessed_grade_level_descriptor                        AS assessed_grade_level,
@@ -47,14 +45,12 @@ SELECT DISTINCT
     ]) }}                                                                           AS assessment_key,
     ""                                                                              AS objective_assessment_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.student_reference.student_unique_id',
-        'student_school_associations.school_reference.school_id'
-    ]) }}                                                                           AS student_school_key,
-    {{ dbt_utils.surrogate_key([
-        'student_assessments.student_reference.student_unique_id'
+        'student_assessments.student_reference.student_unique_id',
+        'student_assessments.school_year'
     ]) }}                                                                           AS student_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.school_reference.school_id'
+        'student_school_associations.school_reference.school_id',
+        'student_assessments.school_year'
     ]) }}                                                                           AS school_key,
     student_assessments.school_year                                                 AS school_year,
     student_assessments.student_assessment_identifier                               AS student_assessment_identifier,
@@ -82,20 +78,13 @@ UNION ALL
 SELECT DISTINCT
     {{ dbt_utils.surrogate_key([
         'student_assessments.assessment_reference.assessment_identifier',
-        'student_assessments.assessment_reference.namespace',
-        'student_assessments.school_year'
+        'student_assessments.assessment_reference.namespace'
     ]) }}                                                                                AS assessment_key,
     {{ dbt_utils.surrogate_key([
         'student_assessments.assessment_reference.assessment_identifier',
         'student_assessments.assessment_reference.namespace',
-        'student_objective_assessments.objective_assessment_reference.identification_code',
-        'student_assessments.school_year'
+        'student_objective_assessments.objective_assessment_reference.identification_code'
     ]) }}                                                                                AS objective_assessment_key,
-    {{ dbt_utils.surrogate_key([
-        'student_school_associations.student_reference.student_unique_id',
-        'student_school_associations.school_reference.school_id',
-        'student_assessments.school_year'
-    ]) }}                                                                                AS student_school_key,
     {{ dbt_utils.surrogate_key([
         'student_assessments.student_reference.student_unique_id',
         'student_assessments.school_year'
@@ -139,14 +128,12 @@ SELECT DISTINCT
         'student_objective_assessments.objective_assessment_reference.identification_code'
     ]) }}                                                                                     AS objective_assessment_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.student_reference.student_unique_id',
-        'student_school_associations.school_reference.school_id'
-    ]) }}                                                                                     AS student_school_key,
-    {{ dbt_utils.surrogate_key([
-        'student_assessments.student_reference.student_unique_id'
+        'student_assessments.student_reference.student_unique_id',
+        'student_assessments.school_year'
     ]) }}                                                                                     AS student_key,
     {{ dbt_utils.surrogate_key([
-        'student_school_associations.school_reference.school_id'
+        'student_school_associations.school_reference.school_id',
+        'student_assessments.school_year'
     ]) }}                                                                                     AS school_key,
     student_assessments.school_year                                                           AS school_year,
     student_assessments.student_assessment_identifier                                         AS student_assessment_identifier,

@@ -3,13 +3,11 @@ SELECT
     {{ dbt_utils.surrogate_key([
         'assessments.assessment_identifier',
         'assessments.namespace',
-        'objective_assessments.identification_code',
-        'objective_assessments.school_year'
+        'objective_assessments.identification_code'
     ]) }}                                               AS objective_assessment_key,
     {{ dbt_utils.surrogate_key([
         'assessments.assessment_identifier',
         'assessments.namespace',
-        'assessments.school_year'
     ]) }}                                               AS assessment_key,
     objective_assessments.school_year                   AS school_year,
     objective_assessments.identification_code           AS identification_code,

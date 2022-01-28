@@ -2,8 +2,7 @@
 SELECT
     {{ dbt_utils.surrogate_key([
         'assessments.assessment_identifier',
-        'assessments.namespace',
-        'assessments.school_year'
+        'assessments.namespace'
     ]) }}                                               AS assessment_key,
     {{ dbt_utils.surrogate_key([
         'education_organization_reference.education_organization_id',
@@ -17,5 +16,5 @@ SELECT
     IFNULL(assessments.assessment_version, 0)           AS version,
     assessments.assessment_category_descriptor	        AS category,
     assessment_form                                     AS form,
-    adaptive_assessment                                 AS adaptive_assessment
+    IF(adaptive_assessment IS TRUE, 'Yes', 'No')        AS adaptive_assessment
 FROM {{ ref('stg_edfi_assessments') }} assessments
