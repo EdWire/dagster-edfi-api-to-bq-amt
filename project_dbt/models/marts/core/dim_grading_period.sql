@@ -31,7 +31,8 @@ grades_grading_periods_unioned AS (
             'unique_records.session_name'
         ]) }}                                               AS session_key,
         {{ dbt_utils.surrogate_key([
-            'unique_records.school_id' 
+            'unique_records.school_id',
+            'unique_records.school_year'
         ]) }}                                               AS school_key,
         unique_records.school_year                          AS school_year,
         grading_periods.grading_period_descriptor           AS grading_period_description,

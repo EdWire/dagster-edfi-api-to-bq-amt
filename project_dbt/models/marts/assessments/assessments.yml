@@ -94,10 +94,6 @@ models:
 
       - name: objective_assessment_key
         description: Foreign key to `dim_objective_assessment`
-        tests:
-          - relationships:
-              to: ref('dim_objective_assessment')
-              field: objective_assessment_key
 
       - name: student_key
         description: Foreign key to `dim_student`
