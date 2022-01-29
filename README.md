@@ -1,5 +1,5 @@
-# Ed-Fi API ➡ Analytics Middle Tier
-This repository contains code that pulls data from a target Ed-Fi API and creates tables in BigQuery that conform to the Analytics Middle Tier specification. If you are running the Ed-Fi API in YearSpecific mode or start with a new ODS at the start of the school year, this repository allows for extracting multiple school years of data and creates AMT tables that are multi-year.
+# Ed-Fi API ➡ analytical data system
+This repository contains code that pulls data from a target Ed-Fi API and creates various data marts with dimension and fact tables organized around various business processes. If you are running the Ed-Fi API in YearSpecific mode or start with a new ODS at the start of the school year, this repository allows for extracting multiple school years of data and creates analytics tables that are multi-year.
 
 This repository takes the viewpoint that each ODS should be limited to a single school year. It is recommended that LEAs run the Ed-Fi API mode in YearSpecific mode to have school year segmentation while having all years accessible via the Ed-Fi API.
 
