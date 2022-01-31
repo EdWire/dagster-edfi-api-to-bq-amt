@@ -5,12 +5,12 @@ models:
   - name: fct_student_attendance
     description: '{{ doc("fct_student_attendance") }}'
     columns:
-      - name: student_key
-        description: Foreign key to `dim_student`
+      - name: local_education_agency_key
+        description: Foreign key to `dim_local_education_agency`
         tests:
           - relationships:
-              to: ref('dim_student')
-              field: student_key
+              to: ref('dim_local_education_agency')
+              field: local_education_agency_key
 
       - name: school_key
         description: Foreign key to `dim_school`
@@ -18,6 +18,13 @@ models:
           - relationships:
               to: ref('dim_school')
               field: school_key
+
+      - name: student_key
+        description: Foreign key to `dim_student`
+        tests:
+          - relationships:
+              to: ref('dim_student')
+              field: student_key
 
       - name: school_year
         description: School year
@@ -51,14 +58,17 @@ models:
       - name: reported_as_absent_from_home_room
         description: 1 if the student was absent during their home room class
 
-      - name: reported_as_is_present_in_all_sections
-        description: SQL logic not complete
+      - name: is_chronically_absent
+        description: 1 if the student has 15 or more absences
 
-      - name: reported_as_absent_from_any_section
-        description: SQL logic not complete
+      - name: is_on_the_verge
+        description: 1 if the student has an average daily attendance below 92%
 
 
   - name: rpt_student_attendance
     description: >
       Staging version of the attendance fact table that joins on the date dim and student dim
       to add contextual information.
+    columns:
+      - name: is_latest_date_avaliable
+        description: TRUE/FALSE if the date record is the lastest date available for the respective school year

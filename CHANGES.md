@@ -1,5 +1,22 @@
 # Changelog
 
+# v0.5.2
+
+### New
+
+- [dbt] Adds `local_education_agency_key` to `fct_student_attendance`
+- [dbt] Adds `local_education_agency_key` to `is_chronically_absent`
+- [dbt] Adds `is_chronically_absent` to `fct_student_attendance`
+- [dbt] Adds `is_on_the_verge` to `fct_student_attendance`
+- [dbt] Removes `reported_as_is_present_in_all_sections` from `fct_student_attendance`
+- [dbt] Removes `reported_as_absent_from_any_section` from `fct_student_attendance`
+- [dbt] Adds `is_latest_date_avaliable` to `rpt_student_attendance`
+
+### Breaking Changes
+
+- [dbt] Removes `is_chronically_absent` metric in favor of using `fct_student_attendance` table
+
+
 # v0.5.1
 
 ### New
