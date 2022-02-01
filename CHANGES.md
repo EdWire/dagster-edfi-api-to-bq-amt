@@ -4,6 +4,13 @@
 
 ### New
 
+- [dagster] Updates dagster to version 0.13.17
+
+
+# v0.5.2
+
+### New
+
 - [dbt] Adds `local_education_agency_key` to `fct_student_attendance`
 - [dbt] Adds `local_education_agency_key` to `is_chronically_absent`
 - [dbt] Adds `is_chronically_absent` to `fct_student_attendance`

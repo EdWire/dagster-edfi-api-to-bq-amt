@@ -53,6 +53,7 @@ SELECT
     dim_student.student_display_name                            AS student_display_name,
     dim_student.is_actively_enrolled                            AS is_actively_enrolled,
     dim_student.grade_level                                     AS grade_level,
+    dim_student.grade_level_id                                  AS grade_level_id,
     dim_student.gender                                          AS gender,
     dim_student.limited_english_proficiency                     AS limited_english_proficiency,
     dim_student.is_english_language_learner                     AS is_english_language_learner,
@@ -70,4 +71,6 @@ LEFT JOIN {{ ref('dim_student') }} dim_student
     ON fct_student_assessment.student_key = dim_student.student_key
 LEFT JOIN {{ ref('dim_school') }} dim_school
     ON fct_student_assessment.school_key = dim_school.school_key
-WHERE fct_student_assessment.objective_assessment_key = ""
+WHERE
+    fct_student_assessment.objective_assessment_key = ""
+    AND dim_student.student_unique_id IS NOT NULL
