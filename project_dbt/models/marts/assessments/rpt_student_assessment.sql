@@ -41,6 +41,7 @@ objective_assessments AS (
 
 SELECT
     fct_student_assessment.school_year                          AS school_year,
+    dim_assessment.assessment_identifier                        AS assessment_identifier,
     dim_assessment.title                                        AS title,
     dim_assessment.namespace                                    AS namespace,
     dim_student.student_unique_id                               AS student_unique_id,
